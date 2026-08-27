@@ -1,0 +1,17 @@
+{
+  "project_name": "未命名作品",
+  "author": "你的笔名",
+  "genre": "通用网文",
+  "perspective": "第三人称限知视角",
+  "target_word_count_per_chapter": 2500,
+  "tone": "冷峻、紧凑、强调感官细节",
+  "rules": {
+    "max_context_loading_kb": 12,
+    "require_evidence_chain": true,
+    "self_review_questions": 4,
+    "anti_ai_detection_items": 6
+  },
+  "chapters_completed": 0,
+  "current_arc": "第一卷",
+  "notes": "首次使用时把 project_name/author/genre 改成你的作品信息。tone 决定 Agent 的写作语气倾向。perspective 决定叙述视角。"
+}
