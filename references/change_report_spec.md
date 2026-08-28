@@ -1,3 +1,15 @@
+<!--
+> 📍 **位置**：阶段⑤ → Change Report 格式规范
+> ⬆️ **上游**：`references/05-hooks-and-memory.md`（落库时调用）
+> ⚠️ **必读前置**：本章最终正文 + 自检/润色结果
+> 📚 **相关参考**：
+> - `story/truth/characters.md` — 角色状态变更目标
+> - `story/truth/world.md` — 世界状态变更目标
+> - `story/truth/hooks.md` — 伏笔状态变更目标
+> - `story/truth/relationships.md` — 关系状态变更目标
+> ⬇️ **下游**：无（格式规范文件，被05调用）
+-->
+
 # Change Report 格式规范
 
 阶段⑤落库时必须生成本章 Change Report，作为状态更新的唯一依据。无 Change Report 的状态更新视为无效。

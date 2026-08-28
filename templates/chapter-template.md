@@ -1,3 +1,12 @@
+<!--
+> 📍 **位置**：章节输出 → 章节 Frontmatter 模板
+> ⬆️ **上游**：阶段②写作完成后填充 Frontmatter
+> ⚠️ **必读前置**：本章正文 + 规划清单
+> 📚 **相关参考**：
+> - `references/01-session-start.md` — 阶段①规划章态
+> - `references/05-hooks-and-memory.md` — 阶段⑤落库时读取 Frontmatter
+> ⬇️ **下游**：阶段③自检 / 阶段⑤落库（均读取 Frontmatter 获取章节元数据）
+-->
 ---
 chapter_id: 001
 title: "章节标题"

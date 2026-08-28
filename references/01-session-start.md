@@ -1,3 +1,16 @@
+<!--
+> 📍 **位置**：阶段① → 项目启动与本章规划
+> ⬆️ **上游**：`SKILL.md`（用户说"写第X章"时进入）
+> ⚠️ **必读前置**：story/truth/ 下4个状态文件（强制加载）
+> 📚 **相关参考**：
+> - `templates/voice-profile-template.md` — 新角色建立基线档案时使用
+> - `pools/author_dna/` — 主对标书DNA（风格校准，推荐读）
+> - `pools/planner/` — 卷结构参考（节奏校准，推荐读）
+> - `pools/reference/techniques/` — 按场景选1-2个技巧方法论
+> - `pools/reference/samples/` — 同类场景实战样本
+> ⬇️ **下游**：`references/02-writing-guide.md`（规划完成后进入阶段②写作）
+-->
+
 <!-- 提示：如果不阅读本文件直接规划，会导致：前文因果断层、角色声线漂移(OCC)、伏笔漏回收。 -->
 
 # 阶段①：项目启动与本章规划 SOP

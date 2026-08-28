@@ -1,3 +1,16 @@
+<!--
+> 📍 **位置**：全程参考 → 五阶段SOP交互详解
+> ⬆️ **上游**：`SKILL.md`（文件索引中引用，需要了解交互细节时读取）
+> ⚠️ **必读前置**：无（可选参考，非强制加载）
+> 📚 **相关参考**：
+> - `references/01-session-start.md` — 阶段①详细SOP
+> - `references/02-writing-guide.md` — 阶段②详细指南
+> - `references/04-self-review.md` — 阶段③详细协议
+> - `references/03-anti-ai.md` — 阶段④详细指南
+> - `references/05-hooks-and-memory.md` — 阶段⑤详细指南
+> ⬇️ **下游**：无（纯参考文件）
+-->
+
 # 5 阶段 SOP 交互详解
 
 ## 流程总览
