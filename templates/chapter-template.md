@@ -8,6 +8,11 @@ causal_links:
 hooks_planted: ["HK001"]
 hooks_resolved: []
 emotion_arc: "起点情绪 → 终点情绪"
+change_summary:
+  characters: "（本章角色状态的核心变化，一句话）"
+  world: "（本章世界状态的变化，无则填"无"）"
+  relationships: "（本章关系变化，无则填"无"）"
+review_status: "full_pass"  # full_pass / partial_pass / needs_human_review
 ---
 
 # 第X章 章节标题
@@ -25,3 +30,9 @@ emotion_arc: "起点情绪 → 终点情绪"
 （每500字左右有一个小转折或钩子）
 
 （章末留悬念或情绪未完感，不要圆满收束）
+
+---
+
+> **Frontmatter 字段说明：**
+> - `change_summary`：本章核心变化摘要，下一章读 Frontmatter 就能快速知道上一章变了什么，不用翻完整 Change Report
+> - `review_status`：自检结果标记。full_pass = 4/4 全通过；partial_pass = 3/4 通过有瑕疵；needs_human_review = ≤2/4 通过需作者重点审稿
