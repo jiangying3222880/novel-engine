@@ -17,12 +17,12 @@
     │ （按需加载 pools/reference/samples/ 同类场景样本）
     │ 输出：正文初稿（无 YAML；元数据写 story/meta/chapter_XXX.md，功能三）
     ▼
-[阶段③ 自检] 读取 04-self-review.md
+[阶段③ 自检] 读取 03-self-review.md
     │ 4问行为验证检测（不是"自夸"，是检测行为模式）
     │ 最多 3 轮修正 + Best Version 保留
     │ 输出：自检报告 + 最终正文版本
     ▼
-[阶段④ 润色] 读取 03-anti-ai.md
+[阶段④ 润色] 读取 04-anti-ai.md
     │ 对照式转换：AI版 → 转换过程 → 目标版
     │ 输出：精修稿
     ▼
@@ -82,7 +82,7 @@ Agent 输出：完整正文初稿
 ## 阶段③ 自检交互
 
 ```
-Agent 读取：04-self-review.md
+Agent 读取：03-self-review.md
 Agent 执行：4 问行为验证检测
   Q1：章末悬念行为检测
   Q2：声线行为检测（对照 characters.md 基线摘要）
@@ -117,7 +117,7 @@ Agent 输出：自检报告
 ## 阶段④ 润色交互
 
 ```
-Agent 读取：03-anti-ai.md
+Agent 读取：04-anti-ai.md
 Agent 执行：
   1. 逐段扫描 3 大检测模式（乒乓球短句/段末升华/解释腔）
   2. 命中 → 对照四大转换原则（心理→动作/解释→结果/对称→不对称/总结→落物）

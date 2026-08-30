@@ -180,6 +180,7 @@ version: 1.4.0
 | ①/⑤ 检索 | `references/08-retrieval.md` |
 | ⑤ 格式 | `references/change_report_spec.md` |
 | ⑤ 日志 | `templates/log-template.md`（story/logs/第XXX章.md） |
+| ②③④ 去味 | `references/09-human-signal-zh.md`（深度方法库：四模式+27模式+人感注入） |
 | 外包分支 | `references/10-chat-outsource.md` |
 
 **项目级文件**（每本书独立，不在技能目录中）：

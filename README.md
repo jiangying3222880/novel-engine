@@ -1,4 +1,4 @@
-# Novel Engine v1.4
+﻿# Novel Engine v1.4
 
 <!--
 > 📍 **位置**：项目说明文档（用户可读）
@@ -10,7 +10,8 @@
 > 🎯 **读者**：人类用户（了解项目结构、版本历史、使用方法）
 -->
 
-工业级网文写作 Skill：纯 Markdown 状态机（主）+ ZVEC 检索运行时（功能八，唯一 Python 部件）。**技能只存模板，项目存内容。**
+工业级网文写作 Skill：纯 Markdown 状态机（主）+ 检索运行时（
+untime/，BM25+FTS 已落地，ZVEC 规划中，唯一 Python 部件）。**技能只存模板，项目存内容。**
 
 ## 解决什么问题
 
@@ -42,7 +43,7 @@
 ## 五阶段工作流
 
 ```
-规划(身份路由+细纲一致性+参考素材) → 写作(主角主动表达节点) → 举证自检(读者×编辑双通道) → 反AI味润色(成因层诊断+Prompt Defense) → 落库(Change Report+6状态+meta+日志+ZVEC索引)
+规划(身份路由+细纲一致性+参考素材) → 写作(主角主动表达节点) → 举证自检(读者×编辑双通道) → 反AI味润色(成因层诊断+Prompt Defense) → 落库(Change Report+6状态+meta+日志+BM25/FTS索引)
 ```
 
 每个阶段只读必要的参考文件，产出明确的交付物，阶段间不传递历史报错。
@@ -133,14 +134,14 @@ Python + SQLite + 多 Agent 的工程化路线。暴露问题：维护成本失�
 
 1. **Agent 自动拆解**：用户只需提供对标书，Agent 负责读、分析、判断、入池。修正了"用户手动拆"的歧义
 2. **两阶段拆解模式**：快速预览（前3章+整体结构+适配度评估）→ 用户确认 → 深度拆解（按档位全量）。避免一上来就全文暴力拆解
-3. **拆解判断标准**：Reference 入池 5 条标准（逆向应用 03-anti-ai.md），≥4条才入池。Agent 是"筛选+分析"，不是"复制+粘贴"
+3. **拆解判断标准**：Reference 入池 5 条标准（逆向应用 04-anti-ai.md），≥4条才入池。Agent 是"筛选+分析"，不是"复制+粘贴"
 4. **Unit 情绪标记**：每个事件单元标注情绪烈度（-9~+9）+ 节奏类型，写特定情绪场景时可快速对标
 5. **文风整体定位**：Author DNA 增加一句话文风、冰山程度、非AI味程度、叙事距离等整体定位
 6. **节奏量化统计**：Planner 增加信息释放频率、章节内部节奏模式、开篇节奏等量化数据
 7. **强制加载刚性约束**：阶段①未输出完整确认清单，禁止进入阶段②。把"必须读"变成硬门槛
 8. **每本书独立建池**：pools/ 随项目创建随项目归档，不跨书复用，避免题材间风格污染
 
-### 第九代：Novel Engine v1.3.2（当前版本 — 用户级素材库 + 技能导航体系）
+### 第九代：Novel Engine v1.3.2（用户级素材库 + 技能导航体系）
 
 **从"项目级素材池"扩展为"用户级 + 项目级"双层体系**，并补全跨文件路由导航：
 
@@ -175,8 +176,8 @@ Python + SQLite + 多 Agent 的工程化路线。暴露问题：维护成本失�
 ```
 
 关键交叉引用加固：
-- `04-self-review.md` 检测到 AI 味时明确指向 `03-anti-ai.md` 的修正方法
-- `02-writing-guide.md` 与 `03-anti-ai.md` 的互补关系明示
+- `03-self-review.md` 检测到 AI 味时明确指向 `04-anti-ai.md` 的修正方法
+- `02-writing-guide.md` 与 `04-anti-ai.md` 的互补关系明示
 - 拆书模板都指向 `拆解方法论.md` 作为"拆前必读"
 - 强制加载刚性：SKILL.md 阶段①加"未输出确认清单禁止进入②"
 
@@ -188,6 +189,22 @@ Python + SQLite + 多 Agent 的工程化路线。暴露问题：维护成本失�
 - r3：用户发现"他"连续开头机械感问题，按"动作/物件主语"原则修6 处段落
 
 最终 v1.3.2 = 5750字 / full_pass / 4 问全过 / 4 伏笔全埋。
+### 第十代：Novel Engine v1.4（当前版本 — 身份路由 + 状态机深化 + 检索运行时 + 深度去AI味 + 外包分支）
+
+**v1.3.2 → v1.4 的八大功能落地 + 五章实测回填**（详见项目内规划文档与 `routes/index.md`）：
+
+1. **目录规范化**：新增 `routes/index.md` 作为全文件路由台账（唯一真相源），文件头部导航块统一
+2. **身份路由**：`references/identity-routing.md` 作者×编剧×编辑×读者四身份矩阵（阶段③/④切换）
+3. **章节 YAML 脱离正文**：元数据迁 `story/meta/`（chapter_XXX.md + index.md 进度真相源），正文保持干净无 YAML
+4. **流程 IO 日志**：`templates/log-template.md` 每章 5 阶段合一日志（story/logs/）
+5. **Obsidian 叙事总览**：`templates/narrative/` 六模板（作品/角色/世界观/伏笔/章节地图/关系网）
+6. **多维状态中心 6 文件**：characters/world/hooks/relationships/objects/timeline，5 通用字段 + 时空一致性校验 + 伏笔推进状态（status_progress / next_resolved_at 定稿）
+7. **检索运行时**：`runtime/`（BM25+FTS 已落地 + 增量索引 + 稳定性测试；ZVEC 待接入）
+8. **深度去 AI 味**：`09-human-signal-zh.md`（四模式+27模式库+人感注入）+ `06-prompt-defense.md`（防诱导）
+9. **外包写作分支**：`10-chat-outsource.md`——给最终提示词 → 网页 chat 写 → 回接去 AI 味落库（初始化/中途自然语言随时激活）
+10. **五章实测回填 A-H**：F 中文 entity_id 定稿、G 伏笔推进状态列定稿、B 主角主动表达、E 细纲参考素材槽位等
+
+**阶段号修正**：`03-self-review.md`（阶段③自检）与 `04-anti-ai.md`（阶段④去AI味）文件名与阶段号对齐（v1.3 曾错配，v1.4 修正，历史保留）。
 
 ## 文件索引（技能级）
 
@@ -197,7 +214,8 @@ Python + SQLite + 多 Agent 的工程化路线。暴露问题：维护成本失�
 |------|------|
 | `SKILL.md` | 路由入口 + 3 铁律 + 5 阶段 SOP 概要 |
 | `routes/index.md` | **路由台账（唯一真相源）** |
-| `references/` | 五阶段详细参考（00/01/02/03/04/05/07 + change_report_spec + identity-routing + 06-prompt-defense + 08-retrieval）|
+| \
+| `references/` | 五阶段详细参考（00/01/02/03/04/05/07 + change_report_spec + identity-routing + 06-prompt-defense + 08-retrieval + 09-human-signal + 10-chat-outsource）|
 | `library/` | 用户级素材库（techniques / genres / knowledge / platforms / identities / market-research）|
 | `templates/` | 模板层（novel-config / chapter / voice-profile / truth / pools / meta / narrative / log-template）|
 
