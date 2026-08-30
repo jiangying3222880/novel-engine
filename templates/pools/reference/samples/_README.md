@@ -4,7 +4,7 @@
 > ⚠️ **必读前置**：`templates/pools/拆解方法论.md` → Reference 入池5条标准
 > 📚 **相关参考**：
 > - `pools/reference/techniques/` — 写作技巧方法论（先看原理知道方向）
-> - `references/03-anti-ai.md` — 叙事质感指南（判断样本质量的标准）
+> - `references/04-anti-ai.md` — 叙事质感指南（判断样本质量的标准）
 > ⬇️ **下游**：阶段②写作（写同类场景时加载1-2个样本参考）
 -->
 

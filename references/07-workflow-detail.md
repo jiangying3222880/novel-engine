@@ -1,15 +1,4 @@
-<!--
-> 📍 **位置**：全程参考 → 五阶段SOP交互详解
-> ⬆️ **上游**：`SKILL.md`（文件索引中引用，需要了解交互细节时读取）
-> ⚠️ **必读前置**：无（可选参考，非强制加载）
-> 📚 **相关参考**：
-> - `references/01-session-start.md` — 阶段①详细SOP
-> - `references/02-writing-guide.md` — 阶段②详细指南
-> - `references/04-self-review.md` — 阶段③详细协议
-> - `references/03-anti-ai.md` — 阶段④详细指南
-> - `references/05-hooks-and-memory.md` — 阶段⑤详细指南
-> ⬇️ **下游**：无（纯参考文件）
--->
+﻿> 全程参考 · 5阶段SOP交互详解 · 路由见 `routes/index.md`
 
 # 5 阶段 SOP 交互详解
 
@@ -26,7 +15,7 @@
     ▼
 [阶段② 写作] 读取 02-writing-guide.md
     │ （按需加载 pools/reference/samples/ 同类场景样本）
-    │ 输出：正文初稿（带 Frontmatter）
+    │ 输出：正文初稿（无 YAML；元数据写 story/meta/chapter_XXX.md，功能三）
     ▼
 [阶段③ 自检] 读取 04-self-review.md
     │ 4问行为验证检测（不是"自夸"，是检测行为模式）
@@ -84,7 +73,7 @@ Agent 读取：02-writing-guide.md（内化写作原则）
 Agent 执行：
   1. 有对话戏 → 先在脑中完成嘴心5问
   2. 按规划清单写作
-  3. 写完后在正文顶部写入 Frontmatter（含 change_summary + review_status）
+  3. 写完后元数据写入 story/meta/chapter_XXX.md（含 change_summary + review_status，正文无 YAML）
 Agent 输出：完整正文初稿
 ```
 
@@ -145,7 +134,7 @@ Agent 输出：精修稿（完整正文，不是 diff）
 Agent 读取：05-hooks-and-memory.md + change_report_spec.md
 Agent 执行：
   1. 生成 Change Report（角色/伏笔/时间线/世界规则/关系变化）
-  2. 根据 Change Report 更新 story/truth/ 下 4 个状态文件
+  2. 根据 Change Report 更新 story/truth/ 下 6 个状态文件（含 objects/timeline）
   3. 保存正文文件（含 Frontmatter + review_status）
 Agent 输出：落库报告
 ```
@@ -156,7 +145,7 @@ Agent 输出：落库报告
 
 如果对话中途断开（compact 或新会话）：
 1. 读取最近章节的 Frontmatter 恢复上下文
-2. 读取 story/truth/ 4个状态文件确认当前状态
+2. 读取 story/truth/ 6个状态文件（含 objects/timeline）确认当前状态
 3. 检查 hooks.md 确认伏笔状态
 4. 如果有未完成的自检（阶段③未完成），重新自检
 5. 如果正文已落库但自检未做，补做自检后再继续

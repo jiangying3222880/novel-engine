@@ -1,0 +1,10 @@
+# Novel Engine v1.4 · ZVEC 检索运行时（功能八）
+# 唯一 Python 部件。其余保持纯 Markdown。
+# Z1 已实测：zvec 0.7.0 在 Windows 可用；doc id 必须 ASCII（中文名用 pypinyin 转拼音键）。
+
+zvec>=0.6.0
+sentence-transformers   # bge-small-zh-v1.5 本地 embedding（Z3 接入）
+jieba                   # 中文分词（BM25 预处理）
+pyyaml                  # 读取 config.yaml
+pypinyin                # 中文名 → ASCII entity_id（id 必须 ASCII 的实测约束）
+numpy                   # 向量运算

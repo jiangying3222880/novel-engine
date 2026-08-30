@@ -1,15 +1,4 @@
-<!--
-> 📍 **位置**：阶段① → 项目启动与本章规划
-> ⬆️ **上游**：`SKILL.md`（用户说"写第X章"时进入）
-> ⚠️ **必读前置**：story/truth/ 下4个状态文件（强制加载）
-> 📚 **相关参考**：
-> - `templates/voice-profile-template.md` — 新角色建立基线档案时使用
-> - `pools/author_dna/` — 主对标书DNA（风格校准，推荐读）
-> - `pools/planner/` — 卷结构参考（节奏校准，推荐读）
-> - `pools/reference/techniques/` — 按场景选1-2个技巧方法论
-> - `pools/reference/samples/` — 同类场景实战样本
-> ⬇️ **下游**：`references/02-writing-guide.md`（规划完成后进入阶段②写作）
--->
+> 阶段① 项目启动与本章规划 · 路由见 `routes/index.md`
 
 <!-- 提示：如果不阅读本文件直接规划，会导致：前文因果断层、角色声线漂移(OCC)、伏笔漏回收。 -->
 
@@ -23,13 +12,17 @@
 
 1. `story/truth/characters.md` — 角色基线摘要 + 当前状态（位置/情绪/知识/携带物品）
 2. `story/truth/world.md` — 世界核心规则 + 当前状态（时间/地点/环境/大事记）
-3. `story/truth/hooks.md` — 当前生效的伏笔与未解悬念
+3. `story/truth/hooks.md` — 当前生效的伏笔与未解悬念（含推进状态）
 4. `story/truth/relationships.md` — 角色关系网络
+5. `story/truth/objects.md` — 物品状态（关键道具持有链）
+6. `story/truth/timeline.md` — 时间线（当前故事时间锚点）
 
 ### 基础信息
 
 5. `novel-config.json` — 项目档案（书名/题材/字数/基调）
-6. 最新已完成章节的 Frontmatter — 上一章的 causal_links / hooks / emotion_arc / change_summary
+6. `story/meta/上一章` — 上一章的 causal_links / hooks / emotion_arc / change_summary（功能三 YAML 迁移后）
+7. `story/meta/index.md` — 进度唯一真相源
+8. `大纲/细纲_本章.md` — **必读**（E 回填：细纲与规划一致性自检的基准；约束细纲 ≤2KB）
 
 ### 按需读取（本章涉及才读）
 
@@ -56,7 +49,10 @@
   ✓ world.md 已读取（当前：第X章/第N天/地点X）
   ✓ hooks.md 已读取（X 个 active，X 个伏笔债务）
   ✓ relationships.md 已读取（X 对关系）
-  ✓ 上一章 Frontmatter 已读取（change_summary: ...）
+  ✓ objects.md 已读取（N 件关键物品）
+  ✓ timeline.md 已读取（当前故事时间锚点）
+  ✓ story/meta/上一章 + index.md 已读取（change_summary: ...）
+  ✓ 细纲_本章.md 已读取（一致性自检基准）
 ```
 
 ---
@@ -113,10 +109,11 @@
 ## 5. 规划判断逻辑
 
 读取完成后，内部判断（不输出）：
-- 上一章 change_summary 和 emotion_arc 的终点是什么？本章应从什么情绪开始？
-- hooks.md 中有哪些 active 钩子到了该回收或推进的时机？
+- 以**编剧身份**主导规划（身份路由见 `references/identity-routing.md`）：上一章 change_summary 和 emotion_arc 的终点是什么？本章应从什么情绪开始？
+- hooks.md 中有哪些 active 钩子到了该回收或推进的时机？（含 status_progress=partial 的下一回收点）
 - 本章场景类型对应 `pools/reference/techniques/` 的哪1-2个技巧分类？
 - 本章是否需要参考 `pools/reference/samples/` 中的同类场景样本？
+- **参考素材三选一必填（C 回填）**：①技巧调阅 ②场景参考 ③明确声明"未拆池无素材，建议跑对标书快速预览拆解"——不许留空
 
 ---
 
@@ -138,12 +135,21 @@
    - 角色A｜[情绪]｜[语言变化]｜[口癖变化]｜[动作泄露]
    - 角色B｜[情绪]｜[语言变化]｜[口癖变化]｜[动作泄露]
 
-4. 参考素材
+4. 主角主动表达节点（B 回填 · 防哑巴）
+   - 本章至少 1 处主角"主动提问/表态/拒绝"节点：[具体设计]
+
+5. 参考素材（三选一必填）
    - 技巧调阅：[techniques/ 下1-2个分类]
    - 场景参考：[samples/ 下1-2个样本，如无则跳过]
-   - 结构参考：[planner/ 下对标书对应章节节奏，如无则跳过]
+   - 或明确声明未拆池：[建议跑对标书快速预览拆解]
 
-5. 预估字数：[X000 字]
+6. 预估字数：[X000 字]（校验区间见 config，<70% 落库时记归因）
+
+7. 与细纲一致性自检（E 回填 · 全勾才算完成）
+   - [x] 核心事件对齐细纲
+   - [x] 情绪弧对齐细纲
+   - [x] 伏笔埋收对齐细纲
+   - [x] 字数预估对齐细纲
 ```
 
 ---
@@ -161,6 +167,6 @@
 
 第1章（无上一章）：
 - 跳过"读取上一章 Frontmatter"
-- 重点参考 `pools/reference/techniques/` 的「黄金开头」分类
+- 重点参考 `pools/reference/techniques/` 的「黄金开头」分类（参考素材三选一必填）
 - 规划清单增加"第一句话设计"
 - 所有出场角色都按新角色处理

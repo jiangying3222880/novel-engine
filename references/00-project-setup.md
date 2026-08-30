@@ -1,14 +1,4 @@
-<!--
-> 📍 **位置**：阶段⓪ → 项目初始化
-> ⬆️ **上游**：`SKILL.md`（用户说"开新书"或"导入已有项目"时进入）
-> ⚠️ **必读前置**：无
-> 📚 **相关参考**：
-> - `templates/truth/` — 4个状态文件模板
-> - `templates/voice-profile-template.md` — 角色声线基线档案模板
-> - `templates/pools/_README.md` — 素材池总说明
-> - `templates/pools/拆解方法论.md` — 对标书拆解执行手册（Agent拆书前必读）
-> ⬇️ **下游**：`references/01-session-start.md`（初始化完成后进入阶段①）
--->
+﻿> 阶段⓪ 项目初始化 · 路由见 `routes/index.md`
 
 <!-- 提示：如果跳过本文件直接开始写，会导致：项目结构混乱、状态文件缺失、后续每一步都出错。 -->
 
@@ -83,15 +73,35 @@
 - `大纲/细纲_第2章.md`
 - `大纲/细纲_第3章.md`
 
-### Step 5：初始化状态文件
+### Step 5：初始化状态与元数据文件
 
-从 `templates/truth/` 复制 4 个状态文件模板到项目目录 `story/truth/` 下：
-- `characters.md` — 填入角色基线摘要（从 `设定/角色声线.md` 提取核心信息）+ 初始状态
-- `world.md` — 填入核心规则摘要（从 `设定/世界观.md` 提取3-5条不可变规则）+ 初始时间/地点
-- `hooks.md` — 空表，第1章写作后开始记录
-- `relationships.md` — 填入初始关系矩阵
+**5a. 状态文件（从 `templates/truth/` 复制 6 个模板到项目 `story/truth/`）：**
+- `characters.md` — 角色基线摘要 + 初始状态
+- `world.md` — 核心规则摘要 + 初始时间/地点
+- `hooks.md` — 空表（含推进状态/下一回收点两列，G 定稿）
+- `relationships.md` — 初始关系矩阵
+- `objects.md` — 物品状态（关键道具持有链）
+- `timeline.md` — 时间线（当前故事时间锚点）
 
 > 关键原则：基线摘要 = 完整设定的"压缩版"，只保留最核心的信息（控制在 2KB 以内）。完整档案仍在 `设定/` 目录下，按需读取。
+
+**5b. 元数据骨架（功能三/四/五）：**
+- `story/meta/index.md` — 从 `templates/meta/index.md` 初始化（进度唯一真相源）
+- `story/meta/chapter_001.md` — 从 `templates/meta/chapter_XXX.md` 初始化（第1章元数据）
+- `story/logs/` — 每章 1 个流程日志文件（`templates/log-template.md`）
+- `config/identity/` — 作者/编剧/编辑/读者 项目级覆盖（技能级基线在 `library/identities/`，项目级存在则优先）
+- `叙事总览.md` + `叙事总览/` — 从 `templates/narrative/` 初始化（Obsidian 纯展示层，功能五）
+### Step 5.5：初始化检索索引（默认 BM25+FTS，零依赖）
+
+**默认启用 L1 BM25+FTS**（`runtime/bm25_fts.py`，仅依赖 jieba 分词，无需安装 zvec SDK）：
+
+```
+python runtime/bm25_fts.py build --root <项目根>
+```
+
+- 索引产物：`story/index/bm25/index.json`（truth + meta + 正文分块）
+- **检索层说明（告知用户）**：BM25+FTS=词法精确命中（专名检索）；ZVEC=词法+语义混合（可语义召回，需另装 zvec SDK）。两者都有防剧透+知情权过滤。写作期 L1 已够用；要语义检索再把 `runtime/config.yaml` 的 `retrieval.mode` 切到 `zvec`。
+- 每次落库（阶段⑤）后重建：`python runtime/bm25_fts.py build --root <项目根>`
 
 ### Step 6：对标书拆解（可选但强烈推荐）
 
@@ -117,7 +127,7 @@
 3. **暂不拆解**：先写起来，后面再补
 
 用户选择后执行：
-1. 从 `templates/pools/` 初始化项目的 `pools/` 目录
+1. 从 `templates/pools/` 初始化项目的 `pools/` 目录，并落 `pools/_status.md`（空池标记：`拆解状态: 未拆解/已拆N本/深度档位`，C 回填）
 2. 让用户提供对标书（书名或文本文件）
 3. Agent 读取 `templates/pools/拆解方法论.md`，按方法论执行**快速预览**，生成预览报告请用户确认
 4. 用户确认后，Agent 按选定档位执行**深度拆解**，内容填入对应池子
@@ -132,8 +142,13 @@ novel-config.json      ← 项目档案 ✓
 设定/角色声线.md        ← 完整角色基线 ✓
 大纲/卷纲.md            ← 卷纲 ✓
 大纲/细纲_第1章.md      ← 第1章细纲 ✓
-story/truth/           ← 4个状态文件 ✓
-pools/                 ← 素材池（如已拆解） ✓
+story/truth/           ← 6个状态文件（characters/world/hooks/relationships/objects/timeline）✓
+story/meta/index.md    ← 章节索引（进度唯一真相源）✓
+story/meta/chapter_001.md ← 第1章元数据 ✓
+story/logs/            ← 流程日志目录 ✓
+config/identity/       ← 项目级身份档案（如有）✓
+叙事总览/              ← Obsidian 总览骨架 ✓
+pools/_status.md       ← 素材池状态标记（未拆解/已拆解）✓
 ```
 
 确认后对用户说："项目初始化完成，现在开始写第1章"，进入阶段①。
@@ -173,7 +188,7 @@ pools/                 ← 素材池（如已拆解） ✓
 - 缺少硬边界和情绪光谱：Agent 补充建议，用户确认
 
 **正文 → `正文/` 目录**
-- 已有正文：保持原文件，为每章补 Frontmatter
+- 已有正文：保持原文件；元数据写入 `story/meta/chapter_XXX.md`（功能三 YAML 迁移，正文保持干净）
 - 无正文：跳过
 
 ### Step 3：重建 story/truth/ 状态文件
@@ -186,8 +201,10 @@ pools/                 ← 素材池（如已拆解） ✓
 
 - `characters.md` — 读取最近3章正文，提取角色当前位置/情绪/已知信息/携带物品，填入当前状态表；从角色设定提取核心信息填入基线摘要
 - `world.md` — 读取最近3章正文，提取当前时间/地点/环境，填入当前状态；从世界观设定提取3-5条核心规则填入规则摘要
-- `hooks.md` — 扫描已有正文，提取埋设的伏笔，建立 hooks 表（标注埋设章）
+- `hooks.md` — 扫描已有正文，提取埋设的伏笔，建立 hooks 表（标注埋设章，含推进状态）
 - `relationships.md` — 从已有内容中提取角色关系，建立初始矩阵
+- `objects.md` — 扫描正文提取关键道具/物品，建立持有链
+- `timeline.md` — 从正文提取故事时间锚点，建立时间线
 
 > 如果只有 1-2 章正文，就按实际章数重建，不必强求3章。
 

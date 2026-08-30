@@ -6,7 +6,7 @@
 > 📚 **相关参考**：
 > - `templates/pools/拆解方法论.md` — 拆解执行手册（拆书前必读）
 > - `references/02-writing-guide.md` — 双层声线系统
-> - `references/03-anti-ai.md` — 叙事质感与反AI味标准
+> - `references/04-anti-ai.md` — 叙事质感与反AI味标准
 > ⬇️ **下游**：
 > - 阶段①规划（风格校准，推荐加载）
 > - 阶段②写作（句式/节奏/词汇校准）

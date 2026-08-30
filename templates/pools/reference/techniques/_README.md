@@ -5,7 +5,7 @@
 > 📚 **相关参考**：
 > - `pools/reference/samples/` — 实战样本（看具体怎么落地的）
 > - `references/02-writing-guide.md` — 冰山法则 + 对话不对称
-> - `references/03-anti-ai.md` — 四大转换原则
+> - `references/04-anti-ai.md` — 四大转换原则
 > ⬇️ **下游**：阶段①规划（按场景选1-2个技巧）/ 阶段②写作（调用对应技巧）
 -->
 

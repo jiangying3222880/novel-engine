@@ -1,0 +1,34 @@
+﻿# ZVEC 检索运行时配置（功能八）
+# 唯一 Python 部件 · 其余保持纯 Markdown
+
+retrieval:
+  mode: bm25_fts                       # 默认启用：BM25+FTS（零依赖，jieba 分词，专名命中）
+  # mode: zvec                          # 可选增强：ZVEC 混合检索（需 zvec SDK，dense 语义召回）
+  # 差别：BM25+FTS=词法精确命中；ZVEC=词法+语义混合。防剧透/知情权两者都有。
+
+zvec:
+  collection_path: story/index/zvec          # 索引库路径（项目级）
+  dense_dim: 512                             # bge-small-zh-v1.5 维度
+  sparse: bm25_zh                            # 中文 BM25 稀疏向量
+  fusion: code_layer_rrf            # zvec 0.7.0 无 MultiQuery/RRF，代码层合并近似
+  weights:
+    dense: 0.7
+    sparse: 0.3
+
+embedding:
+  # Z3 落地(2026-08-30): torch 被 Windows 长路径(WinError 206)阻断 → 当前用 jieba TF-IDF dense(index.py/_embed, 零重依赖, 真实词法语义)
+  provider: jieba_tfidf                    # 当前实现
+  model: BAAI/bge-small-zh-v1.5            # 规划拍板模型(升级路径: 环境支持后装 bge 替换 _embed 即可)
+  # provider: dashscope                      # 备选：通义千问 API（需 key）
+
+chunking:
+  block_size_chars: 500-1000                 # 正文语义块大小
+  doc_types: [truth, meta, 正文, 设定]
+
+retrieval_gate:
+  cutoff_field: source_chapter               # 防剧透基准字段
+  visibility_field: visibility               # 知情权字段
+  locked_placeholder: "[未解锁：第N章]"       # 未解锁占位格式
+
+degrade:
+  fallback: markdown_gate                    # ZVEC 不可用 → 回退纯 markdown 检索门

@@ -1,4 +1,4 @@
-# Novel Engine v1.3
+# Novel Engine v1.4
 
 <!--
 > 📍 **位置**：项目说明文档（用户可读）
@@ -10,7 +10,7 @@
 > 🎯 **读者**：人类用户（了解项目结构、版本历史、使用方法）
 -->
 
-工业级网文写作 Skill，纯 Markdown 驱动，零 Python 依赖。**技能只存模板，项目存内容。**
+工业级网文写作 Skill：纯 Markdown 状态机（主）+ ZVEC 检索运行时（功能八，唯一 Python 部件）。**技能只存模板，项目存内容。**
 
 ## 解决什么问题
 
@@ -23,7 +23,11 @@
 | 乒乓球式短句/装酷感 | 对话不对称三原则 + 双层声线系统 |
 | 不敢留白/解释腔 | 冰山法则（默认读者看过同类作品，只写物理结果不写原理） |
 | 角色 OCC（出戏） | 基线档案（永久）+ 章态（每章动态），章态必须落在基线情绪光谱内 |
-| 记忆漂移/前后矛盾 | story/truth/ 4文件状态中心，Change Report 驱动更新 |
+| 记忆漂移/前后矛盾 | story/truth/ 6文件状态中心（+objects/timeline），Change Report 驱动更新 |
+| 检索靠全文扫描 | ZVEC 混合检索（dense+BM25+防剧透+知情权过滤），章节 YAML 迁 story/meta 供索引 |
+| 身份单一 | 作者×编剧×编辑×读者身份路由，市场调查三档（快速/标准/深度） |
+| AI 味复发 | 成因层诊断 7 层 + AI 味指数五档 + Prompt Defense 防诱导 |
+| 长篇失控 | Obsidian 叙事总览（角色/世界观/伏笔/章节地图/关系网）+ 每章流程日志 |
 | 风格漂移 | 对标书拆解素材池（pools/），Author DNA 风格锚点 + 高质量样本参考 |
 | 对标书拆解靠人工 | Agent 自动拆解（两阶段：快速预览→深度），带判断标准筛选入池 |
 
@@ -38,7 +42,7 @@
 ## 五阶段工作流
 
 ```
-规划(含声线章态) → 写作(含嘴心5问) → 举证自检 → 反AI味润色 → 落库(Change Report)
+规划(身份路由+细纲一致性+参考素材) → 写作(主角主动表达节点) → 举证自检(读者×编辑双通道) → 反AI味润色(成因层诊断+Prompt Defense) → 落库(Change Report+6状态+meta+日志+ZVEC索引)
 ```
 
 每个阶段只读必要的参考文件，产出明确的交付物，阶段间不传递历史报错。
@@ -187,29 +191,26 @@ Python + SQLite + 多 Agent 的工程化路线。暴露问题：维护成本失�
 
 ## 文件索引（技能级）
 
-| 文件 | 用途 | 触发阶段 |
-|------|------|---------|
-| `SKILL.md` | 路由入口 + 3 铁律 + 5 阶段 SOP | 全程 |
-| `references/00-project-setup.md` | 项目初始化（从零创建/导入已有/对标书拆解） | ⓪ |
-| `references/01-session-start.md` | 项目启动 + 状态加载 + 章态注入 | ① |
-| `references/02-writing-guide.md` | 冰山法则 + 对话不对称 + 章态 + 示范 | ② |
-| `references/03-anti-ai.md` | 3 大 AI 味模式 + 对照式转换示范 + 四大转换原则 | ④ |
-| `references/04-self-review.md` | 4 问举证自检（含 OOC 检测） | ③ |
-| `references/05-hooks-and-memory.md` | 状态落库 + Change Report 流程 | ⑤ |
-| `references/07-workflow-detail.md` | 5 阶段 SOP 交互详解 | 全程 |
-| `references/change_report_spec.md` | Change Report 格式规范 | ⑤ |
-| `templates/novel-config.json` | 项目配置预设 | ⓪ |
-| `templates/chapter-template.md` | 章节 Frontmatter 模板 | ② |
-| `templates/voice-profile-template.md` | 角色声线基线档案模板 | ① |
-| `templates/truth/` | 4个状态文件模板 | ⓪ |
-| `templates/pools/` | 5个素材池模板 + 拆解标准 + 两阶段流程 | ⓪ |
+> 完整文件→阶段映射、上下游关系、素材库导航见 **`routes/index.md`**（唯一真相源）。本表仅列顶层入口。
+
+| 文件 | 用途 |
+|------|------|
+| `SKILL.md` | 路由入口 + 3 铁律 + 5 阶段 SOP 概要 |
+| `routes/index.md` | **路由台账（唯一真相源）** |
+| `references/` | 五阶段详细参考（00/01/02/03/04/05/07 + change_report_spec + identity-routing + 06-prompt-defense + 08-retrieval）|
+| `library/` | 用户级素材库（techniques / genres / knowledge / platforms / identities / market-research）|
+| `templates/` | 模板层（novel-config / chapter / voice-profile / truth / pools / meta / narrative / log-template）|
 
 **项目级文件**（每本书独立，不在技能目录中）：
-- `story/truth/` — 4个状态文件（强制加载）
+- `story/truth/` — 6个状态文件（characters/world/hooks/relationships/objects/timeline，强制加载）
+- `story/meta/` — 章节元数据集中索引（index.md 进度真相源 + chapter_XXX.md）
+- `story/logs/` — 每章流程日志
+- `叙事总览/` — Obsidian 纯展示层总览
 - `pools/` — 5个素材池（按需加载，Agent 自动拆解生成）
 - `设定/` — 完整设定档案（按需读取）
 - `大纲/` — 卷纲 + 逐章细纲
 - `正文/` — 章节正文
+> 详见 `routes/index.md` 第五节。
 
 ## 版本
 
@@ -219,3 +220,4 @@ Python + SQLite + 多 Agent 的工程化路线。暴露问题：维护成本失�
 - v1.3.0：对照式转换示范 + 四大转换原则 + 行为验证自检 + 3轮修正上限+Best Version + 状态优先级系统 + review_status标记。
 - v1.3.1：对标书拆解体系补全（Agent自动拆/两阶段/判断标准）+ Unit情绪标记 + 文风/节奏量化 + 强制加载刚性约束 + 每本书独立建池。
 - v1.3.2：用户级素材库 library/（techniques+genres+knowledge+platforms 四库）+ 拆解方法论独立成文 + 全文件导航体系 + 第1章实战验证（乒乓球对话修正+连续"他"修正）。
+- v1.4.0：功能一~八全量落地（目录规范化 / 身份路由 / 章节YAML迁story/meta / 流程IO日志 / Obsidian叙事总览 / 豆包融合·成因层+Prompt Defense / 多维状态中心6文件+伏笔推进状态 / ZVEC混合检索 runtime）+ 五章实测回填 A-H 八项（含 F 中文entity_id、G 伏笔推进状态定稿）。

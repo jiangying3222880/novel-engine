@@ -1,38 +1,21 @@
----
+﻿---
 name: novel-engine
 description: 工业级网文写作与长篇状态管理引擎，解决AI写作呆板、假自检与上下文溢出问题。
-version: 1.3.2
+version: 1.4.0
 ---
 
 <!--
-> 📍 **位置**：总入口 / 路由中枢
-> ⬆️ **上游**：用户指令触发（无上游依赖文件）
-> ⚠️ **必读前置**：写作三铁律（写前必读）
-> 📚 **用户级素材库**（跨项目共享，按需加载）：
-> - `library/techniques/` — 通用写作方法论（剧情收获/雪花法/爽点设计/人物塑模等）
-> - `library/genres/` — 题材风格库（辰东玄幻/斩神都市神话等）
-> - `library/knowledge/` — 通用知识库（古代常识/人设/世界观素材等）
-> - `library/platforms/` — 平台适配指南（番茄/起点/晋江等）
-> 📚 **项目级参考**：
-> - `references/07-workflow-detail.md` — 五阶段SOP交互详解
-> - `templates/pools/_README.md` — 项目级素材池总说明
-> ⬇️ **下游入口**：
-> - `references/00-project-setup.md` — 阶段⓪项目初始化（从零创建 / 导入已有）
-> - `references/01-session-start.md` — 阶段①本章规划
-> - `references/02-writing-guide.md` — 阶段②正文写作
-> - `references/04-self-review.md` — 阶段③行为验证自检
-> - `references/03-anti-ai.md` — 阶段④反AI味润色
-> - `references/05-hooks-and-memory.md` — 阶段⑤状态落库
+> 导航：全部文件的路由/上下游/素材库见 `routes/index.md`（唯一真相源）。
 -->
 
-# Novel Engine v1.3 (小说创作引擎)
+# Novel Engine v1.4 (小说创作引擎)
 
-纯 Markdown 文件状态机，零 Python 依赖，跨平台运行。**技能只存模板，项目存内容。**
+纯 Markdown 文件状态机（主）+ ZVEC 检索运行时（唯一 Python 部件，功能八），跨平台运行。**技能只存模板，项目存内容。**
 
 ## 写作三铁律（写前必读）
 
-1. **写前必读**：创作前必须且仅读取项目目录下 `story/truth/` 4个状态文件（characters/world/hooks/relationships）+ `novel-config.json` + 上一章 Frontmatter。禁止全量加载设定集——全量加载会导致上下文溢出、Agent 跳读、声线崩塌。
-2. **章节优先**：以"章节"为唯一基本单元。所有因果链、钩子状态、情绪弧统一记入章节 Frontmatter 元数据，不另建中间文件。
+1. **写前必读**：创作前必须且仅读取项目目录下 `story/truth/` 6个状态文件（characters/world/hooks/relationships/objects/timeline）+ `novel-config.json` + `story/meta/上一章` + `story/meta/index.md`。禁止全量加载设定集——全量加载会导致上下文溢出、Agent 跳读、声线崩塌。
+2. **章节优先（v1.4 索引驱动）**：以"章节"为唯一基本单元。章节元数据（causal_links / hooks / emotion_arc / change_summary）统一记入 `story/meta/chapter_XXX.md`（集中式索引，正文文件保持干净无 YAML）；进度唯一真相源 = `story/meta/index.md`。状态文件（story/truth/）维护 5 通用字段（status / transition / valid_until / visibility / source_chapter），供检索（功能八）与一致性校验共用。
 3. **写后自检**：初稿完成后必须执行 4 问行为验证自检。无正文 `evidence_ids` 证据链的自检报告一律判定无效，必须重检。修正最多 3 轮，保留 Best Version。
 
 ---
@@ -46,6 +29,7 @@ version: 1.3.2
 | "开新书""帮我建项目""开始写新书" | → 阶段⓪入口A |
 | "导入""我有设定/大纲""把已有项目导进来" | → 阶段⓪入口B |
 | "写下一章""规划第X章""继续写" | → 阶段①（需已有 novel-config.json） |
+| "外包写作""用网页chat写""给我提示词我拿去写""外部写手" | → 阶段① + 外包分支（`references/10-chat-outsource.md`，初始化或中途随时可激活） |
 
 ### 阶段⓪：项目初始化 (Setup)
 
@@ -81,10 +65,20 @@ version: 1.3.2
 - 标准：以上 + Reference 精选段落（约增加 4-6KB/章）
 - 全量：五项全拆（约增加 8-12KB/章）
 
+
+**拆书规范速查（拆什么 / 什么入池 / 格式如何）：**
+
+| Q | 答案 |
+|---|------|
+| 拆哪些内容 | 对标书 ×5 池：`author_dna`(句式/节奏/词汇/文风) · `planner`(卷结构/爽点密度/伏笔编排) · `reference`(精选段落 200-500字) · `unit`(前20章关键事件) · `knowledge`(可溯源领域知识) |
+| 什么入池 | DNA=有可复现模式 · Planner=有清晰结构 · Reference=过非AI味5条≥4条 · Unit=有"起因→决策→结果→情绪"四闭环 · Knowledge=可溯源可复用。Agent 是"筛选+分析"不是"复制粘贴" |
+| 格式如何 | 填空式模板见 `templates/pools/拆书规范.md`；各池完整字段模板见 `author_dna/_template.md` / `planner/_template.md` / `unit/_template.md` / `reference/_README.md` / `knowledge/_README.md` |
+
+> 完整执行手册：`templates/pools/拆解方法论.md`（拆书前必读）· 池子架构：`templates/pools/_README.md`
 向用户提供以上选项，用户决定对标书和拆解深度后：
 1. 从 `templates/pools/` 初始化项目的 `pools/` 目录
 2. Agent 执行快速预览 → 用户确认 → Agent 执行深度拆解
-3. 拆解判断标准见 `templates/pools/_README.md`
+3. 拆解判断标准见 `templates/pools/拆书规范.md` + `_README.md`
 4. 拆解完成后进入①。
 
 ---
@@ -98,14 +92,16 @@ version: 1.3.2
 - **强制加载状态（必须全部读取）**：
   - `story/truth/characters.md` —— 基线摘要 + 当前状态（位置/情绪/知识/携带物品）
   - `story/truth/world.md` —— 核心规则 + 当前状态（时间/地点/环境）
-  - `story/truth/hooks.md` —— 伏笔追踪
+  - `story/truth/hooks.md` —— 伏笔追踪（含推进状态）
   - `story/truth/relationships.md` —— 关系网络
+  - `story/truth/objects.md` —— 物品状态（关键道具持有链）
+  - `story/truth/timeline.md` —— 时间线（当前故事时间锚点）
   > 若文件不存在，从 `templates/truth/` 初始化后再继续。
 - **推荐加载（按场景）**：
   - `pools/reference/techniques/` 对应技巧 —— 知道方法论
   - `pools/author_dna/` 主对标书DNA —— 校准风格
   - `pools/planner/` 卷结构参考 —— 校准节奏
-- 读入数据：`novel-config.json` → `设定/角色声线.md`（新角色/声线存疑时才读）→ 上一章 Frontmatter
+- 读入数据：`novel-config.json` → `设定/角色声线.md`（新角色/声线存疑时才读）→ `story/meta/上一章` + `story/meta/index.md`
 - **加载确认（必须输出完整清单，缺一项都不算完成）**：
   - [x] characters.md 已读取（N 个角色）
   - [x] world.md 已读取
@@ -120,32 +116,43 @@ version: 1.3.2
 - 读取参考：`references/02-writing-guide.md`
 - 按需调取：`pools/reference/samples/` 同类场景样本
 - 执行：按规划清单+章态写作，有重点对话戏时先做嘴心5问隐式思考
-- 产出：**带 Frontmatter 元数据的正文初稿**
+- 产出：**干净正文初稿**（无 YAML；元数据写入 `story/meta/chapter_XXX.md`）
 
 ### 阶段③：行为验证自检 (Reviewing)
-- 读取参考：`references/04-self-review.md`
+- 读取参考：`references/03-self-review.md`
 - 执行：4 问**行为验证**自检（检测正文中是否存在可观察的行为模式），每问必须标注 `evidence_ids`（引用原文片段，格式：`source: [角色/场景名] excerpt: [原文片段]`）
 - 修正循环：最多 3 轮，保留 **Best Version**（每轮打综合分，最终输出分数最高的版本）
 - 输出状态标记：`full_pass` / `partial_pass` / `needs_human_review`
 - 产出：**带证据链的自检报告 + 最终正文版本**
 
 ### 阶段④：反 AI 味润色 (De-AI Process)
-- 读取参考：`references/03-anti-ai.md`
+- 读取参考：`references/04-anti-ai.md`
 - 执行：对照三大 AI 味模式做**行为检测**，命中则按**四大转换原则**（心理→动作/解释→结果/对称→不对称/总结→落物）做最小修改。参考对照式示范（AI版→转换过程→目标版）
 - 产出：**精修稿**
 
 ### 阶段⑤：状态落库 (Settling)
 - 读取参考：`references/05-hooks-and-memory.md` + `references/change_report_spec.md`
 - 执行：
-  1. 生成本章 **Change Report**（角色变化/新伏笔/伏笔回收/时间线/世界规则变化/关系变化）
-  2. 根据 Change Report 更新 `story/truth/` 下的 4 个状态文件
-  3. 保存正文 Frontmatter（含 change_summary）
+  1. 生成本章 **Change Report**（角色变化/新伏笔/伏笔回收/时间线/世界规则变化/关系变化/物品状态）
+  2. 根据 Change Report 更新 `story/truth/` 下的 6 个状态文件（含 objects/timeline）
+  3. 更新 `story/meta/chapter_XXX.md`（change_summary）+ `story/meta/index.md`（进度）
+  4. 写 `story/logs/第XXX章.md` 流程日志（5 阶段合一）
+  5. 联动更新 `叙事总览/`（功能五）+ 增量索引（功能八，ZVEC 可用时）
 - **更新确认（必须输出）**：
   - [x] characters.md 已更新
   - [x] world.md 已更新
-  - [x] hooks.md 已更新
+  - [x] hooks.md 已更新（含推进状态）
   - [x] relationships.md 已更新
+  - [x] objects.md 已更新
+  - [x] timeline.md 已更新
+  - [x] story/meta/index.md 进度已更新
 - 产出：**Change Report + 项目最新状态**
+
+### 分支：外包写作（Chat-Outsource）★ v1.4 新增
+> 用户用自然语言随时激活（初始化或中途均可）。详见 `references/10-chat-outsource.md`。
+- **触发**："外包写作""这章用网页chat写""给我提示词我拿去写""外部写手"等
+- **流程**：阶段①照跑 → **编译一份自包含最终提示词**（打包状态/目标/声线样本/去AI味要求，外部 chat 可独立写作）→ 用户贴入任意网页 chat → 正文贴回 → **阶段③自检 → 阶段④去AI味（跑满）→ 阶段⑤落库**
+- **关键**：提示词必须自包含（外部读不到本地状态）；④必须跑满（外部稿几乎必带 AI 味）；防剧透只给本章相关状态；这是流程层分支，不改"内容只引导"理念。
 
 ---
 
@@ -153,34 +160,27 @@ version: 1.3.2
 
 - 单状态文件 ≤ 8KB
 - 单次对话强制加载总量 ≤ 12KB
-- SKILL.md 本身 ≤ 5KB（本文件即为路由入口，不含写作细节）
+- SKILL.md 本身 ≤ 8KB（路由入口 + 五阶段SOP概要；detail 下沉 `references/07-workflow-detail.md`）
 
-## 文件索引（技能级 = 模板 + 参考）
+## 文件索引
 
-| 文件 | 用途 | 触发阶段 |
-|------|------|---------|
-| `references/00-project-setup.md` | 项目初始化（从零创建/导入已有） | ⓪ |
-| `references/01-session-start.md` | 项目启动与规划 SOP | ① |
-| `references/02-writing-guide.md` | 冰山法则 + 对话不对称 + 章态 + 示范 | ② |
-| `references/03-anti-ai.md` | 对照式转换示范 + 四大转换原则（跨题材通用） | ④ |
-| `references/04-self-review.md` | 4 问行为验证自检 + 3轮修正 + Best Version | ③ |
-| `references/05-hooks-and-memory.md` | 伏笔追踪 + 4 级记忆 | ⑤ |
-| `references/07-workflow-detail.md` | 5 阶段 SOP 交互详解 | 全程 |
-| `references/change_report_spec.md` | Change Report 格式规范 | ⑤ |
-| `templates/novel-config.json` | 项目配置预设 | ⓪ |
-| `templates/chapter-template.md` | 章节 Frontmatter 模板 | ② |
-| `templates/voice-profile-template.md` | 角色声线基线档案模板 | ① |
-| `templates/truth/` | 4个状态文件模板 | ⓪ |
-| `templates/pools/_README.md` | 池子总说明（成本/使用原则/快速开始） | ⓪ |
-| `templates/pools/unit/_template.md` | 语义单元模板 | ⓪⑤ |
-| `templates/pools/author_dna/_template.md` | Author DNA 模板 | ⓪ |
-| `templates/pools/planner/_template.md` | 结构分析模板 | ⓪ |
-| `templates/pools/knowledge/_README.md` | 知识池说明 | ⓪ |
-| `templates/pools/reference/_README.md` | 素材池说明 | ⓪ |
+完整文件→阶段映射、上下游关系、素材库导航见 **`routes/index.md`**（唯一真相源）。此处仅列五阶段路由入口：
 
-> **项目级文件**（每本书独立，不在技能目录中）：
-> - `story/truth/` — 4个状态文件（基线摘要+当前状态，强制加载）
-> - `pools/` — 5个素材池（对标书拆解+写作积累，按需加载）
-> - `设定/` — 完整设定档案（按需读取）
-> - `大纲/` — 卷纲 + 逐章细纲
-> - `正文/` — 章节正文
+| 阶段 | 路由入口文件 |
+|------|-------------|
+| ⓪ 项目初始化 | `references/00-project-setup.md` |
+| ① 本章规划 | `references/01-session-start.md` |
+| ② 正文写作 | `references/02-writing-guide.md` |
+| ③ 行为验证自检 | `references/03-self-review.md` |
+| ④ 反AI味润色 | `references/04-anti-ai.md` |
+| ⑤ 状态落库 | `references/05-hooks-and-memory.md` |
+| 全程参考 | `references/07-workflow-detail.md` |
+| ③/④ 身份路由 | `references/identity-routing.md` |
+| ④ 提示词防御 | `references/06-prompt-defense.md` |
+| ①/⑤ 检索 | `references/08-retrieval.md` |
+| ⑤ 格式 | `references/change_report_spec.md` |
+| ⑤ 日志 | `templates/log-template.md`（story/logs/第XXX章.md） |
+| 外包分支 | `references/10-chat-outsource.md` |
+
+**项目级文件**（每本书独立，不在技能目录中）：
+> 详见 `routes/index.md` 第五节。

@@ -1,29 +1,13 @@
 <!--
-> 📍 **位置**：章节输出 → 章节 Frontmatter 模板
-> ⬆️ **上游**：阶段②写作完成后填充 Frontmatter
-> ⚠️ **必读前置**：本章正文 + 规划清单
+> 📍 **位置**：章节输出 → 正文骨架模板（v1.4 功能三：无 YAML）
+> ⬆️ **上游**：阶段②写作完成后输出正文文件
+> ⚠️ **必读前置**：本章规划清单 + story/meta/ 上一章
 > 📚 **相关参考**：
+> - `templates/meta/chapter_XXX.md` — 本章元数据（原 Frontmatter 迁出地）
+> - `templates/log-template.md` — 每章流程日志（5 阶段合一）
 > - `references/01-session-start.md` — 阶段①规划章态
-> - `references/05-hooks-and-memory.md` — 阶段⑤落库时读取 Frontmatter
-> ⬇️ **下游**：阶段③自检 / 阶段⑤落库（均读取 Frontmatter 获取章节元数据）
+> ⬇️ **下游**：阶段③自检 / 阶段⑤落库（元数据从 story/meta/ 读取，正文文件保持干净）
 -->
----
-chapter_id: 001
-title: "章节标题"
-word_count: 0
-causal_links:
-  from_chapter: 000
-  trigger: "（第1章填：开篇事件；后续章填：上一章主角的抉择或遭遇）"
-hooks_planted: ["HK001"]
-hooks_resolved: []
-emotion_arc: "起点情绪 → 终点情绪"
-change_summary:
-  characters: "（本章角色状态的核心变化，一句话）"
-  world: "（本章世界状态的变化，无则填"无"）"
-  relationships: "（本章关系变化，无则填"无"）"
-review_status: "full_pass"  # full_pass / partial_pass / needs_human_review
----
-
 # 第X章 章节标题
 
 正文从这里开始。
@@ -42,6 +26,8 @@ review_status: "full_pass"  # full_pass / partial_pass / needs_human_review
 
 ---
 
-> **Frontmatter 字段说明：**
-> - `change_summary`：本章核心变化摘要，下一章读 Frontmatter 就能快速知道上一章变了什么，不用翻完整 Change Report
-> - `review_status`：自检结果标记。full_pass = 4/4 全通过；partial_pass = 3/4 通过有瑕疵；needs_human_review = ≤2/4 通过需作者重点审稿
+> **v1.4 说明（功能三 YAML 迁移）：**
+> - 正文文件**不再包含 YAML Frontmatter**。章节元数据（causal_links / hooks / emotion_arc / change_summary）统一存放于 `story/meta/chapter_XXX.md`。
+> - 每章流程日志（输入/输出/关键决策/身份）存放于 `story/logs/第XXX章.md`。
+> - 阶段①读取：story/meta/上一章 + index；阶段⑤落库：更新 meta + index + 状态文件。
+> - 检索字段（source_chapter / visibility 等）随功能七状态文件维护，不写进正文。
