@@ -1,4 +1,4 @@
-# 检索运行时配置（功能八）
+﻿# 检索运行时配置（功能八）
 # 唯一 Python 部件 · 其余保持纯 Markdown
 # 本文件为 runtime 三脚本的配置源（index.py / bm25_fts.py / query.py 均读取）
 
@@ -19,6 +19,8 @@ zvec:
   weights:
     dense: 0.7
     sparse: 0.3
+  # 注：当前 query.py 用 RRF(k=60) 融合（无权重）；0.7/0.3 为规划目标值，
+  #     若未来改加权融合（dense*0.7+sparse*0.3）时启用，RRF 阶段此字段不生效。
 
 embedding:
   # Z3 落地(2026-08-30): torch 被 Windows 长路径(WinError 206)阻断 → 当前用 jieba TF-IDF dense(index.py/_embed, 零重依赖, 真实词法语义)

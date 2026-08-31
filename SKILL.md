@@ -96,6 +96,7 @@ version: 1.4.0
   - `story/truth/relationships.md` —— 关系网络
   - `story/truth/objects.md` —— 物品状态（关键道具持有链）
   - `story/truth/timeline.md` —— 时间线（当前故事时间锚点）
+  - `大纲/细纲.md`（如存在且 ≤2KB）—— 本章承诺（核心事件/情绪弧/伏笔埋收/字数预估）必读，防细纲→规划脱节（E 回填）
   > 若文件不存在，从 `templates/truth/` 初始化后再继续。
 - **推荐加载（按场景）**：
   - `pools/reference/techniques/` 对应技巧 —— 知道方法论
@@ -143,6 +144,7 @@ version: 1.4.0
   5. 联动更新 `叙事总览/`（功能五）+ 重建检索索引（功能八）：
      - BM25+FTS（默认启用，零依赖，必跑）：`python runtime/bm25_fts.py build --root <项目根>`
      - ZVEC（可选增强，仅装了 zvec SDK 时跑）：`python runtime/index.py build --root <项目根>`
+  6. 新出场/升级角色检查（D 回填）：本章台词≥2句的新角色 → B类建档（characters 加精简基线）；有独立目标/影响主线 → A类补完整声线入设定；纯工具角（无台词/一次性）不建档
 - **更新确认（必须输出）**：
   - [x] characters.md 已更新
   - [x] world.md 已更新
