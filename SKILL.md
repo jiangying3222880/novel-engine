@@ -107,6 +107,8 @@ version: 1.4.0
   - [x] world.md 已读取
   - [x] hooks.md 已读取（X 个 active）
   - [x] relationships.md 已读取
+  - [x] objects.md 已读取（N 个关键物品）
+  - [x] timeline.md 已读取（当前故事时间锚点）
   > **刚性约束：未输出完整确认清单，禁止进入阶段②。** 确认清单是阶段①完成的唯一凭证。
 - 新角色检查：有新角色 → 建基线档案存入 `设定/角色声线.md` + 更新 characters.md 基线摘要
 - 章态注入：为本章出场角色生成声线章态（必须落在基线光谱内；状态冲突按5级优先级裁决：世界规则 > 硬边界 > 核心性格 > 章态 > 剧情需求）
@@ -116,6 +118,7 @@ version: 1.4.0
 - 读取参考：`references/writing-guide.md`
 - 按需调取：`pools/reference/samples/` 同类场景样本
 - 执行：按规划清单+章态写作，有重点对话戏时先做嘴心5问隐式思考
+- 写前防御（`references/prompt-defense.md` §4.1）：动笔前先输出**防 AI 味声明**（本场景 AI 味风险点 + 人感抓手），缺失即重来
 - 产出：**干净正文初稿**（无 YAML；元数据写入 `story/meta/chapter_XXX.md`）
 
 ### 阶段③：行为验证自检 (Reviewing)
@@ -137,7 +140,9 @@ version: 1.4.0
   2. 根据 Change Report 更新 `story/truth/` 下的 6 个状态文件（含 objects/timeline）
   3. 更新 `story/meta/chapter_XXX.md`（change_summary）+ `story/meta/index.md`（进度）
   4. 写 `story/logs/第XXX章.md` 流程日志（5 阶段合一）
-  5. 联动更新 `叙事总览/`（功能五）+ 增量索引（功能八，ZVEC 可用时）
+  5. 联动更新 `叙事总览/`（功能五）+ 重建检索索引（功能八）：
+     - BM25+FTS（默认启用，零依赖，必跑）：`python runtime/bm25_fts.py build --root <项目根>`
+     - ZVEC（可选增强，仅装了 zvec SDK 时跑）：`python runtime/index.py build --root <项目根>`
 - **更新确认（必须输出）**：
   - [x] characters.md 已更新
   - [x] world.md 已更新
@@ -145,6 +150,9 @@ version: 1.4.0
   - [x] relationships.md 已更新
   - [x] objects.md 已更新
   - [x] timeline.md 已更新
+  - [x] 检索索引已重建（bm25_fts.py build 必跑；index.py build 仅装了 zvec 时跑）
+  - **叙事总览增量更新规则**：正文每章 → 更新 `叙事总览/` 该章涉及条目；truth 变更（角色/关系/地点/hooks/时间线）时同步对应总览；
+    **每 5 章全量对齐一次**（对照 story/meta/ 各章 change_summary，防“只增新不修旧”）；每卷结尾做一次结构复核。
   - [x] story/meta/index.md 进度已更新
 - 产出：**Change Report + 项目最新状态**
 

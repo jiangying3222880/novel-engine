@@ -1,16 +1,21 @@
-﻿# ZVEC 检索运行时配置（功能八）
+# 检索运行时配置（功能八）
 # 唯一 Python 部件 · 其余保持纯 Markdown
+# 本文件为 runtime 三脚本的配置源（index.py / bm25_fts.py / query.py 均读取）
 
 retrieval:
   mode: bm25_fts                       # 默认启用：BM25+FTS（零依赖，jieba 分词，专名命中）
   # mode: zvec                          # 可选增强：ZVEC 混合检索（需 zvec SDK，dense 语义召回）
   # 差别：BM25+FTS=词法精确命中；ZVEC=词法+语义混合。防剧透/知情权两者都有。
 
+paths:
+  collection_path: story/index/novel_index    # ZVEC 索引目录（index.py / query.py 使用）
+  bm25_path: story/index/bm25/index.json      # BM25 索引文件（bm25_fts.py 使用）
+  body_dir: 正文                              # 正文目录名（相对项目根；默认“正文”）
+
 zvec:
-  collection_path: story/index/zvec          # 索引库路径（项目级）
   dense_dim: 512                             # bge-small-zh-v1.5 维度
   sparse: bm25_zh                            # 中文 BM25 稀疏向量
-  fusion: code_layer_rrf            # zvec 0.7.0 无 MultiQuery/RRF，代码层合并近似
+  fusion: code_layer_rrf            # zvec 0.7.0 无 MultiQuery/RRF，代码层 RRF 合并
   weights:
     dense: 0.7
     sparse: 0.3
@@ -23,7 +28,7 @@ embedding:
 
 chunking:
   block_size_chars: 500-1000                 # 正文语义块大小
-  doc_types: [truth, meta, 正文, 设定]
+  doc_types: [truth, meta, 正文]             # 当前实际支持（设定/ 未实现，不做空头承诺）
 
 retrieval_gate:
   cutoff_field: source_chapter               # 防剧透基准字段

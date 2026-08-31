@@ -16,6 +16,10 @@ Novel Engine v1.4 · BM25 + FTS 全文检索（默认启用 · 零依赖）
 用法：
   python runtime/bm25_fts.py build --root <项目根>            # 建索引（默认 story/index/bm25/）
   python runtime/bm25_fts.py query --root <项目根> --text "沈青梧 剑胎" --cutoff 5 [--visibility public] [--topk 10]
+
+修复（对照审查报告）：
+  BUG-5: save 保留 terms（不再丢弃导致 load 后查不准）；meta 章号从文件名解析（复用 index.py）；
+         正文目录从 config.yaml paths.body_dir 读（不再硬编码"正文"）。
 """
 import os
 import sys
@@ -28,6 +32,25 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 K1 = 1.5
 B = 0.75
+
+
+def _load_config():
+    """读 runtime/config.yaml 的 paths.body_dir / bm25_path（BUG-4/5）。"""
+    cfg = {"body_dir": "正文", "bm25_path": "story/index/bm25/index.json"}
+    try:
+        import yaml
+        cpath = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.yaml")
+        with open(cpath, encoding="utf-8") as f:
+            data = yaml.safe_load(f) or {}
+        p = data.get("paths", {}) or {}
+        cfg["body_dir"] = p.get("body_dir", cfg["body_dir"])
+        cfg["bm25_path"] = p.get("bm25_path", cfg["bm25_path"])
+    except Exception:
+        pass
+    return cfg
+
+
+CONFIG = _load_config()
 
 
 def _tokenize(text):
@@ -55,7 +78,7 @@ class BM25Index:
             freq[t] = freq.get(t, 0) + 1
         dl = sum(freq.values())
         self.docs[doc["id"]] = {
-            "text": doc["text"][:200],
+            "text": doc["text"],
             "terms": freq, "length": dl,
             "doc_type": doc.get("doc_type", ""),
             "entity_cn": doc.get("entity_cn", ""),
@@ -103,113 +126,87 @@ class BM25Index:
         return scored[:topk]
 
     def save(self, path):
+        """修复 BUG-5 问题 1：保留 terms，load 后无需用截断文本重分词。"""
         os.makedirs(os.path.dirname(path), exist_ok=True)
         payload = {
             "avgdl": self.avgdl, "N": self.N,
             "df": self.df,
-            "docs": {k: {kk: vv for kk, vv in v.items() if kk != "terms"}
-                     for k, v in self.docs.items()},
+            "docs": self.docs,   # 完整保留 terms / text，不再剔除
         }
         with open(path, "w", encoding="utf-8") as f:
             json.dump(payload, f, ensure_ascii=False)
 
     def load(self, path):
+        """修复 BUG-5 问题 1：直接读序列化的 terms；旧索引无 terms 时兜底重分词。"""
         with open(path, encoding="utf-8") as f:
             p = json.load(f)
         self.avgdl, self.N, self.df = p["avgdl"], p["N"], p["df"]
         self.docs = {}
         for k, v in p["docs"].items():
-            terms = _tokenize(v["text"])
-            freq = {}
-            for t in terms:
-                freq[t] = freq.get(t, 0) + 1
-            self.docs[k] = dict(v)
-            self.docs[k]["terms"] = freq
-            self.docs[k]["length"] = sum(freq.values())
+            if "terms" in v:
+                self.docs[k] = dict(v)
+            else:
+                # 旧索引兼容：用已存 text 重分词（text 若是截断版，质量降级但可用）
+                freq = {}
+                for t in _tokenize(v.get("text", "")):
+                    freq[t] = freq.get(t, 0) + 1
+                self.docs[k] = dict(v)
+                self.docs[k]["terms"] = freq
+                self.docs[k]["length"] = sum(freq.values())
 
 
 # ---------- 数据源扫描 ----------
+def _to_dict(d):
+    """把 index.py 的 zvec.Doc 转成统一 dict（若 zvec 不可用则原样返回）。"""
+    if not hasattr(d, "fields"):
+        return d
+    f = d.fields
+    return {
+        "id": d.id,
+        "text": f.get("text", ""),
+        "doc_type": f.get("doc_type", ""),
+        "entity_cn": f.get("entity_cn", ""),
+        "source_chapter": f.get("source_chapter", 0),
+        "visibility": f.get("visibility", "public"),
+        "status": f.get("status", ""),
+    }
+
+
 def _iter_truth_docs(root):
-    """复用 index._iter_truth_files 的实体扫描（保证 entity_id 规则一致）。"""
+    """复用 index._iter_truth_files（实体扫描 + 字段解析规则一致）。"""
     import index as idx
     try:
-        return idx._iter_truth_files(root)
+        return [_to_dict(d) for d in idx._iter_truth_files(root)]
     except Exception:
         return []
 
 
 def _iter_meta_docs(root):
-    """story/meta/chapter_*.md → 每条一条 meta 文档。"""
-    meta_dir = os.path.join(root, "story", "meta")
-    docs = []
-    if not os.path.isdir(meta_dir):
-        return docs
-    for fn in sorted(os.listdir(meta_dir)):
-        if not (fn.endswith(".md") and fn.startswith("chapter_")):
-            continue
-        path = os.path.join(meta_dir, fn)
-        try:
-            with open(path, encoding="utf-8") as f:
-                text = f.read()
-        except Exception:
-            continue
-        m = re.search(r"chapter_id[:：]\s*(\d+)", text)
-        ch = int(m.group(1)) if m else 0
-        docs.append({
-            "id": f"meta.{fn}", "text": text[:600], "doc_type": "meta",
-            "entity_cn": fn, "source_chapter": ch, "visibility": "public", "status": "",
-        })
-    return docs
+    """story/meta/chapter_*.md → 每条一条 meta 文档（章号从文件名解析，复用 index.py）。"""
+    import index as idx
+    try:
+        return [_to_dict(d) for d in idx._iter_meta_docs(root)]
+    except Exception:
+        return []
 
 
 def _iter_正文_docs(root):
-    """正文/ 分块（500-1000 字/块），按章。"""
+    """正文/ 分块（500-1000 字/块），按章（正文目录从 config 读）。"""
     import index as idx
-    body_dir = os.path.join(root, "正文")
-    docs = []
-    if not os.path.isdir(body_dir):
-        return docs
-    for fn in sorted(os.listdir(body_dir)):
-        if not fn.endswith(".md"):
-            continue
-        path = os.path.join(body_dir, fn)
-        try:
-            with open(path, encoding="utf-8") as f:
-                text = f.read()
-        except Exception:
-            continue
-        m = re.search(r"[第]?(\d+)[章节]", fn)
-        ch = int(m.group(1)) if m else 0
-        for i, chunk in enumerate(idx._chunk_text(text)):
-            docs.append({
-                "id": f"body.{fn}.{i}", "text": chunk, "doc_type": "正文",
-                "entity_cn": fn, "source_chapter": ch, "visibility": "public", "status": "",
-            })
-    return docs
-
-
-def _truth_to_dict(d):
-    """把 index._iter_truth_files 的 zvec.Doc 转成统一 dict。"""
-    return {
-        "id": d.id,
-        "text": d.fields.get("text", ""),
-        "doc_type": d.fields.get("doc_type", ""),
-        "entity_cn": d.fields.get("entity_cn", ""),
-        "source_chapter": d.fields.get("source_chapter", 0),
-        "visibility": d.fields.get("visibility", "public"),
-        "status": d.fields.get("status", ""),
-    }
+    try:
+        return [_to_dict(d) for d in idx._iter_正文_docs(root)]
+    except Exception:
+        return []
 
 
 def build(root, out=None):
     index = BM25Index()
-    docs = [_truth_to_dict(d) for d in _iter_truth_docs(root)]
-    docs += _iter_meta_docs(root) + _iter_正文_docs(root)
+    docs = _iter_truth_docs(root) + _iter_meta_docs(root) + _iter_正文_docs(root)
     for doc in docs:
         index.add(doc)
     index.finalize()
     if out is None:
-        out = os.path.join(root, "story", "index", "bm25", "index.json")
+        out = os.path.join(root, *CONFIG["bm25_path"].split("/"))
     index.save(out)
     return index
 
@@ -224,7 +221,7 @@ def main():
     ap.add_argument("--topk", type=int, default=10)
     args = ap.parse_args()
 
-    idx_path = os.path.join(args.root, "story", "index", "bm25", "index.json")
+    idx_path = os.path.join(args.root, *CONFIG["bm25_path"].split("/"))
     if args.cmd == "build":
         idx = build(args.root, idx_path)
         print(f"BM25 索引已建：{idx.N} 条文档，{len(idx.df)} 个词项 → {idx_path}")
