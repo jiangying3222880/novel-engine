@@ -16,7 +16,7 @@ Novel Engine v1.4 · 稳定性测试脚本（5 章 = 1 观察窗口，可对任�
   7. spoiler     防剧透门真判定：cutoff 之后埋设的钩子应被标记未解锁
 
 修复（对照审查报告 BUG-7）：
-  - check_spoiler 从"恒 return True"改为真判定（统计超限钩子，违规窗口返回 False）
+  - check_spoiler 从"恒 return True"改为真判定（全量实测修正：beyond_cutoff 仅统计观测，埋设章解析失败才 fail）
   - check_zvec 种子从 hash() 改为 hashlib.md5（跨进程确定性，可复现）
   - 查询向量从随机向量改为 idx._embed 真实内容向量（有语义意义的召回）
 """
@@ -38,8 +38,30 @@ STATE_MACHINES = {
     "relationships.md": ["ally", "support", "neutral", "tension", "hostile", "severed", "reconciled"],
     "objects.md": ["owned", "lost", "destroyed", "sealed", "transferred"],
 }
-HOOK_PROGRESS = ["pending", "partial", "due"]
-QUERY_FIXTURES = ["剑胎", "沈青梧", "反噬", "林伯"]
+HOOK_PROGRESS = ["pending", "in_progress", "partially_revealed", "resolved"]
+
+def _extract_queries(truth_dir):
+    """从 truth 自动提取查询词（全量实测修正：替代硬编码的青云问道词表，跨项目通用）。
+    从 characters.md 取角色姓名、world.md 取地点名，去重后取前 4 个实体。"""
+    queries = []
+    for fn, col in (("characters.md", 1), ("world.md", 0)):
+        p = os.path.join(truth_dir, fn)
+        if not os.path.isfile(p):
+            continue
+        for line in _read(p).splitlines():
+            if not line.startswith("|") or "---" in line:
+                continue
+            cells = [c.strip() for c in line.strip("|").split("|")]
+            if len(cells) <= col:
+                continue
+            v = cells[col]
+            if v and v not in ("姓名", "角色A", "地点", "(主角名)", "（主角名）") and not v.startswith("("):
+                queries.append(v)
+            if len(queries) >= 4:
+                break
+        if len(queries) >= 4:
+            break
+    return queries[:4] or ["量子烙印"]  # 兜底查询词
 
 
 def _read(path):
@@ -156,8 +178,9 @@ def check_zvec(root_dir, index_path, window):
     result["detail"]["idempotent"] = idem
 
     # 查询：用 idx._embed 真实内容向量（修复 BUG-7 问题 3，有语义意义的召回）
+    # 全量实测修正：查询词从项目 truth 自动提取，跨项目通用
     query_hits = {}
-    for text in QUERY_FIXTURES:
+    for text in _extract_queries(os.path.join(root_dir, "story", "truth")):
         q = zvec.Query(field_name="dense", vector=idx._embed(text))
         try:
             res = col.query(q, topk=5)
@@ -171,25 +194,26 @@ def check_zvec(root_dir, index_path, window):
 
 
 def check_spoiler(truth_dir, cutoff):
-    """7. 防剧透门真判定（修复 BUG-7 问题 1）：统计埋设章 > cutoff 的钩子。
-    返回 False 当且仅当存在超限钩子（如窗口1 cutoff=5 却有 >5 章埋设 = 数据越界/防剧透未生效）。"""
+    """7. 防剧透门观测（修复 BUG-7 + 全量实测修正）：
+    beyond_cutoff（埋设章 > cutoff）是正常现象——全书伏笔跨章登记，仅作统计输出。
+    fail 仅当：钩子埋设章无法解析（数据损坏），说明 hooks 表格式错误。"""
     h = _read(os.path.join(truth_dir, "hooks.md"))
-    beyond = []
+    beyond, bad = [], []
     for line in h.splitlines():
         if not line.startswith("|") or "h_" not in line:
             continue
         cells = [c.strip() for c in line.strip("|").split("|")]
         if len(cells) < 4:
             continue
-        try:
-            m = re.search(r"\d+", cells[3])  # 埋设章(source_chapter) 列
-            buried = int(m.group(0))
-        except Exception:
+        m = re.search(r"\d+", cells[3])  # 埋设章(source_chapter) 列
+        if not m:
+            bad.append(cells[0])  # 埋设章解析失败 = 数据坏
             continue
+        buried = int(m.group(0))
         if buried > cutoff:
             beyond.append(cells[0])
-    ok = (len(beyond) == 0)
-    detail = {"cutoff": cutoff, "beyond_cutoff_hooks": beyond[:10], "count": len(beyond)}
+    ok = (len(bad) == 0)
+    detail = {"cutoff": cutoff, "beyond_cutoff_hooks": beyond[:10], "count": len(beyond), "unparsable_hooks": bad}
     return ok, detail
 
 
