@@ -106,7 +106,7 @@
 - `故事/元数据/chapter_001.md` — 从 `templates/meta/chapter_XXX.md` 初始化（第1章元数据）
 - `故事/日志/` — 每章 1 个流程日志文件（`templates/log-template.md`）
 - `配置/身份/` — 作者/编剧/编辑/读者 项目级覆盖（技能级基线在 `library/identities/`，项目级存在则优先）
-- `叙事总览.md` + `叙事总览/` — 从 `templates/narrative/` 初始化（Obsidian 纯展示层，功能五）
+- `叙事总览.md`（根 MOC 入口）+ `叙事总览/` — 从 `templates/narrative/` 复制 6 个骨架（00_作品总览/01_角色总览/02_世界观总览/03_伏笔追踪总览/04_章节地图/05_关系网）到项目 `叙事总览/`，并按项目已有数据填充关键内容（Obsidian 纯展示层，功能五）。**只建空目录不复制骨架 = 缺陷**（曾导致叙事总览为空）
 ### Step 5.5：初始化检索索引（默认 BM25+FTS，零依赖）
 
 **默认启用 L1 BM25+FTS**（`runtime/bm25_fts.py`，仅依赖 jieba 分词，无需安装 zvec SDK）：
