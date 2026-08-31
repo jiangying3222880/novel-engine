@@ -1,8 +1,8 @@
-<!--
+﻿<!--
 > 📍 **位置**：项目 `story/meta/chapter_XXX.md`
 > ⬆️ **上游**：功能三 YAML 迁移 —— 原章节 Frontmatter 迁出正文，集中到此
 > ⚠️ **用途**：承接原 Frontmatter 的 causal_links / hooks / emotion_arc / change_summary 等元数据
-> 📚 **相关参考**：`templates/meta/index.md`（索引）· `references/change_report_spec.md`（⑤落库）
+> 📚 **相关参考**：`templates/meta/index.md`（索引）· `references/change-report-spec.md`（⑤落库）
 -->
 # 章节元数据：第 X 章
 

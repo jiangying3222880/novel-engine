@@ -1,4 +1,4 @@
-> 阶段⑤ 状态落库与 Change Report · 路由见 `routes/index.md`
+﻿> 阶段⑤ 状态落库与 Change Report · 路由见 `routes/index.md`
 
 <!-- 提示：如果不阅读本文件，会导致：伏笔状态紊乱、长篇逻辑前后矛盾。 -->
 
@@ -71,7 +71,7 @@
 
 ### Step 1：生成 Change Report
 
-参照 `references/change_report_spec.md`，生成本章变更报告，包含：
+参照 `references/change-report-spec.md`，生成本章变更报告，包含：
 
 1. **角色变化**：哪些角色的位置/情绪/已知信息/携带物品变了
 2. **新伏笔**：本章埋了哪些新伏笔（含部分揭示的推进状态更新）

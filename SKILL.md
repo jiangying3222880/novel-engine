@@ -29,12 +29,12 @@ version: 1.4.0
 | "开新书""帮我建项目""开始写新书" | → 阶段⓪入口A |
 | "导入""我有设定/大纲""把已有项目导进来" | → 阶段⓪入口B |
 | "写下一章""规划第X章""继续写" | → 阶段①（需已有 novel-config.json） |
-| "外包写作""用网页chat写""给我提示词我拿去写""外部写手" | → 阶段① + 外包分支（`references/10-chat-outsource.md`，初始化或中途随时可激活） |
+| "外包写作""用网页chat写""给我提示词我拿去写""外部写手" | → 阶段① + 外包分支（`references/chat-outsource.md`，初始化或中途随时可激活） |
 
 ### 阶段⓪：项目初始化 (Setup)
 
 **入口 A（从零创建）或入口 B（导入已有）**
-- 读取参考：`references/00-project-setup.md`
+- 读取参考：`references/project-setup.md`
 - 入口 A：对话建立 config/世界观/角色/大纲 → 从 `templates/truth/` 初始化状态文件 → 进入素材准备环节
 - 入口 B：读取已有材料 → 映射到标准结构 → 从当前章节往前推3章重建状态 → 进入素材准备环节
 
@@ -88,7 +88,7 @@ version: 1.4.0
 当用户已有项目文件且发出"写下一章""规划第X章""开始写作"等指令时，严格按顺序触发：
 
 ### 阶段①：本章规划 (Planning)
-- 读取参考：`references/01-session-start.md`
+- 读取参考：`references/session-start.md`
 - **强制加载状态（必须全部读取）**：
   - `story/truth/characters.md` —— 基线摘要 + 当前状态（位置/情绪/知识/携带物品）
   - `story/truth/world.md` —— 核心规则 + 当前状态（时间/地点/环境）
@@ -113,25 +113,25 @@ version: 1.4.0
 - 产出：**规划清单 + Hook计划 + 本章声线章态**
 
 ### 阶段②：正文写作 (Drafting)
-- 读取参考：`references/02-writing-guide.md`
+- 读取参考：`references/writing-guide.md`
 - 按需调取：`pools/reference/samples/` 同类场景样本
 - 执行：按规划清单+章态写作，有重点对话戏时先做嘴心5问隐式思考
 - 产出：**干净正文初稿**（无 YAML；元数据写入 `story/meta/chapter_XXX.md`）
 
 ### 阶段③：行为验证自检 (Reviewing)
-- 读取参考：`references/03-self-review.md`
+- 读取参考：`references/self-review.md`
 - 执行：4 问**行为验证**自检（检测正文中是否存在可观察的行为模式），每问必须标注 `evidence_ids`（引用原文片段，格式：`source: [角色/场景名] excerpt: [原文片段]`）
 - 修正循环：最多 3 轮，保留 **Best Version**（每轮打综合分，最终输出分数最高的版本）
 - 输出状态标记：`full_pass` / `partial_pass` / `needs_human_review`
 - 产出：**带证据链的自检报告 + 最终正文版本**
 
 ### 阶段④：反 AI 味润色 (De-AI Process)
-- 读取参考：`references/04-anti-ai.md`
+- 读取参考：`references/anti-ai.md`
 - 执行：对照三大 AI 味模式做**行为检测**，命中则按**四大转换原则**（心理→动作/解释→结果/对称→不对称/总结→落物）做最小修改。参考对照式示范（AI版→转换过程→目标版）
 - 产出：**精修稿**
 
 ### 阶段⑤：状态落库 (Settling)
-- 读取参考：`references/05-hooks-and-memory.md` + `references/change_report_spec.md`
+- 读取参考：`references/hooks-and-memory.md` + `references/change-report-spec.md`
 - 执行：
   1. 生成本章 **Change Report**（角色变化/新伏笔/伏笔回收/时间线/世界规则变化/关系变化/物品状态）
   2. 根据 Change Report 更新 `story/truth/` 下的 6 个状态文件（含 objects/timeline）
@@ -149,7 +149,7 @@ version: 1.4.0
 - 产出：**Change Report + 项目最新状态**
 
 ### 分支：外包写作（Chat-Outsource）★ v1.4 新增
-> 用户用自然语言随时激活（初始化或中途均可）。详见 `references/10-chat-outsource.md`。
+> 用户用自然语言随时激活（初始化或中途均可）。详见 `references/chat-outsource.md`。
 - **触发**："外包写作""这章用网页chat写""给我提示词我拿去写""外部写手"等
 - **流程**：阶段①照跑 → **编译一份自包含最终提示词**（打包状态/目标/声线样本/去AI味要求，外部 chat 可独立写作）→ 用户贴入任意网页 chat → 正文贴回 → **阶段③自检 → 阶段④去AI味（跑满）→ 阶段⑤落库**
 - **关键**：提示词必须自包含（外部读不到本地状态）；④必须跑满（外部稿几乎必带 AI 味）；防剧透只给本章相关状态；这是流程层分支，不改"内容只引导"理念。
@@ -160,7 +160,7 @@ version: 1.4.0
 
 - 单状态文件 ≤ 8KB
 - 单次对话强制加载总量 ≤ 12KB
-- SKILL.md 本身 ≤ 8KB（路由入口 + 五阶段SOP概要；detail 下沉 `references/07-workflow-detail.md`）
+- SKILL.md 本身 ≤ 8KB（路由入口 + 五阶段SOP概要；detail 下沉 `references/workflow-detail.md`）
 
 ## 文件索引
 
@@ -168,20 +168,20 @@ version: 1.4.0
 
 | 阶段 | 路由入口文件 |
 |------|-------------|
-| ⓪ 项目初始化 | `references/00-project-setup.md` |
-| ① 本章规划 | `references/01-session-start.md` |
-| ② 正文写作 | `references/02-writing-guide.md` |
-| ③ 行为验证自检 | `references/03-self-review.md` |
-| ④ 反AI味润色 | `references/04-anti-ai.md` |
-| ⑤ 状态落库 | `references/05-hooks-and-memory.md` |
-| 全程参考 | `references/07-workflow-detail.md` |
+| ⓪ 项目初始化 | `references/project-setup.md` |
+| ① 本章规划 | `references/session-start.md` |
+| ② 正文写作 | `references/writing-guide.md` |
+| ③ 行为验证自检 | `references/self-review.md` |
+| ④ 反AI味润色 | `references/anti-ai.md` |
+| ⑤ 状态落库 | `references/hooks-and-memory.md` |
+| 全程参考 | `references/workflow-detail.md` |
 | ③/④ 身份路由 | `references/identity-routing.md` |
-| ④ 提示词防御 | `references/06-prompt-defense.md` |
-| ①/⑤ 检索 | `references/08-retrieval.md` |
-| ⑤ 格式 | `references/change_report_spec.md` |
+| ④ 提示词防御 | `references/prompt-defense.md` |
+| ①/⑤ 检索 | `references/retrieval.md` |
+| ⑤ 格式 | `references/change-report-spec.md` |
 | ⑤ 日志 | `templates/log-template.md`（story/logs/第XXX章.md） |
-| ②③④ 去味 | `references/09-human-signal-zh.md`（深度方法库：四模式+27模式+人感注入） |
-| 外包分支 | `references/10-chat-outsource.md` |
+| ②③④ 去味 | `references/human-signal-zh.md`（深度方法库：四模式+27模式+人感注入） |
+| 外包分支 | `references/chat-outsource.md` |
 
 **项目级文件**（每本书独立，不在技能目录中）：
 > 详见 `routes/index.md` 第五节。

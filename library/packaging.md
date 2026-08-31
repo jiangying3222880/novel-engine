@@ -1,8 +1,8 @@
-<!--
+﻿<!--
 > 📍 **位置**：用户级素材库 → 卖点包装与反套路提案
 > ⬆️ **上游**：`library/market-research.md`（市场调查产出喂给卖点引擎）· `library/identities/作者.md`（作者身份持有卖点）
 > ⚠️ **触发**：立项（⓪）/ 简介 / 导语 / 卖点 / 投稿文 / 发布包装 / 反套路创意提案
-> 📚 **相关**：`references/09-human-signal-zh.md`（包装文案同样要反 AI 味）· `library/platforms/`（平台适配）
+> 📚 **相关**：`references/human-signal-zh.md`（包装文案同样要反 AI 味）· `library/platforms/`（平台适配）
 > 📌 **来源**：融合豆包 `doubao-novel-writing`（功能六 卖点包装/反套路提案）能力，按 novel-engine 结构重构转述。
 -->
 
@@ -64,7 +64,7 @@
 
 ## 四、包装文案反 AI 味（human-signal 联动）
 
-简介/导语/投稿文同样会 AI 味，套用 `references/09-human-signal-zh.md`：
+简介/导语/投稿文同样会 AI 味，套用 `references/human-signal-zh.md`：
 
 - **上游防御**：先定读者与平台再写（番茄 vs 晋江的语气不同），不写完再补救。
 - **模式库注意**：简介最易命中"抽象大词堆叠"（成长/蜕变/逆袭）与"结尾金句化"（每个人都欠他一个交代）——落到具体动作与代价。

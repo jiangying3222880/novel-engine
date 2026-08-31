@@ -1,10 +1,10 @@
-<!--
+﻿<!--
 > 📍 **位置**：角色基线 → 声线档案模板
 > ⬆️ **上游**：阶段①发现新角色时，按此模板建立基线档案
 > ⚠️ **必读前置**：角色首次登场的正文内容
 > 📚 **相关参考**：
 > - `templates/truth/characters.md` — 角色状态矩阵（基线摘要从完整档案提取）
-> - `references/02-writing-guide.md` — 双层声线系统说明
+> - `references/writing-guide.md` — 双层声线系统说明
 > ⬇️ **下游**：`story/truth/characters.md`（提取基线摘要存入状态矩阵）
 -->
 

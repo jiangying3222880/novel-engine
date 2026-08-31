@@ -1,8 +1,8 @@
-<!--
+﻿<!--
 > 📍 **位置**：状态中心 → 时间线
 > ⬆️ **上游**：阶段①强制加载；阶段⑤通过 Change Report 更新
 > ⚠️ **必读前置**：无（项目初始化时从模板创建，后续持续更新）
-> 📚 **相关参考**：`references/05-hooks-and-memory.md` · `references/identity-routing.md`
+> 📚 **相关参考**：`references/hooks-and-memory.md` · `references/identity-routing.md`
 > ⬇️ **下游**：阶段②写作（时间锚点）/ 阶段⑤落库（新增时间条目）
 -->
 ---

@@ -1,11 +1,11 @@
----
+﻿---
 <!--
 > 📍 **位置**：素材池 → Planner 结构模板
 > ⬆️ **上游**：对标书拆解阶段（Agent 按拆解方法论自动生成）
 > ⚠️ **必读前置**：`templates/pools/拆解方法论.md` → Planner 拆解细则
 > 📚 **相关参考**：
 > - `templates/pools/拆解方法论.md` — 拆解执行手册（拆书前必读）
-> - `references/01-session-start.md` — 章节规划时参考节奏
+> - `references/session-start.md` — 章节规划时参考节奏
 > ⬇️ **下游**：
 > - 阶段①规划（节奏校准，推荐加载）
 > - 卷纲/细纲规划时参考结构设计

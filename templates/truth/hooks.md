@@ -1,10 +1,10 @@
-<!--
+﻿<!--
 > 📍 **位置**：状态中心 → 伏笔追踪库
 > ⬆️ **上游**：阶段①强制加载；阶段⑤通过 Change Report 更新
 > ⚠️ **必读前置**：无（项目初始化时从模板创建，后续持续更新）
 > 📚 **相关参考**：
-> - `references/05-hooks-and-memory.md` — 伏笔管理与状态落库指南
-> - `references/change_report_spec.md` — 变更报告格式
+> - `references/hooks-and-memory.md` — 伏笔管理与状态落库指南
+> - `references/change-report-spec.md` — 变更报告格式
 > ⬇️ **下游**：阶段①规划（检查伏笔债务）/ 阶段②写作（埋伏笔）/ 阶段③自检（检查伏笔回收）
 -->
 ---

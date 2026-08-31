@@ -1,4 +1,4 @@
-> 阶段① 项目启动与本章规划 · 路由见 `routes/index.md`
+﻿> 阶段① 项目启动与本章规划 · 路由见 `routes/index.md`
 
 <!-- 提示：如果不阅读本文件直接规划，会导致：前文因果断层、角色声线漂移(OCC)、伏笔漏回收。 -->
 
@@ -33,7 +33,7 @@
 11. `pools/reference/techniques/` 对应技巧 — 方法论参考（按场景选1-2个）
 12. `pools/reference/samples/` 同类场景 — 实战样本参考（按场景选1-2个）
 
-**首次启动判断**：如果项目目录中没有 `novel-config.json`，说明项目未初始化，跳转至 `references/00-project-setup.md` 执行阶段⓪。
+**首次启动判断**：如果项目目录中没有 `novel-config.json`，说明项目未初始化，跳转至 `references/project-setup.md` 执行阶段⓪。
 
 **禁止全量加载设定集。** 大纲文件只读当前章对应段落。
 

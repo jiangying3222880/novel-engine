@@ -1,0 +1,15 @@
+# WorkBuddy 本地工具内存（不进仓库）
+.workbuddy/
+
+# git bundle 备份
+*.bundle
+
+# 过程文档（审查报告等，不进技能仓库）
+审查报告*.md
+
+# 运行时索引二进制（可重建，不进仓库）
+story/index/
+
+# Python 缓存
+__pycache__/
+*.pyc
