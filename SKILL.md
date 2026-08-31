@@ -14,8 +14,8 @@ version: 1.4.0
 
 ## 写作三铁律（写前必读）
 
-1. **写前必读**：创作前必须且仅读取项目目录下 `story/truth/` 6个状态文件（characters/world/hooks/relationships/objects/timeline）+ `novel-config.json` + `story/meta/上一章` + `story/meta/index.md`。禁止全量加载设定集——全量加载会导致上下文溢出、Agent 跳读、声线崩塌。
-2. **章节优先（v1.4 索引驱动）**：以"章节"为唯一基本单元。章节元数据（causal_links / hooks / emotion_arc / change_summary）统一记入 `story/meta/chapter_XXX.md`（集中式索引，正文文件保持干净无 YAML）；进度唯一真相源 = `story/meta/index.md`。状态文件（story/truth/）维护 5 通用字段（status / transition / valid_until / visibility / source_chapter），供检索（功能八）与一致性校验共用。
+1. **写前必读**：创作前必须且仅读取项目目录下 `故事/真相/` 6个状态文件（characters/world/hooks/relationships/objects/timeline）+ `novel-config.json` + `故事/元数据/上一章` + `故事/元数据/index.md`。禁止全量加载设定集——全量加载会导致上下文溢出、Agent 跳读、声线崩塌。
+2. **章节优先（v1.4 索引驱动）**：以"章节"为唯一基本单元。章节元数据（causal_links / hooks / emotion_arc / change_summary）统一记入 `故事/元数据/chapter_XXX.md`（集中式索引，正文文件保持干净无 YAML）；进度唯一真相源 = `故事/元数据/index.md`。状态文件（故事/真相/）维护 5 通用字段（status / transition / valid_until / visibility / source_chapter），供检索（功能八）与一致性校验共用。
 3. **写后自检**：初稿完成后必须执行 4 问行为验证自检。无正文 `evidence_ids` 证据链的自检报告一律判定无效，必须重检。修正最多 3 轮，保留 Best Version。
 
 ---
@@ -86,13 +86,13 @@ version: 1.4.0
 |---|------|
 | 拆哪些内容 | 对标书 ×5 池：`author_dna`(句式/节奏/词汇/文风) · `planner`(卷结构/爽点密度/伏笔编排) · `reference`(精选段落 200-500字) · `unit`(前20章关键事件) · `knowledge`(可溯源领域知识) |
 | 什么入池 | DNA=有可复现模式 · Planner=有清晰结构 · Reference=过非AI味5条≥4条 · Unit=有"起因→决策→结果→情绪"四闭环 · Knowledge=可溯源可复用。Agent 是"筛选+分析"不是"复制粘贴" |
-| 格式如何 | 填空式模板见 `templates/pools/拆书规范.md`；各池完整字段模板见 `author_dna/_template.md` / `planner/_template.md` / `unit/_template.md` / `reference/_README.md` / `knowledge/_README.md` |
+| 格式如何 | 填空式模板见 `templates/素材池/拆书规范.md`；各池完整字段模板见 `author_dna/_template.md` / `planner/_template.md` / `unit/_template.md` / `reference/_README.md` / `knowledge/_README.md` |
 
-> 完整执行手册：`templates/pools/拆解方法论.md`（拆书前必读）· 池子架构：`templates/pools/_README.md`
+> 完整执行手册：`templates/素材池/拆解方法论.md`（拆书前必读）· 池子架构：`templates/素材池/_README.md`
 向用户提供以上选项，用户决定对标书和拆解深度后：
-1. 从 `templates/pools/` 初始化项目的 `pools/` 目录
+1. 从 `templates/素材池/` 初始化项目的 `素材池/` 目录
 2. Agent 执行快速预览 → 用户确认 → Agent 执行深度拆解
-3. 拆解判断标准见 `templates/pools/拆书规范.md` + `_README.md`
+3. 拆解判断标准见 `templates/素材池/拆书规范.md` + `_README.md`
 4. 拆解完成后进入①。
 
 ---
@@ -104,19 +104,19 @@ version: 1.4.0
 ### 阶段①：本章规划 (Planning)
 - 读取参考：`references/session-start.md`
 - **强制加载状态（必须全部读取）**：
-  - `story/truth/characters.md` —— 基线摘要 + 当前状态（位置/情绪/知识/携带物品）
-  - `story/truth/world.md` —— 核心规则 + 当前状态（时间/地点/环境）
-  - `story/truth/hooks.md` —— 伏笔追踪（含推进状态）
-  - `story/truth/relationships.md` —— 关系网络
-  - `story/truth/objects.md` —— 物品状态（关键道具持有链）
-  - `story/truth/timeline.md` —— 时间线（当前故事时间锚点）
+  - `故事/真相/characters.md` —— 基线摘要 + 当前状态（位置/情绪/知识/携带物品）
+  - `故事/真相/world.md` —— 核心规则 + 当前状态（时间/地点/环境）
+  - `故事/真相/hooks.md` —— 伏笔追踪（含推进状态）
+  - `故事/真相/relationships.md` —— 关系网络
+  - `故事/真相/objects.md` —— 物品状态（关键道具持有链）
+  - `故事/真相/timeline.md` —— 时间线（当前故事时间锚点）
   - `大纲/细纲.md`（如存在且 ≤2KB）—— 本章承诺（核心事件/情绪弧/伏笔埋收/字数预估）必读，防细纲→规划脱节（E 回填）
   > 若文件不存在，从 `templates/truth/` 初始化后再继续。
 - **推荐加载（按场景）**：
-  - `pools/reference/techniques/` 对应技巧 —— 知道方法论
-  - `pools/author_dna/` 主对标书DNA —— 校准风格
-  - `pools/planner/` 卷结构参考 —— 校准节奏
-- 读入数据：`novel-config.json` → `设定/角色声线.md`（新角色/声线存疑时才读）→ `story/meta/上一章` + `story/meta/index.md`
+  - `素材池/reference/techniques/` 对应技巧 —— 知道方法论
+  - `素材池/author_dna/` 主对标书DNA —— 校准风格
+  - `素材池/planner/` 卷结构参考 —— 校准节奏
+- 读入数据：`novel-config.json` → `设定/角色声线.md`（新角色/声线存疑时才读）→ `故事/元数据/上一章` + `故事/元数据/index.md`
 - **加载确认（必须输出完整清单，缺一项都不算完成）**：
   - [x] characters.md 已读取（N 个角色）
   - [x] world.md 已读取
@@ -131,10 +131,10 @@ version: 1.4.0
 
 ### 阶段②：正文写作 (Drafting)
 - 读取参考：`references/writing-guide.md`
-- 按需调取：`pools/reference/samples/` 同类场景样本
+- 按需调取：`素材池/reference/samples/` 同类场景样本
 - 执行：按规划清单+章态写作，有重点对话戏时先做嘴心5问隐式思考
 - 写前防御（`references/prompt-defense.md` §4.1）：动笔前先输出**防 AI 味声明**（本场景 AI 味风险点 + 人感抓手），缺失即重来
-- 产出：**干净正文初稿**（无 YAML；元数据写入 `story/meta/chapter_XXX.md`）
+- 产出：**干净正文初稿**（无 YAML；元数据写入 `故事/元数据/chapter_XXX.md`）
 
 ### 阶段③：行为验证自检 (Reviewing)
 - 读取参考：`references/self-review.md`
@@ -152,9 +152,9 @@ version: 1.4.0
 - 读取参考：`references/hooks-and-memory.md` + `references/change-report-spec.md`
 - 执行：
   1. 生成本章 **Change Report**（角色变化/新伏笔/伏笔回收/时间线/世界规则变化/关系变化/物品状态）
-  2. 根据 Change Report 更新 `story/truth/` 下的 6 个状态文件（含 objects/timeline）
-  3. 更新 `story/meta/chapter_XXX.md`（change_summary）+ `story/meta/index.md`（进度）
-  4. 写 `story/logs/第XXX章.md` 流程日志（5 阶段合一）
+  2. 根据 Change Report 更新 `故事/真相/` 下的 6 个状态文件（含 objects/timeline）
+  3. 更新 `故事/元数据/chapter_XXX.md`（change_summary）+ `故事/元数据/index.md`（进度）
+  4. 写 `故事/日志/第XXX章.md` 流程日志（5 阶段合一）
   5. 联动更新 `叙事总览/`（功能五）+ 重建检索索引（功能八）：
      - BM25+FTS（默认启用，零依赖，必跑）：`python runtime/bm25_fts.py build --root <项目根>`
      - ZVEC（可选增强，仅装了 zvec SDK 时跑）：`python runtime/index.py build --root <项目根>`
@@ -168,8 +168,8 @@ version: 1.4.0
   - [x] timeline.md 已更新
   - [x] 检索索引已重建（bm25_fts.py build 必跑；index.py build 仅装了 zvec 时跑）
   - **叙事总览增量更新规则**：正文每章 → 更新 `叙事总览/` 该章涉及条目；truth 变更（角色/关系/地点/hooks/时间线）时同步对应总览；
-    **每 5 章全量对齐一次**（对照 story/meta/ 各章 change_summary，防“只增新不修旧”）；每卷结尾做一次结构复核。
-  - [x] story/meta/index.md 进度已更新
+    **每 5 章全量对齐一次**（对照 故事/元数据/ 各章 change_summary，防“只增新不修旧”）；每卷结尾做一次结构复核。
+  - [x] 故事/元数据/index.md 进度已更新
 - 产出：**Change Report + 项目最新状态**
 
 ### 分支：外包写作（Chat-Outsource）★ v1.4 新增
@@ -203,7 +203,7 @@ version: 1.4.0
 | ④ 提示词防御 | `references/prompt-defense.md` |
 | ①/⑤ 检索 | `references/retrieval.md` |
 | ⑤ 格式 | `references/change-report-spec.md` |
-| ⑤ 日志 | `templates/log-template.md`（story/logs/第XXX章.md） |
+| ⑤ 日志 | `templates/log-template.md`（故事/日志/第XXX章.md） |
 | ②③④ 去味 | `references/human-signal-zh.md`（深度方法库：四模式+27模式+人感注入） |
 | 外包分支 | `references/chat-outsource.md` |
 

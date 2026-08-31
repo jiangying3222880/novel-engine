@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Novel Engine v1.4 · BM25 + FTS 全文检索（默认启用 · 零依赖）
@@ -14,7 +14,7 @@ Novel Engine v1.4 · BM25 + FTS 全文检索（默认启用 · 零依赖）
   两者都做：防剧透 cutoff + 知情权过滤（visibility）。
 
 用法：
-  python runtime/bm25_fts.py build --root <项目根>            # 建索引（默认 story/index/bm25/）
+  python runtime/bm25_fts.py build --root <项目根>            # 建索引（默认 故事/索引/bm25/）
   python runtime/bm25_fts.py query --root <项目根> --text "沈青梧 剑胎" --cutoff 5 [--visibility public] [--topk 10]
 
 修复（对照审查报告）：
@@ -36,7 +36,7 @@ B = 0.75
 
 def _load_config():
     """读 runtime/config.yaml 的 paths.body_dir / bm25_path（BUG-4/5）。"""
-    cfg = {"body_dir": "正文", "bm25_path": "story/index/bm25/index.json"}
+    cfg = {"body_dir": "正文", "bm25_path": "故事/索引/bm25/index.json"}
     try:
         import yaml
         cpath = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.yaml")
@@ -182,7 +182,7 @@ def _iter_truth_docs(root):
 
 
 def _iter_meta_docs(root):
-    """story/meta/chapter_*.md → 每条一条 meta 文档（章号从文件名解析，复用 index.py）。"""
+    """故事/元数据/chapter_*.md → 每条一条 meta 文档（章号从文件名解析，复用 index.py）。"""
     import index as idx
     try:
         return [_to_dict(d) for d in idx._iter_meta_docs(root)]

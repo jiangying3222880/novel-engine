@@ -8,8 +8,8 @@ retrieval:
   # 差别：BM25+FTS=词法精确命中；ZVEC=词法+语义混合。防剧透/知情权两者都有。
 
 paths:
-  collection_path: story/index/novel_index    # ZVEC 索引目录（index.py / query.py 使用）
-  bm25_path: story/index/bm25/index.json      # BM25 索引文件（bm25_fts.py 使用）
+  collection_path: 故事/索引/novel_index    # ZVEC 索引目录（index.py / query.py 使用）
+  bm25_path: 故事/索引/bm25/index.json      # BM25 索引文件（bm25_fts.py 使用）
   body_dir: 正文                              # 正文目录名（相对项目根；默认“正文”）
 
 zvec:

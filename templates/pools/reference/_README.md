@@ -1,12 +1,12 @@
-<!--
+﻿<!--
 > 📍 **位置**：素材池 → 文学素材池（Reference Pool）
 > ⬆️ **上游**：对标书拆解阶段（Agent 按拆解方法论自动生成）
-> ⚠️ **必读前置**：`templates/pools/拆解方法论.md` → Reference 入池5条标准
+> ⚠️ **必读前置**：`templates/素材池/拆解方法论.md` → Reference 入池5条标准
 > 📚 **相关参考**：
-> - `templates/pools/_README.md` — 素材池总览
-> - `templates/pools/拆解方法论.md` — 拆解执行手册
-> - `pools/reference/techniques/` — 写作技巧方法论（原理层）
-> - `pools/reference/samples/` — 实战样本库（落地层）
+> - `templates/素材池/_README.md` — 素材池总览
+> - `templates/素材池/拆解方法论.md` — 拆解执行手册
+> - `素材池/reference/techniques/` — 写作技巧方法论（原理层）
+> - `素材池/reference/samples/` — 实战样本库（落地层）
 > ⬇️ **下游**：阶段②写作（写同类场景时按需加载参考）
 -->
 

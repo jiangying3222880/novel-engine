@@ -5,7 +5,7 @@
 > 📚 **相关参考**：
 > - `templates/truth/characters.md` — 角色状态矩阵（基线摘要从完整档案提取）
 > - `references/writing-guide.md` — 双层声线系统说明
-> ⬇️ **下游**：`story/truth/characters.md`（提取基线摘要存入状态矩阵）
+> ⬇️ **下游**：`故事/真相/characters.md`（提取基线摘要存入状态矩阵）
 -->
 
 # 角色声线基线档案模板

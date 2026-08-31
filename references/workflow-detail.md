@@ -8,14 +8,14 @@
 用户："写第X章"
     │
     ▼
-[阶段① 规划] 读取 story/truth/4文件 + session-start.md
+[阶段① 规划] 读取 故事/真相/4文件 + session-start.md
     │ （状态冲突按5级优先级裁决）
-    │ （按需加载 pools/ 素材 + techniques 技巧）
+    │ （按需加载 素材池/ 素材 + techniques 技巧）
     │ 输出：规划清单
     ▼
 [阶段② 写作] 读取 writing-guide.md
-    │ （按需加载 pools/reference/samples/ 同类场景样本）
-    │ 输出：正文初稿（无 YAML；元数据写 story/meta/chapter_XXX.md，功能三）
+    │ （按需加载 素材池/reference/samples/ 同类场景样本）
+    │ 输出：正文初稿（无 YAML；元数据写 故事/元数据/chapter_XXX.md，功能三）
     ▼
 [阶段③ 自检] 读取 self-review.md
     │ 4问行为验证检测（不是"自夸"，是检测行为模式）
@@ -27,7 +27,7 @@
     │ 输出：精修稿
     ▼
 [阶段⑤ 落库] 读取 hooks-and-memory.md + change-report-spec.md
-    │ 输出：生成 Change Report → 更新 story/truth/4文件 → 保存正文
+    │ 输出：生成 Change Report → 更新 故事/真相/4文件 → 保存正文
     ▼
 完成，等待用户下一指令
 ```
@@ -43,18 +43,18 @@
 
 ```
 Agent 读取（强制）：
-  story/truth/characters.md — 基线摘要 + 当前状态
-  story/truth/world.md — 核心规则 + 当前状态
-  story/truth/hooks.md — 伏笔追踪
-  story/truth/relationships.md — 关系网络
+  故事/真相/characters.md — 基线摘要 + 当前状态
+  故事/真相/world.md — 核心规则 + 当前状态
+  故事/真相/hooks.md — 伏笔追踪
+  故事/真相/relationships.md — 关系网络
   novel-config.json — 项目配置
   上一章 Frontmatter — change_summary + emotion_arc
 
 Agent 读取（按需）：
-  pools/author_dna/ — 风格校准
-  pools/planner/ — 节奏校准
-  pools/reference/techniques/ — 对应技巧方法论
-  pools/reference/samples/ — 同类场景样本
+  素材池/author_dna/ — 风格校准
+  素材池/planner/ — 节奏校准
+  素材池/reference/techniques/ — 对应技巧方法论
+  素材池/reference/samples/ — 同类场景样本
   设定/角色声线.md — 仅新角色或声线存疑
 
 Agent 内部判断：
@@ -73,7 +73,7 @@ Agent 读取：writing-guide.md（内化写作原则）
 Agent 执行：
   1. 有对话戏 → 先在脑中完成嘴心5问
   2. 按规划清单写作
-  3. 写完后元数据写入 story/meta/chapter_XXX.md（含 change_summary + review_status，正文无 YAML）
+  3. 写完后元数据写入 故事/元数据/chapter_XXX.md（含 change_summary + review_status，正文无 YAML）
 Agent 输出：完整正文初稿
 ```
 
@@ -134,7 +134,7 @@ Agent 输出：精修稿（完整正文，不是 diff）
 Agent 读取：hooks-and-memory.md + change-report-spec.md
 Agent 执行：
   1. 生成 Change Report（角色/伏笔/时间线/世界规则/关系变化）
-  2. 根据 Change Report 更新 story/truth/ 下 6 个状态文件（含 objects/timeline）
+  2. 根据 Change Report 更新 故事/真相/ 下 6 个状态文件（含 objects/timeline）
   3. 保存正文文件（含 Frontmatter + review_status）
 Agent 输出：落库报告
 ```
@@ -145,7 +145,7 @@ Agent 输出：落库报告
 
 如果对话中途断开（compact 或新会话）：
 1. 读取最近章节的 Frontmatter 恢复上下文
-2. 读取 story/truth/ 6个状态文件（含 objects/timeline）确认当前状态
+2. 读取 故事/真相/ 6个状态文件（含 objects/timeline）确认当前状态
 3. 检查 hooks.md 确认伏笔状态
 4. 如果有未完成的自检（阶段③未完成），重新自检
 5. 如果正文已落库但自检未做，补做自检后再继续

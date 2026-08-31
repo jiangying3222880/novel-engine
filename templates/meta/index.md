@@ -1,5 +1,5 @@
 ﻿<!--
-> 📍 **位置**：项目 `story/meta/index.md`
+> 📍 **位置**：项目 `故事/元数据/index.md`
 > ⬆️ **上游**：功能三 YAML 迁移 —— 章节索引与进度唯一真相源
 > ⚠️ **用途**：项目进度唯一真相源 + 章节元数据索引（每章一条）
 > 📚 **相关参考**：`templates/meta/chapter_XXX.md` · `references/session-start.md`（阶段①读取）

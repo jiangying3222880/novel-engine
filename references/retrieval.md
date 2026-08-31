@@ -20,7 +20,7 @@
 
 **L1 调用**：
 ```
-python runtime/bm25_fts.py build  --root <项目根>                  # 初始化/落库后重建（默认 story/index/bm25/）
+python runtime/bm25_fts.py build  --root <项目根>                  # 初始化/落库后重建（默认 故事/索引/bm25/）
 python runtime/bm25_fts.py query --root <项目根> --text "剑胎" --cutoff 5 [--visibility public] [--topk 10]
 ```
 
@@ -29,8 +29,8 @@ python runtime/bm25_fts.py query --root <项目根> --text "剑胎" --cutoff 5 [
 novel-engine 从"纯 Markdown"升级为 **Markdown 主状态 + ZVEC 检索运行时（唯一 Python 部件）**。检索层是**真混合检索**（向量 + BM25 + RRF 融合），不是 markdown 兜底。
 
 - **运行时位置**：`runtime/`（唯一 Python 部件）
-- **索引产物**：`story/index/`
-- **数据源**：story/truth（状态）+ story/meta（元数据）+ 正文（分块）+ 设定（按需）
+- **索引产物**：`故事/索引/`
+- **数据源**：故事/真相（状态）+ 故事/元数据（元数据）+ 正文（分块）+ 设定（按需）
 
 ## 2. 调用点
 
@@ -98,7 +98,7 @@ for q_ in (q_dense, q_fts):
 ## 5. 降级链路
 
 **ZVEC 不可用（未装 SDK / 建库失败）→ 回退纯 markdown 检索门**：
-- 用 grep/顺序扫描 story/truth + story/meta，按 `source_chapter ≤ cutoff` + `visibility` 过滤
+- 用 grep/顺序扫描 故事/真相 + 故事/元数据，按 `source_chapter ≤ cutoff` + `visibility` 过滤
 - 防剧透逻辑不变（未解锁只给占位）
 - **运行降级，不是功能降级**：检索质量降低，但防剧透与知情权不丢失
 
@@ -109,17 +109,17 @@ Z1  ✅ 实测通过：zvec 0.7.0 在 Windows 可用。关键发现：①doc id 
 Z2  ✅ runtime/index.py：schema（5通用字段）+ 拼音 entity_id + truth 全量索引写入；正文/meta 分块索引为扩展点
 Z3  ✅ embedding：jieba TF-IDF dense 已落地（index.py/_embed，真实词法语义，零重依赖）；bge-small-zh-v1.5 为升级路径（torch 被 Windows 长路径阻断，见 config.yaml）
 Z4  ✅ runtime/query.py：dense + BM25(match_string) 双查询，代码层合并；0.7.0 无 MultiQuery/RRF，权重近似
-Z5  ✅ 防剧透双查询 + 知情权过滤，落 story/index/；ZVEC 缺失时 markdown 门降级
+Z5  ✅ 防剧透双查询 + 知情权过滤，落 故事/索引/；ZVEC 缺失时 markdown 门降级
 ```
 
 ## 7. 验收 Checklist
 
 - [x] Z1 在 Windows 实测通过（zvec 0.7.0；id 必须 ASCII 无 /）
 - [x] runtime/ 为唯一 Python 部件，其余零 Python
-- [x] schema 复用 5 通用字段，story/truth 全量索引（43 条实测）
+- [x] schema 复用 5 通用字段，故事/真相 全量索引（43 条实测）
 - [x] 混合检索（dense + BM25 match_string）返回相关结果（"剑胎"命中剑胎相关条目）
 - [ ] 本地 bge-small-zh-v1.5 embedding 生效（Z3 待接入，当前 hash 占位）
 - [x] 双查询：cutoff 内返回全文、cutoff 外返回 `[未解锁：第N章]`
 - [x] 真死角色依据 visibility 正确过滤
 - [x] ZVEC 缺失时自动回退 markdown 门，防剧透仍生效
-- [x] 索引产物可落 story/index/ 并支持清空重建
+- [x] 索引产物可落 故事/索引/ 并支持清空重建

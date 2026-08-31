@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Novel Engine v1.4 · ZVEC 索引脚本（功能八 · 修复版）
@@ -6,7 +6,7 @@ Z1 已实测：zvec 0.7.0 在 Windows 可用；id 必须 ASCII，中文名存 en
 F 定稿：中文姓名 = 唯一 entity_id（经 pypinyin 转 ASCII 键，zvec 约束）。
 
 用法：
-  python runtime/index.py build              # 全量重建（truth + story/meta + 正文，先清空旧库）
+  python runtime/index.py build              # 全量重建（truth + 故事/元数据 + 正文，先清空旧库）
   python runtime/index.py upsert --chapter N # 增量索引第 N 章（meta + 正文，先删旧章）
   python runtime/index.py delete --chapter N # 按章删除（正文改写后重建）
 
@@ -21,8 +21,8 @@ import argparse
 # ---- 环境 ----
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
-# 索引库默认落在项目级 story/index；无项目时用引擎目录（测试）
-INDEX_PATH = os.path.join(PROJECT_ROOT, "story", "index", "novel_index")
+# 索引库默认落在项目级 故事/索引；无项目时用引擎目录（测试）
+INDEX_PATH = os.path.join(PROJECT_ROOT, "故事", "索引", "novel_index")
 DENSE_DIM = 512  # bge-small-zh-v1.5
 
 # 拼音归一映射：对象 → ASCII 键（entity_id）
@@ -34,8 +34,8 @@ def _load_config(root):
     失败时返回默认值，不中断。"""
     cfg = {
         "mode": "bm25_fts",
-        "collection_path": "story/index/novel_index",
-        "bm25_path": "story/index/bm25/index.json",
+        "collection_path": "故事/索引/novel_index",
+        "bm25_path": "故事/索引/bm25/index.json",
         "body_dir": "正文",
     }
     try:
@@ -140,17 +140,31 @@ def _doc_id(doc_type, entity, chapter):
 
 
 def _make_doc(doc_id, entity_cn, doc_type, chapter, source_chapter, visibility, status, text):
-    import zvec
-    return zvec.Doc(
-        id=doc_id,
-        vectors={"dense": _embed(text)},
-        fields={
-            "entity_cn": entity_cn, "doc_type": doc_type,
-            "chapter": chapter, "source_chapter": source_chapter,
-            "visibility": visibility, "status": status or "",
+    """构造文档对象。zvec 可用 → zvec.Doc（含 dense 向量，供 ZVEC 模式）；
+    zvec 不可用 → 纯 dict（供 BM25+FTS 默认模式，避免默认检索因 zvec 缺失而中断）。"""
+    try:
+        import zvec
+        return zvec.Doc(
+            id=doc_id,
+            vectors={"dense": _embed(text)},
+            fields={
+                "entity_cn": entity_cn, "doc_type": doc_type,
+                "chapter": chapter, "source_chapter": source_chapter,
+                "visibility": visibility, "status": status or "",
+                "text": text,
+            },
+        )
+    except Exception:
+        return {
+            "id": doc_id,
             "text": text,
-        },
-    )
+            "doc_type": doc_type,
+            "entity_cn": entity_cn,
+            "chapter": chapter,
+            "source_chapter": source_chapter,
+            "visibility": visibility,
+            "status": status or "",
+        }
 
 
 # ---------- 字段解析（BUG-2 修复）----------
@@ -188,10 +202,10 @@ def _field_value(cells, header, field, default="", is_int=False):
 
 
 def _iter_truth_files(root):
-    """扫描 story/truth 各状态文件，每实体生成一条索引。
+    """扫描 故事/真相 各状态文件，每实体生成一条索引。
     修复 BUG-2：按表头列名解析 visibility / source_chapter / status（缺省 public/0），
     供 query.py 的防剧透 cutoff 与知情权过滤真正生效。"""
-    truth_dir = os.path.join(root, "story", "truth")
+    truth_dir = os.path.join(root, "故事", "真相")
     if not os.path.isdir(truth_dir):
         return []
     # 各文件实体列（0基）。relationships/timeline 不产独立实体（关系/事件已在其他行+全文 FTS）。
@@ -276,9 +290,9 @@ def _iter_truth_files(root):
 
 
 def _iter_meta_docs(root):
-    """story/meta/chapter_*.md → 每条一条 meta 文档。
+    """故事/元数据/chapter_*.md → 每条一条 meta 文档。
     修复 BUG-5 问题 2：章号从文件名解析（chapter_007.md → 7），不再依赖正文里的 chapter_id 字段。"""
-    meta_dir = os.path.join(root, "story", "meta")
+    meta_dir = os.path.join(root, "故事", "元数据")
     docs = []
     if not os.path.isdir(meta_dir):
         return docs

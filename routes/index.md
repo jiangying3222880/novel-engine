@@ -34,15 +34,15 @@
 ```
 上游：SKILL.md（"开新书/导入"触发）
 前置：无
-相关：templates/truth/ · templates/voice-profile-template.md · templates/pools/拆书规范.md（拆什么/入池/格式三问）· templates/pools/_README.md · templates/pools/拆解方法论.md
+相关：templates/truth/ · templates/voice-profile-template.md · templates/素材池/拆书规范.md（拆什么/入池/格式三问）· templates/素材池/_README.md · templates/素材池/拆解方法论.md
 下游：references/session-start.md（初始化完成 → 阶段①）
 ```
 
 ### session-start.md · 阶段① 本章规划
 ```
 上游：references/project-setup.md
-前置：story/truth/ 6个状态文件（强制加载，含 objects/timeline）+ novel-config.json
-相关：templates/voice-profile-template.md · templates/细纲模板.md（B/E 回填：主角主动表达+参考素材槽位）· config/identity/（项目级身份覆盖）· pools/author_dna/ · pools/planner/ · pools/reference/techniques/ · pools/reference/samples/
+前置：故事/真相/ 6个状态文件（强制加载，含 objects/timeline）+ novel-config.json
+相关：templates/voice-profile-template.md · templates/细纲模板.md（B/E 回填：主角主动表达+参考素材槽位）· 配置/身份/（项目级身份覆盖）· 素材池/author_dna/ · 素材池/planner/ · 素材池/reference/techniques/ · 素材池/reference/samples/
 下游：references/writing-guide.md（规划完成 → 阶段②）
 ```
 
@@ -50,14 +50,14 @@
 ```
 上游：references/session-start.md（规划清单）
 前置：规划清单 + 章态 + 素材
-相关：pools/reference/samples/（同类场景样本）
+相关：素材池/reference/samples/（同类场景样本）
 下游：references/self-review.md（初稿 → 阶段③）
 ```
 
 ### self-review.md · 阶段③ 行为验证自检
 ```
 上游：references/writing-guide.md（初稿完成）
-前置：本章正文初稿 + story/truth/ 状态文件
+前置：本章正文初稿 + 故事/真相/ 状态文件
 相关：references/anti-ai.md（检出AI味时查修正方法）· references/writing-guide.md（声线/冰山异常时回查）
 下游：自检通过 → references/anti-ai.md；自检不通过 → 回阶段②改写（≤3轮，保留Best Version）
 ```
@@ -66,7 +66,7 @@
 ```
 上游：references/self-review.md（自检通过）
 前置：本章正文 + self-review 自检结果
-相关：references/writing-guide.md（冰山/对话不对称理论基础）· pools/reference/samples/ · pools/author_dna/
+相关：references/writing-guide.md（冰山/对话不对称理论基础）· 素材池/reference/samples/ · 素材池/author_dna/
 下游：references/hooks-and-memory.md（润色完成 → 阶段⑤）
 ```
 
@@ -74,7 +74,7 @@
 ```
 上游：references/anti-ai.md（润色完成）
 前置：本章最终正文 + 自检结果
-相关：references/change-report-spec.md · story/truth/ 6个状态文件（含 objects/timeline）
+相关：references/change-report-spec.md · 故事/真相/ 6个状态文件（含 objects/timeline）
 下游：本章完成，等待用户指令进入下一章
 ```
 
@@ -88,7 +88,7 @@
 ### chat-outsource.md · 外包写作分支（Chat-Outsource）
 ```
 上游：SKILL.md（"外包写作/用网页chat写"触发）+ references/session-start.md（阶段①规划）
-前置：story/truth/ 6个状态文件 + 规划清单 + 声线样本（pools/author_dna + 设定/角色声线）
+前置：故事/真相/ 6个状态文件 + 规划清单 + 声线样本（素材池/author_dna + 设定/角色声线）
 产出：一份自包含最终提示词（打包状态/目标/声线样本/去AI味要求）→ 用户贴入网页chat → 正文贴回
 下游：references/self-review.md（阶段③）→ 04（④跑满）→ 05（⑤落库）
 相关：references/anti-ai.md · references/human-signal-zh.md（回接后去AI味）
@@ -98,7 +98,7 @@
 ```
 上游：references/hooks-and-memory.md（落库时调用）
 前置：本章最终正文 + 自检/润色结果
-相关：story/truth/characters|world|hooks|relationships（变更目标）
+相关：故事/真相/characters|world|hooks|relationships（变更目标）
 下游：无（格式规范文件，被05调用）
 ```
 
@@ -118,7 +118,7 @@
 | `library/identities/` | 身份档案模板（作者/编剧/编辑/读者） | ⓪/全程 |
 | `library/market-research.md` | 市场调查三档路由 | ⓪ |
 | `library/packaging.md` | 卖点包装 + 反套路提案（doubao 融合） | ⓪/投稿/包装 |
-| `templates/pools/` | 素材池模板（author_dna/planner/unit/knowledge/reference + 拆解方法论） | ⓪ |
+| `templates/素材池/` | 素材池模板（author_dna/planner/unit/knowledge/reference + 拆解方法论） | ⓪ |
 
 ## 四、素材库导航（用户级 + 项目级）
 
@@ -130,7 +130,7 @@
 | 用户级 | `library/platforms/` | 平台适配指南（确认目标平台风格） |
 | 用户级 | `library/identities/` | 身份档案基线（作者/编剧/编辑/读者，项目级可覆盖） |
 | 用户级 | `library/market-research.md` | 市场调查三档路由（快速/标准/深度） |
-| 项目级 | `pools/` | 对标书拆解出的素材池（author_dna/planner/unit/knowledge/reference） |
+| 项目级 | `素材池/` | 对标书拆解出的素材池（author_dna/planner/unit/knowledge/reference） |
 
 ---
 
@@ -138,11 +138,11 @@
 
 | 用途 | 路径 |
 |------|------|
-| 状态真相（强制加载） | `story/truth/`（characters/world/hooks/relationships） |
-| 章节元数据 + 章节索引 | `story/meta/`（已启用） |
+| 状态真相（强制加载） | `故事/真相/`（characters/world/hooks/relationships） |
+| 章节元数据 + 章节索引 | `故事/元数据/`（已启用） |
 | Obsidian 叙事总览（纯展示）| 项目根 `叙事总览.md` + `叙事总览/`（已启用） |
-| 流程日志 | `story/logs/`（已启用） |
-| 素材池（按需加载） | `pools/` |
+| 流程日志 | `故事/日志/`（已启用） |
+| 素材池（按需加载） | `素材池/` |
 | 完整设定档案 | `设定/` |
 | 卷纲+细纲 | `大纲/` |
 | 章节正文 | `正文/` |

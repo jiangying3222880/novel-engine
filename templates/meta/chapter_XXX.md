@@ -1,5 +1,5 @@
 ﻿<!--
-> 📍 **位置**：项目 `story/meta/chapter_XXX.md`
+> 📍 **位置**：项目 `故事/元数据/chapter_XXX.md`
 > ⬆️ **上游**：功能三 YAML 迁移 —— 原章节 Frontmatter 迁出正文，集中到此
 > ⚠️ **用途**：承接原 Frontmatter 的 causal_links / hooks / emotion_arc / change_summary 等元数据
 > 📚 **相关参考**：`templates/meta/index.md`（索引）· `references/change-report-spec.md`（⑤落库）
@@ -24,7 +24,7 @@
 
 ## change_summary（落库变更摘要）
 - （阶段⑤ 落库后填写：状态文件变更、新出场角色、伏笔推进等摘要）
-- 进度真相：本章完成后，`story/meta/index.md` 为进度唯一真相源。
+- 进度真相：本章完成后，`故事/元数据/index.md` 为进度唯一真相源。
 
 ---
 > 检索字段：source_chapter（=本章号）/ visibility / status 等 5 通用字段见功能七，随状态文件维护，本文件仅存章级元数据。

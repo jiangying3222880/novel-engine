@@ -2,9 +2,9 @@
 <!--
 > 📍 **位置**：素材池 → Author DNA 模板
 > ⬆️ **上游**：对标书/作者稿拆解阶段（Agent 按拆解方法论提炼手法规则生成）
-> ⚠️ **必读前置**：`templates/pools/拆解方法论.md` → Author DNA 拆解细则
+> ⚠️ **必读前置**：`templates/素材池/拆解方法论.md` → Author DNA 拆解细则
 > 📚 **相关参考**：
-> - `templates/pools/拆解方法论.md` — 拆解执行手册（拆书前必读）
+> - `templates/素材池/拆解方法论.md` — 拆解执行手册（拆书前必读）
 > - `references/writing-guide.md` — 双层声线系统
 > - `references/anti-ai.md` — 叙事质感与反AI味标准
 > ⬇️ **下游**：

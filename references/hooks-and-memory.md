@@ -6,13 +6,13 @@
 
 ## 1. 核心原则
 
-- **状态集中在 `story/truth/`**：6个文件（characters / world / hooks / relationships / objects / timeline）是唯一真相中心
+- **状态集中在 `故事/真相/`**：6个文件（characters / world / hooks / relationships / objects / timeline）是唯一真相中心
 - **Change Report 驱动更新**：先出报告，再改状态文件，确保所有变更可追溯
 - **池子只放对标书内容**：素材池是高质量对标书的拆解产物，不存自己的稿件
 
 ---
 
-## 2. story/truth/ 六层状态体系（功能七 · 5 通用字段）
+## 2. 故事/真相/ 六层状态体系（功能七 · 5 通用字段）
 
 > 每个实体/状态记录带 5 通用字段：`status` / `transition` / `valid_until` / `visibility` / `source_chapter`。检索（功能八）与一致性校验（时空守门）共用这套字段。
 
@@ -82,7 +82,7 @@
 7. **物品变化**：关键道具的持有/物理状态变化（objects.md）
 8. **新出场/升级角色检查（D 回填）**：本章台词≥2句的新角色 → 触发 B 类建档（characters.md 加一行精简基线）
 
-### Step 2：更新 story/truth/ 状态文件
+### Step 2：更新 故事/真相/ 状态文件
 
 根据 Change Report 内容，逐个更新 6 个状态文件：
 
@@ -95,9 +95,9 @@
 
 ### Step 3：写入元数据 + 日志 + 索引（功能三/四/八）
 
-- **元数据**：写入 `story/meta/chapter_XXX.md`（causal_links / hooks / emotion_arc / change_summary）。**正文文件保持干净无 YAML**（功能三 YAML 迁移）。
-- **进度**：更新 `story/meta/index.md`（进度唯一真相源）。
-- **流程日志**：写 `story/logs/第XXX章.md`（5 阶段合一，模板见 `templates/log-template.md`）。
+- **元数据**：写入 `故事/元数据/chapter_XXX.md`（causal_links / hooks / emotion_arc / change_summary）。**正文文件保持干净无 YAML**（功能三 YAML 迁移）。
+- **进度**：更新 `故事/元数据/index.md`（进度唯一真相源）。
+- **流程日志**：写 `故事/日志/第XXX章.md`（5 阶段合一，模板见 `templates/log-template.md`）。
 - **联动总览**：更新 `叙事总览/`（功能五：新角色卡/伏笔卡/章节地图）。
 - **增量索引**：ZVEC 可用时运行 `python runtime/index.py upsert --chapter N`（功能八）。
 
@@ -122,7 +122,7 @@
   ✓ relationships.md：[变化简述，如：林深↔方若华 从6→7]
   ✓ objects.md：[变化简述，如：量子玻璃持有者→林深]
   ✓ timeline.md：[故事时间推进到…]
-  ✓ story/meta/index.md：进度已更新
+  ✓ 故事/元数据/index.md：进度已更新
 
 ## 伏笔债务
   - h_002 已 active 12 章，建议下章推进

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Novel Engine v1.4 · 稳定性测试脚本（5 章 = 1 观察窗口，可对任意窗口快照重复执行）
@@ -143,7 +143,7 @@ def _seed_for(text):
 
 
 def check_zvec(root_dir, index_path, window):
-    """4+5+6. ZVEC 可复现 / 查询 / 幂等。root_dir 需含 story/truth。"""
+    """4+5+6. ZVEC 可复现 / 查询 / 幂等。root_dir 需含 故事/真相。"""
     import zvec
     result = {"ok": True, "detail": {}}
     idx.PROJECT_ROOT = root_dir
@@ -219,9 +219,9 @@ def check_spoiler(truth_dir, cutoff):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--root", required=True, help="窗口根目录（须含 story/truth）")
+    ap.add_argument("--root", required=True, help="窗口根目录（须含 故事/真相）")
     ap.add_argument("--window", required=True, help="观察窗口名")
-    ap.add_argument("--index", default=None, help="窗口索引目录（缺省：root/story/index/w）")
+    ap.add_argument("--index", default=None, help="窗口索引目录（缺省：root/故事/索引/w）")
     ap.add_argument("--cutoff", type=int, default=0)
     args = ap.parse_args()
 

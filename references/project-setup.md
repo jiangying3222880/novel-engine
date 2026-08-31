@@ -18,6 +18,22 @@
 
 ---
 
+## 项目目录命名规范（统一中文 · v1.4 修正）
+
+**原则：项目（每本书）目录内一律中文命名，禁止中英文混用。** 目录是给作者看的，中文便于 Obsidian/本地管理。例外仅限：程序/检索读取的**固定协议文件**（novel-config.json、chapter_XXX.md、characters.md 等）与**机器产物内部文件**（索引二进制），属内部契约，不参与命名规范。
+
+| 英文旧目录 | 中文新目录 | 说明 |
+|-----------|-----------|------|
+| `story/truth/` | `故事/真相/` | 6 个状态文件（characters/world/hooks/relationships/objects/timeline） |
+| `story/meta/` | `故事/元数据/` | 章节元数据 + index.md（进度唯一真相源） |
+| `story/logs/` | `故事/日志/` | 每章流程日志 |
+| `story/index/` | `故事/索引/` | 检索索引（机器产物，内部文件名保留英文） |
+| `config/identity/` | `配置/身份/` | 项目级身份档案 |
+| `pools/` | `素材池/` | 素材池（author_dna/planner/reference 等） |
+| `正文/ 大纲/ 设定/ 叙事总览/` | 不变 | 已是中文 |
+
+> 协议文件名（novel-config.json / chapter_XXX.md / characters.md 等）被检索与自检代码读取，**保持英文文件名**但放中文目录；不属"中英混用"，是固定契约。
+
 ## 入口 A：从零创建（对话驱动）
 
 通过对话逐步建立项目文件。每步完成后确认再进下一步。
@@ -75,7 +91,7 @@
 
 ### Step 5：初始化状态与元数据文件
 
-**5a. 状态文件（从 `templates/truth/` 复制 6 个模板到项目 `story/truth/`）：**
+**5a. 状态文件（从 `templates/truth/` 复制 6 个模板到项目 `故事/真相/`）：**
 - `characters.md` — 角色基线摘要 + 初始状态
 - `world.md` — 核心规则摘要 + 初始时间/地点
 - `hooks.md` — 空表（含推进状态/下一回收点两列，G 定稿）
@@ -86,10 +102,10 @@
 > 关键原则：基线摘要 = 完整设定的"压缩版"，只保留最核心的信息（控制在 2KB 以内）。完整档案仍在 `设定/` 目录下，按需读取。
 
 **5b. 元数据骨架（功能三/四/五）：**
-- `story/meta/index.md` — 从 `templates/meta/index.md` 初始化（进度唯一真相源）
-- `story/meta/chapter_001.md` — 从 `templates/meta/chapter_XXX.md` 初始化（第1章元数据）
-- `story/logs/` — 每章 1 个流程日志文件（`templates/log-template.md`）
-- `config/identity/` — 作者/编剧/编辑/读者 项目级覆盖（技能级基线在 `library/identities/`，项目级存在则优先）
+- `故事/元数据/index.md` — 从 `templates/meta/index.md` 初始化（进度唯一真相源）
+- `故事/元数据/chapter_001.md` — 从 `templates/meta/chapter_XXX.md` 初始化（第1章元数据）
+- `故事/日志/` — 每章 1 个流程日志文件（`templates/log-template.md`）
+- `配置/身份/` — 作者/编剧/编辑/读者 项目级覆盖（技能级基线在 `library/identities/`，项目级存在则优先）
 - `叙事总览.md` + `叙事总览/` — 从 `templates/narrative/` 初始化（Obsidian 纯展示层，功能五）
 ### Step 5.5：初始化检索索引（默认 BM25+FTS，零依赖）
 
@@ -99,7 +115,7 @@
 python runtime/bm25_fts.py build --root <项目根>
 ```
 
-- 索引产物：`story/index/bm25/index.json`（truth + meta + 正文分块）
+- 索引产物：`故事/索引/bm25/index.json`（truth + meta + 正文分块）
 - **检索层说明（告知用户）**：BM25+FTS=词法精确命中（专名检索）；ZVEC=词法+语义混合（可语义召回，需另装 zvec SDK）。两者都有防剧透+知情权过滤。写作期 L1 已够用；要语义检索再把 `runtime/config.yaml` 的 `retrieval.mode` 切到 `zvec`。
 - 每次落库（阶段⑤）后重建：`python runtime/bm25_fts.py build --root <项目根>`
 
@@ -109,7 +125,7 @@ python runtime/bm25_fts.py build --root <项目根>
 >
 > **拆解是 Agent 的工作，不是用户的工作。** 用户只需提供对标书（书名/文本文件），Agent 负责读取、分析、判断、入池。
 >
-> **详细拆解方法论**：见 `templates/pools/拆解方法论.md`（Agent 执行拆解前必须读取该文件）。
+> **详细拆解方法论**：见 `templates/素材池/拆解方法论.md`（Agent 执行拆解前必须读取该文件）。
 
 **两阶段拆解模式（参考 oh-story 拆书方法论）：**
 
@@ -127,9 +143,9 @@ python runtime/bm25_fts.py build --root <项目根>
 3. **暂不拆解**：先写起来，后面再补
 
 用户选择后执行：
-1. 从 `templates/pools/` 初始化项目的 `pools/` 目录，并落 `pools/_status.md`（空池标记：`拆解状态: 未拆解/已拆N本/深度档位`，C 回填）
+1. 从 `templates/素材池/` 初始化项目的 `素材池/` 目录，并落 `素材池/_status.md`（空池标记：`拆解状态: 未拆解/已拆N本/深度档位`，C 回填）
 2. 让用户提供对标书（书名或文本文件）
-3. Agent 读取 `templates/pools/拆解方法论.md`，按方法论执行**快速预览**，生成预览报告请用户确认
+3. Agent 读取 `templates/素材池/拆解方法论.md`，按方法论执行**快速预览**，生成预览报告请用户确认
 4. 用户确认后，Agent 按选定档位执行**深度拆解**，内容填入对应池子
 5. 拆解完成后进入下一步
 
@@ -142,13 +158,13 @@ novel-config.json      ← 项目档案 ✓
 设定/角色声线.md        ← 完整角色基线 ✓
 大纲/卷纲.md            ← 卷纲 ✓
 大纲/细纲_第1章.md      ← 第1章细纲 ✓
-story/truth/           ← 6个状态文件（characters/world/hooks/relationships/objects/timeline）✓
-story/meta/index.md    ← 章节索引（进度唯一真相源）✓
-story/meta/chapter_001.md ← 第1章元数据 ✓
-story/logs/            ← 流程日志目录 ✓
-config/identity/       ← 项目级身份档案（如有）✓
+故事/真相/           ← 6个状态文件（characters/world/hooks/relationships/objects/timeline）✓
+故事/元数据/index.md    ← 章节索引（进度唯一真相源）✓
+故事/元数据/chapter_001.md ← 第1章元数据 ✓
+故事/日志/            ← 流程日志目录 ✓
+配置/身份/       ← 项目级身份档案（如有）✓
 叙事总览/              ← Obsidian 总览骨架 ✓
-pools/_status.md       ← 素材池状态标记（未拆解/已拆解）✓
+素材池/_status.md       ← 素材池状态标记（未拆解/已拆解）✓
 ```
 
 确认后对用户说："项目初始化完成，现在开始写第1章"，进入阶段①。
@@ -188,10 +204,10 @@ pools/_status.md       ← 素材池状态标记（未拆解/已拆解）✓
 - 缺少硬边界和情绪光谱：Agent 补充建议，用户确认
 
 **正文 → `正文/` 目录**
-- 已有正文：保持原文件；元数据写入 `story/meta/chapter_XXX.md`（功能三 YAML 迁移，正文保持干净）
+- 已有正文：保持原文件；元数据写入 `故事/元数据/chapter_XXX.md`（功能三 YAML 迁移，正文保持干净）
 - 无正文：跳过
 
-### Step 3：重建 story/truth/ 状态文件
+### Step 3：重建 故事/真相/ 状态文件
 
 **原则：从当前章节往前推3章重建状态**（太远了没必要，太近了信息不够）。
 

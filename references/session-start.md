@@ -10,28 +10,28 @@
 
 ### 强制加载（必须全部读取）
 
-1. `story/truth/characters.md` — 角色基线摘要 + 当前状态（位置/情绪/知识/携带物品）
-2. `story/truth/world.md` — 世界核心规则 + 当前状态（时间/地点/环境/大事记）
-3. `story/truth/hooks.md` — 当前生效的伏笔与未解悬念（含推进状态）
-4. `story/truth/relationships.md` — 角色关系网络
-5. `story/truth/objects.md` — 物品状态（关键道具持有链）
-6. `story/truth/timeline.md` — 时间线（当前故事时间锚点）
+1. `故事/真相/characters.md` — 角色基线摘要 + 当前状态（位置/情绪/知识/携带物品）
+2. `故事/真相/world.md` — 世界核心规则 + 当前状态（时间/地点/环境/大事记）
+3. `故事/真相/hooks.md` — 当前生效的伏笔与未解悬念（含推进状态）
+4. `故事/真相/relationships.md` — 角色关系网络
+5. `故事/真相/objects.md` — 物品状态（关键道具持有链）
+6. `故事/真相/timeline.md` — 时间线（当前故事时间锚点）
 
 ### 基础信息
 
 5. `novel-config.json` — 项目档案（书名/题材/字数/基调）
-6. `story/meta/上一章` — 上一章的 causal_links / hooks / emotion_arc / change_summary（功能三 YAML 迁移后）
-7. `story/meta/index.md` — 进度唯一真相源
+6. `故事/元数据/上一章` — 上一章的 causal_links / hooks / emotion_arc / change_summary（功能三 YAML 迁移后）
+7. `故事/元数据/index.md` — 进度唯一真相源
 8. `大纲/细纲_本章.md` — **必读**（E 回填：细纲与规划一致性自检的基准；约束细纲 ≤2KB）
 
 ### 按需读取（本章涉及才读）
 
 7. `设定/角色声线.md` — 仅当有新角色或声线存疑时才读完整档案
 8. `设定/世界观.md` — 仅当涉及新设定或设定存疑时才读完整档案
-9. `pools/author_dna/` 主对标书DNA — 风格校准（推荐读）
-10. `pools/planner/` 对应卷结构 — 节奏校准（推荐读）
-11. `pools/reference/techniques/` 对应技巧 — 方法论参考（按场景选1-2个）
-12. `pools/reference/samples/` 同类场景 — 实战样本参考（按场景选1-2个）
+9. `素材池/author_dna/` 主对标书DNA — 风格校准（推荐读）
+10. `素材池/planner/` 对应卷结构 — 节奏校准（推荐读）
+11. `素材池/reference/techniques/` 对应技巧 — 方法论参考（按场景选1-2个）
+12. `素材池/reference/samples/` 同类场景 — 实战样本参考（按场景选1-2个）
 
 **首次启动判断**：如果项目目录中没有 `novel-config.json`，说明项目未初始化，跳转至 `references/project-setup.md` 执行阶段⓪。
 
@@ -51,7 +51,7 @@
   ✓ relationships.md 已读取（X 对关系）
   ✓ objects.md 已读取（N 件关键物品）
   ✓ timeline.md 已读取（当前故事时间锚点）
-  ✓ story/meta/上一章 + index.md 已读取（change_summary: ...）
+  ✓ 故事/元数据/上一章 + index.md 已读取（change_summary: ...）
   ✓ 细纲_本章.md 已读取（一致性自检基准）
 ```
 
@@ -60,7 +60,7 @@
 ## 3. 新角色检查
 
 判断本章是否有首次出场的说话角色：
-- **有新角色** → 按 `templates/voice-profile-template.md` 建立完整基线档案，写入 `设定/角色声线.md` + 更新 `story/truth/characters.md` 基线摘要
+- **有新角色** → 按 `templates/voice-profile-template.md` 建立完整基线档案，写入 `设定/角色声线.md` + 更新 `故事/真相/characters.md` 基线摘要
 - **无新角色** → 直接使用已有基线
 
 ---
@@ -82,11 +82,11 @@
 当多个状态文件给出的约束互相矛盾时（例如：角色基线说"冷静克制"，但本章状态是"巨大悲痛"），按以下优先级裁决：
 
 ```
-第1级：世界不可变规则（story/truth/world.md → 核心规则）
+第1级：世界不可变规则（故事/真相/world.md → 核心规则）
     ↓
-第2级：角色硬边界（story/truth/characters.md → 基线摘要 → 硬边界）
+第2级：角色硬边界（故事/真相/characters.md → 基线摘要 → 硬边界）
     ↓
-第3级：角色核心性格（story/truth/characters.md → 基线摘要 → 语言基线+情绪光谱）
+第3级：角色核心性格（故事/真相/characters.md → 基线摘要 → 语言基线+情绪光谱）
     ↓
 第4级：本章章态（chapter-state）
     ↓
@@ -111,8 +111,8 @@
 读取完成后，内部判断（不输出）：
 - 以**编剧身份**主导规划（身份路由见 `references/identity-routing.md`）：上一章 change_summary 和 emotion_arc 的终点是什么？本章应从什么情绪开始？
 - hooks.md 中有哪些 active 钩子到了该回收或推进的时机？（含 status_progress=partial 的下一回收点）
-- 本章场景类型对应 `pools/reference/techniques/` 的哪1-2个技巧分类？
-- 本章是否需要参考 `pools/reference/samples/` 中的同类场景样本？
+- 本章场景类型对应 `素材池/reference/techniques/` 的哪1-2个技巧分类？
+- 本章是否需要参考 `素材池/reference/samples/` 中的同类场景样本？
 - **参考素材三选一必填（C 回填）**：①技巧调阅 ②场景参考 ③明确声明"未拆池无素材，建议跑对标书快速预览拆解"——不许留空
 
 ---
@@ -167,6 +167,6 @@
 
 第1章（无上一章）：
 - 跳过"读取上一章 Frontmatter"
-- 重点参考 `pools/reference/techniques/` 的「黄金开头」分类（参考素材三选一必填）
+- 重点参考 `素材池/reference/techniques/` 的「黄金开头」分类（参考素材三选一必填）
 - 规划清单增加"第一句话设计"
 - 所有出场角色都按新角色处理

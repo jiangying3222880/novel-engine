@@ -83,7 +83,7 @@ evidence_ids:
 
 ### Q2：OOC 检验（声线行为检测）
 
-**检测行为**：本章角色的关键对话和决策，是否落在 `story/truth/characters.md` 的基线摘要范围内？
+**检测行为**：本章角色的关键对话和决策，是否落在 `故事/真相/characters.md` 的基线摘要范围内？
 
 - 验证步骤：
   1. 提取本章每个主要角色的 2-3 句关键对话/关键动作
@@ -224,5 +224,5 @@ Q4 因果与情绪：[通过/未通过]
 
 每写完第 5、10、15 章…额外执行：
 - 翻阅最近 5 章 Frontmatter 的 `change_summary` 和 `emotion_arc`，检查情绪是否断裂
-- 检查 `story/truth/hooks.md` 中 active 超过 10 章未推进的钩子（标记"伏笔债务"）
-- 对照 `story/truth/characters.md` 基线摘要，检查角色声线是否跨章漂移
+- 检查 `故事/真相/hooks.md` 中 active 超过 10 章未推进的钩子（标记"伏笔债务"）
+- 对照 `故事/真相/characters.md` 基线摘要，检查角色声线是否跨章漂移
