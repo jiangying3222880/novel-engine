@@ -133,7 +133,7 @@ ovel-config.json 的 ody_dir（默认 正文/）
 
 ## 字数硬校验（阶段② 验收线 · v1.4 修正）
 
-- 每章正文必须落在 `novel-config.json` 的 `target_word_count_per_chapter` 区间内（例：`[6000, 8000]`）
+- 每章正文必须落在 `novel-config.json` 的 `min_word_count` ~ `max_word_count` 区间内（例：6000 ~ 8000 字）
 - 不足区间下限 → 扩写后重检（补场景细节/对话延展/支线），不达标不进阶段③
 - 超出上限 → 精简冗余，不注水
 - `check_text.py` 可观测字数；写作前先按目标字数 × 节拍密度系数做字数分配（见细纲模板）
