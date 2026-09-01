@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Novel Engine v1.4 · 稳定性测试脚本（5 章 = 1 观察窗口，可对任意窗口快照重复执行）

@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Novel Engine v1.4 · BM25 + FTS 全文检索（默认启用 · 零依赖）
