@@ -25,6 +25,7 @@
 
 | ②③④ 去味 | 深度方法库(human-signal 沉淀) | references/human-signal-zh.md |
 | ② 外包 | 写作外包网页chat(流程分支) | references/chat-outsource.md |
+| 短篇 | 短故事一次成篇(单篇完结) | references/short-story.md |
 
 ---
 
@@ -102,6 +103,14 @@
 下游：无（格式规范文件，被05调用）
 ```
 
+### short-story.md · 短故事创作模式（单篇完结）
+```
+上游：SKILL.md（"写个短故事/短篇/抖音推文风"触发）
+前置：无（输入脑洞即可，不建项目/不拆书/不走 truth）
+相关：references/anti-ai.md（强制过检）· references/prompt-defense.md（版权纪律）· templates/short-story-template.md
+下游：交付单篇（短故事不进入五阶段状态机）
+```
+
 ---
 
 ## 三、模板层路由
@@ -119,6 +128,7 @@
 | `library/market-research.md` | 市场调查三档路由 | ⓪ |
 | `library/packaging.md` | 卖点包装 + 反套路提案（doubao 融合） | ⓪/投稿/包装 |
 | `templates/pools/` | 素材池模板（author_dna/planner/unit/knowledge/reference + 拆解方法论） | ⓪ |
+| `templates/short-story-template.md` | 短故事极简骨架（故事核/导语/四幕/断章） | 短篇 |
 
 ## 四、素材库导航（用户级 + 项目级）
 
