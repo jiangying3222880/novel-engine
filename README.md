@@ -27,7 +27,9 @@
 
 > 👉 安装 / 上手 / FAQ 见下文：`安装依赖` → `安装为技能` → `目录结构总览` → `常见问题 FAQ`。本 README 是唯一对外说明。
 
-### 0. 安装依赖（可选，检索用）
+### 0. 安装依赖（可选，仅 ZVEC 语义检索需要）
+
+> **纯 py 核心依赖（jieba / pypinyin / pyyaml，检索分词用）已离线 vendored 到 `runtime/deps/`**，脚本自动加载，clone 即用、无需安装。默认 BM25 词法检索零依赖。仅当你想启用 ZVEC 语义检索时才执行：
 
 ```bash
 pip install -r runtime/requirements.txt
@@ -141,9 +143,7 @@ novel-engine/
 
 > 完整文件→阶段映射、上下游关系、素材库导航见 
 >
-> `routes/`
->
-> `index.md`
+> [`routes/index.md`](routes/index.md)
 >
 > （唯一真相源）。本表仅列顶层入口。
 
@@ -153,10 +153,12 @@ novel-engine/
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | `SKILL.md`        | 路由入口 + 3 铁律 + 5 阶段 SOP 概要                                                                                                          |
 | `routes/index.md` | **路由台账（唯一真相源）**                                                                                                                    |
-| \\                |                                                                                                                                    |
 | `references/`     | 五阶段详细参考（project-setup / session-start / writing-guide / self-review / anti-ai / hooks-and-memory / workflow-detail / prompt-defense / retrieval / human-signal-zh / chat-outsource / change-report-spec / identity-routing / short-story） |
 | `library/`        | 用户级素材库（techniques /genres/knowledge /platforms/identities /market-research）                                                        |
 | `templates/`      | 模板层（novel-config /chapter/voice-profile /truth/pools /meta/narrative /log-template /short-story-template）                                                |
+
+| `runtime/` | Python 检索运行时（可选，见安装） |
+| `story/`  | 项目结构示意（仅示意，实际项目另建） |
 
 **项目级文件**（每本书独立，不在技能目录中）：
 
@@ -180,9 +182,7 @@ novel-engine/
 
 > 详见 
 >
-> `routes/`
->
-> `index.md`
+> [`routes/index.md`](routes/index.md)
 >
 >  第五节。
 
@@ -200,6 +200,11 @@ novel-engine/
 
 **Q：为什么有的文件名带 `故事/真相`、`故事/元数据` 这种中文路径？**
 技能约定项目目录**统一中文命名**（协议文件名保持英文，如 `chapter_0001.md`）。项目建在技能目录之外，与技能本体隔离。
+
+**Q：怎么在 Obsidian 看角色 / 世界观 / 伏笔 / 章节图谱？**
+- 项目生成后，把项目根 **`叙事总览/` 整个目录作为库（Vault）** 加入 Obsidian（或任意支持 `[[ ]]` 双链的 Markdown 工具）。
+- **必须整目录导入、同库**：总览页（`00`–`05`）与原子卡片（角色卡 / 世界观卡 / 伏笔卡 / 章节卡）靠双链互相指向，只有放在同一库才能解析成连线。只零散拖入单个文件，图谱会分裂、出现"孤立 / 重复"节点（看到 `00_作品总览 1` 这类名字，就是库外另建了同名副本）。
+- 双链由阶段⑤落库联动**自动生成**（单向源于真相），你无需手动补链。总览是只读展示：不要手改总览或卡片、也别在库外另建同名笔记——下一轮落库会覆盖手动改动，且会破坏"单向源于真相"的防污染隔离。
 
 **Q：短故事和长篇能混用吗？**
 能。它们走两套流程，互不干扰。短故事不建项目，长篇用项目状态管理。

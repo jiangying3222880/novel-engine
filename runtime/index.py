@@ -20,6 +20,7 @@ import argparse
 
 # ---- 环境 ----
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "deps"))  # 离线 vendored 依赖 (jieba/pyyaml/pypinyin)
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 # 索引库默认落在项目级 故事/索引；无项目时用引擎目录（测试）
 INDEX_PATH = os.path.join(PROJECT_ROOT, "故事", "索引", "novel_index")
@@ -91,7 +92,6 @@ def _build_schema():
 
 def _get_collection():
     import zvec
-    import numpy as np
     os.makedirs(os.path.dirname(INDEX_PATH), exist_ok=True)
     if not os.path.exists(INDEX_PATH):
         return zvec.create_and_open(INDEX_PATH, _build_schema()), False

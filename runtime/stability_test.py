@@ -28,6 +28,7 @@ import hashlib
 import argparse
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "deps"))  # 离线 vendored 依赖 (jieba/pyyaml/pypinyin)
 import index as idx
 
 VOLUME_LIMIT_KB = 8.0
@@ -38,7 +39,7 @@ STATE_MACHINES = {
     "relationships.md": ["ally", "support", "neutral", "tension", "hostile", "severed", "reconciled"],
     "objects.md": ["owned", "lost", "destroyed", "sealed", "transferred"],
 }
-HOOK_PROGRESS = ["pending", "in_progress", "partially_revealed", "resolved"]
+HOOK_PROGRESS = ["pending", "partial", "due"]  # 与 templates/truth/hooks.md 推进状态枚举(pending/partial/due)对齐
 
 def _extract_queries(truth_dir):
     """从 truth 自动提取查询词（全量实测修正：替代硬编码的青云问道词表，跨项目通用）。

@@ -1,11 +1,15 @@
 # Novel Engine v1.4 · 检索运行时依赖
 # 唯一 Python 部件。其余保持纯 Markdown。
-# Z1 已实测：zvec 0.7.0 在 Windows 可用；doc id 必须 ASCII（中文名用 pypinyin 转拼音键）。
 
-zvec>=0.6.0
-jieba                   # 中文分词（BM25 预处理）
-pyyaml                  # 读取 config.yaml（检索配置源）
-pypinyin                # 中文名 → ASCII entity_id（id 必须 ASCII 的实测约束）
-numpy                   # 向量运算
-# sentence-transformers：被 Windows 长路径（WinError 206）阻断，装不上；
-#   bge-small-zh-v1.5 为升级路径预留，勿启用。当前 embedding 用 index._embed（jieba TF-IDF 词袋，零重依赖）。
+# ===== 纯 py 核心依赖（已离线 vendored 到 runtime/deps，clone 即用，无需安装）=====
+# jieba / pyyaml / pypinyin 已随仓库打包于 runtime/deps/，运行时通过 sys.path 自动加载。
+# 如需手动升级：pip install --target runtime/deps --no-deps jieba pyyaml pypinyin
+
+# ===== 可选增强：ZVEC 语义检索（编译型 wheel，平台绑定，Windows 可装）=====
+# 未安装时 index.py/query.py 走 BM25 兜底；想启用语义检索才装：
+zvec>=0.7.0
+
+# 说明：numpy / sentence-transformers 已弃用
+#   - numpy：index.py 中为死导入，已移除（无需安装）。
+#   - sentence-transformers：被 Windows 长路径（WinError 206）阻断，装不上；
+#     bge-small-zh-v1.5 为升级路径预留，勿启用。当前 embedding 用 index._embed（jieba TF-IDF 词袋，零重依赖）。

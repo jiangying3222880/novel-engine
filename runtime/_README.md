@@ -19,3 +19,4 @@
 
 - 所有脚本 UTF-8 无 BOM（Linux shebang 兼容）。
 - 检索默认 BM25+FTS；ZVEC（语义检索）为可选增强，见 `references/retrieval.md`。
+- **依赖已离线 vendored**：纯 py 依赖（jieba/pyyaml/pypinyin）打包在 `runtime/deps/`，脚本已把 `deps` 注入 sys.path，clone 即用、无需 `pip install`；仅启用 ZVEC 语义检索时才需安装 `zvec`。

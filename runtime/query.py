@@ -18,6 +18,7 @@ import sys
 import argparse
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "deps"))  # 离线 vendored 依赖 (jieba/pyyaml/pypinyin)
 import index
 from index import _embed, DENSE_DIM, _load_config
 

@@ -82,7 +82,7 @@
 ### workflow-detail.md · 全程参考（5阶段SOP交互详解）
 ```
 前置：无（可选参考，非强制）
-相关：references/01~05 各阶段详细 SOP
+相关：references/project-setup / session-start / writing-guide / self-review / anti-ai / hooks-and-memory（各阶段详细 SOP）
 下游：无（纯参考文件）
 ```
 
@@ -91,7 +91,7 @@
 上游：SKILL.md（"外包写作/用网页chat写"触发）+ references/session-start.md（阶段①规划）
 前置：故事/真相/ 6个状态文件 + 规划清单 + 声线样本（素材池/author_dna + 设定/角色声线）
 产出：一份自包含最终提示词（打包状态/目标/声线样本/去AI味要求）→ 用户贴入网页chat → 正文贴回
-下游：references/self-review.md（阶段③）→ 04（④跑满）→ 05（⑤落库）
+下游：references/self-review.md（阶段③）→ anti-ai.md（④跑满）→ hooks-and-memory.md（⑤落库）
 相关：references/anti-ai.md · references/human-signal-zh.md（回接后去AI味）
 ```
 
@@ -100,7 +100,7 @@
 上游：references/hooks-and-memory.md（落库时调用）
 前置：本章最终正文 + 自检/润色结果
 相关：故事/真相/characters|world|hooks|relationships（变更目标）
-下游：无（格式规范文件，被05调用）
+下游：无（格式规范文件，被阶段⑤落库 hooks-and-memory.md 调用）
 ```
 
 ### short-story.md · 短故事创作模式（单篇完结）
@@ -148,7 +148,7 @@
 
 | 用途 | 路径 |
 |------|------|
-| 状态真相（强制加载） | `故事/真相/`（characters/world/hooks/relationships） |
+| 状态真相（强制加载） | `故事/真相/`（6 个文件：characters/world/hooks/relationships/objects/timeline） |
 | 章节元数据 + 章节索引 | `故事/元数据/`（已启用） |
 | Obsidian 叙事总览（纯展示）| 项目根 `叙事总览.md` + `叙事总览/`（已启用） |
 | 流程日志 | `故事/日志/`（已启用） |

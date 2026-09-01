@@ -26,7 +26,8 @@ DEFAULT_ROOT = os.path.dirname(HERE)  # runtime/ 的上级 = 技能根
 
 MARK_START = "<!-- AUTO-LIST-START: 由 doc_sync.py 自动维护，请勿手改 -->"
 MARK_END = "<!-- AUTO-LIST-END -->"
-SKIP_DIRS = {".git", "__pycache__", ".workbuddy", "node_modules"}
+# deps = 离线 vendored 第三方依赖（jieba/pypinyin/pyyaml），非技能说明文档，跳过扫描
+SKIP_DIRS = {".git", "__pycache__", ".workbuddy", "node_modules", "deps"}
 
 
 def walk_dirs(root):
