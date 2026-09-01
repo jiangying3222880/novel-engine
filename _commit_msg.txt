@@ -1,5 +1,0 @@
-﻿docs: 补 templates/identity/_README.md，消除子目录"缺说明"标注
-
-doc_sync 只为有 _README 的目录生成自动清单，templates/identity/
-一直缺 _README.md，导致 templates/_README 的"### 子目录"永远
-标注"缺说明"。补上身份档案模板的说明文档。
