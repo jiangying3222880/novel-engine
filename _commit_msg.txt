@@ -1,8 +1,0 @@
-﻿fix(outsource): 外包提示词补【身份】约束（作者身份人格锚点）
-
-问题：外包提示词只打包任务/状态/目标/手法，漏了"作者身份"——
-外部 chat 读不到技能身份路由，裸工具人写法导致风格/声线不稳。
-
-修复：
-- templates/outsource-prompt.md：模板加【身份】块（题材/书/平台调性/目标读者/作者职责），使用说明加"身份编译"条（从 config + library/identities/作者.md 提取，项目覆盖优先）
-- references/chat-outsource.md：打包清单加【身份】项
