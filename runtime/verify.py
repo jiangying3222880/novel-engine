@@ -11,9 +11,12 @@ Novel Engine v1.4 流程门禁（verify.py）
 
 检查项：
   [结构]   项目目录骨架（真相/元数据/正文/叙事总览…）
+  [MOC]    根叙事总览.md 存在（init 即强制，防初始化漏建）
   [防污染] 真相文件禁止双链（机器可读）
   [骨架]   叙事总览 6 子页 + 根 MOC
   [双链]   展示层链接目标可解析（未写章节悬空=警告非失败）
+  [导航]   快速导航双链必须精确文件名（防语义名 [[角色总览]] 悬空）
+  [角色卡] 角色总览双链必须已有角色卡文件（防未出场角色转双链）
   [命名]   章节链接必须 4 位章号（第000X章）
   [配置]   novel-config.json 合法性（min/max/命名模板）
 
@@ -52,6 +55,9 @@ def main():
                 '正文', '大纲', '设定', '配置/身份', '素材池', '叙事总览']
         missing = [d for d in dirs if not os.path.isdir(os.path.join(root, d))]
         check('目录结构', not missing, '缺失: ' + ','.join(missing) if missing else '')
+        # 1b 根 MOC 存在性（init 也强制：曾因初始化漏建，仅 narrative/all 才报 → 改为 init 即查）
+        moc_ok = os.path.isfile(os.path.join(root, '叙事总览.md'))
+        check('根MOC存在', moc_ok, '缺 叙事总览.md（根MOC入口）' if not moc_ok else '')
 
     # 2 数据层防污染（机器可读：truth + meta 均禁双链）
     polluted = []
@@ -102,6 +108,37 @@ def main():
         elif warns:
             detail = '仅未写章节悬空(允许): ' + ','.join(warns)
         check('双链可解析', not hard, detail)
+
+        # 4b 导航双链精确文件名（防 [[角色总览]] 语义名 vs [[01_角色总览]] 实际文件名不一致）
+        nav_bad = []
+        nav_file = os.path.join(nar, '00_作品总览.md')
+        if os.path.isfile(nav_file):
+            nav_txt = open(nav_file, encoding='utf-8').read()
+            if '## 快速导航' in nav_txt:
+                nav_sec = nav_txt.split('## 快速导航', 1)[1]
+                for m in re.finditer(r'\[\[([^\]|#]+)', nav_sec):
+                    nm = m.group(1).strip()
+                    if nm and not os.path.isfile(os.path.join(nar, nm + '.md')):
+                        nav_bad.append(nm)
+        check('导航双链精确', not nav_bad, '语义名缺失: ' + ','.join(nav_bad) if nav_bad else '')
+
+        # 4c 角色卡可解析（防未出场角色在 01_角色总览 写双链导致悬空）
+        card_bad = []
+        role_file = os.path.join(nar, '01_角色总览.md')
+        card_dir = os.path.join(nar, '角色卡')
+        if os.path.isfile(role_file):
+            role_txt = open(role_file, encoding='utf-8').read()
+            for m in re.finditer(r'\[\[([^\]|#]+)', role_txt):
+                nm = m.group(1).strip()
+                if not nm:
+                    continue
+                if re.match(r'^0\d_', nm):  # 子页导航 → 指向叙事总览目录
+                    if not os.path.isfile(os.path.join(nar, nm + '.md')):
+                        card_bad.append(nm + '(子页缺)')
+                else:  # 角色名 → 必须已有角色卡（落库联动生成后才可双链）
+                    if not os.path.isfile(os.path.join(card_dir, nm + '.md')):
+                        card_bad.append(nm + '(角色卡缺)')
+        check('角色卡可解析', not card_bad, '缺失: ' + ','.join(card_bad) if card_bad else '')
 
         # 5 章节链接命名规范（4位章号）
         bad_chap = []

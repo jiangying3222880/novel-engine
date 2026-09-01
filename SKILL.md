@@ -190,6 +190,7 @@ version: 1.4.0
 
 - 每个目录的 `_README.md` = 人工语义头 + 自动文件清单（由 `runtime/doc_sync.py` 维护，勿手改自动区）。
 - **修改技能文件后**：运行 `python runtime/doc_sync.py update` 刷新各目录自动清单；发布前运行 `python runtime/doc_sync.py check`（退出码 1 = 存在缺失/过期的说明文档）。
+- **正文/文档锚点改写统一走 `runtime/safe_edit.py`**（先校验全部锚点存在→缺失即报错不写盘；`--replace "old|||new"` 可多次、`--check-only` 只校验、`--first-only` 只替换首处）。禁止用裸 Python 内联脚本做锚点替换（易丢内存/引号不匹配）。
 - **大文件拆分原则**：超 15KB 的文档，把"示范/素材/清单"类大块下沉独立子文件，主文件保留骨架 + 链接（参照 `references/anti-ai.md` → `anti-ai-示范库.md` / `anti-ai-词级信号.md`、`human-signal-zh.md` → `human-signal-模式库.md`）。引用一律走主文件入口，子文件按需展开。
 
 ## 文件索引
