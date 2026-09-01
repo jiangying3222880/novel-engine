@@ -18,7 +18,7 @@ Novel Engine v1.4 流程门禁（verify.py）
   [导航]   快速导航双链必须精确文件名（防语义名 [[角色总览]] 悬空）
   [角色卡] 角色总览双链必须已有角色卡文件（防未出场角色转双链）
   [命名]   章节链接必须 4 位章号（第000X章）
-  [配置]   novel-config.json 合法性（min/max/命名模板）
+  [配置]   novel-config.json 合法性（target_word_count/命名模板）
 
 退出码：0=全部通过  1=存在失败项
 """
@@ -154,10 +154,10 @@ def main():
     if os.path.isfile(cfg_path):
         try:
             cfg = json.load(open(cfg_path, encoding='utf-8-sig'))  # 容忍 Windows BOM
-            ok = (isinstance(cfg.get('min_word_count'), int)
-                  and isinstance(cfg.get('max_word_count'), int)
+            ok = (isinstance(cfg.get('target_word_count'), int)
+                  and cfg.get('target_word_count') > 0
                   and 'body_filename_template' in cfg)
-            check('config合法性', ok, '缺 min/max_word_count 或 body_filename_template' if not ok else '')
+            check('config合法性', ok, '缺 target_word_count 或 body_filename_template' if not ok else '')
         except Exception as e:
             check('config合法性', False, f'JSON 解析失败: {e}')
     else:

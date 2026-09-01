@@ -1,0 +1,15 @@
+﻿refactor(config): 字数改为 target_word_count 单字段+验收±15%
+
+按用户方案：config 去掉 min/max 双字段，只保留 target_word_count；
+字数验收按 target±15% 动态判定，config 不存区间。
+用户给区间（6000-8000）→ target 取中点（7000）；给单值直接用。
+
+改动 5 处：
+- templates/novel-config.json：min/max → target_word_count
+- runtime/verify.py：config 校验改查 target_word_count（int>0）
+- references/writing-guide.md：字数硬校验改 target±15%
+- references/project-setup.md：入口A/B 写 target 单字段
+- SKILL.md：初始化核对表改要求字数
+
+验证：新 schema PASS、旧 schema（min/max）正确 FAIL 拦截；
+测试项目 config 已迁移 target=7000。

@@ -3,8 +3,7 @@
   "author": "你的笔名",
   "genre": "通用网文",
   "perspective": "第三人称限知视角",
-  "min_word_count": 6000,
-  "max_word_count": 8000,
+  "target_word_count": 6000,
   "tone": "冷峻、紧凑、强调感官细节",
   "rules": {
     "max_context_loading_kb": 12,
@@ -14,5 +13,5 @@
   },
   "current_arc": "第一卷",
   "body_filename_template": "第000X章 {title}.md",
-  "notes": "首次使用时把 project_name/author/genre 改成你的作品信息。min_word_count/max_word_count 为每章字数区间：用户给区间则直接用；给单值（如3000）则自动取 ±15%（min=2550, max=3450）。body_filename_template 决定正文文件名格式（4位章号+空格+标题）。"
+  "notes": "首次使用时把 project_name/author/genre 改成你的作品信息。target_word_count 为每章要求字数：用户给区间（如6000-8000）则取中点（7000）；给单值（如3000）则直接用。字数验收按 target±15% 判定（写作流程执行，非本文件）。body_filename_template 决定正文文件名格式（4位章号+空格+标题）。"
 }
