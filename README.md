@@ -25,9 +25,21 @@
 
 ## 快速使用
 
+> 👉 **第一次拿到本技能包 / 想了解怎么装、怎么跑**：先看 **[INSTALL.md](INSTALL.md)**（安装步骤 + 目录总览 + 5 分钟上手 + FAQ）。本 README 是设计文档。
 
+### 0. 安装依赖（可选，检索用）
 
-1. 将 `novel-engine/` 整个目录安装为技能
+```bash
+pip install -r runtime/requirements.txt
+```
+
+> 不装也能写（纯写作不依赖 Python）；装了才有"检索"功能。ZVEC 语义检索为可选增强，不装自动降级 BM25 词法检索。
+
+### 1. 安装为技能
+
+将 `novel-engine/` 整个目录复制到助手的技能目录（如豆包的 `.user_skills/novel-engine/`），保持目录名与 `SKILL.md` 的 `name` 一致。
+
+2. 对 Agent 说 "开新书" 或 "导入已有项目"，进入阶段⓪初始化
 
 2. 对 Agent 说 "开新书" 或 "导入已有项目"，进入阶段⓪初始化
 
@@ -36,6 +48,8 @@
 4. 说 "写第 1 章" 启动五阶段 SOP
 
 5. 新角色首次登场时，Agent 自动按模板建立基线档案
+
+**短故事单篇**：说 "写个短故事" / "抖音推文风" → 一次成篇（不建项目），见 `references/short-story.md`。
 
 ## 五阶段工作流
 
@@ -90,7 +104,7 @@
 
 
 
-* SKILL.md 为路由中枢（三铁律+五阶段+初始化核对+流程门禁，当前约 16KB；体积约束适用于状态文件，SKILL 需保持精简，超标时应拆分到 references/）
+* SKILL.md 为路由中枢（三铁律+五阶段+初始化核对+流程门禁，当前约 14.3KB；体积约束适用于状态文件，SKILL 需保持精简，超标时应拆分到 references/）
 
 * 单状态文件 ≤ 8KB
 
@@ -119,9 +133,9 @@
 | `SKILL.md`        | 路由入口 + 3 铁律 + 5 阶段 SOP 概要                                                                                                          |
 | `routes/index.md` | **路由台账（唯一真相源）**                                                                                                                    |
 | \\                |                                                                                                                                    |
-| `references/`     | 五阶段详细参考（project-setup / session-start / writing-guide / self-review / anti-ai / hooks-and-memory / workflow-detail / prompt-defense / retrieval / human-signal-zh / chat-outsource / change-report-spec / identity-routing） |
+| `references/`     | 五阶段详细参考（project-setup / session-start / writing-guide / self-review / anti-ai / hooks-and-memory / workflow-detail / prompt-defense / retrieval / human-signal-zh / chat-outsource / change-report-spec / identity-routing / short-story） |
 | `library/`        | 用户级素材库（techniques /genres/knowledge /platforms/identities /market-research）                                                        |
-| `templates/`      | 模板层（novel-config /chapter/voice-profile /truth/pools /meta/narrative /log-template）                                                |
+| `templates/`      | 模板层（novel-config /chapter/voice-profile /truth/pools /meta/narrative /log-template /short-story-template）                                                |
 
 **项目级文件**（每本书独立，不在技能目录中）：
 
