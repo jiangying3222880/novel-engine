@@ -3,7 +3,7 @@
 > ⬆️ **上游**：`library/_README.md`（用户级素材库总览）
 > 📚 **相关参考**：
 > - `library/techniques/` — 通用写作方法论（先学通用，再学题材）
-> - `templates/素材池/_README.md` — 项目级素材池（本书专用）
+> - `templates/pools/_README.md` — 项目级素材池（本书专用）
 > ⬇️ **下游**：项目初始化（选定题材包）/ 写作阶段（按需加载）
 -->
 

@@ -1,7 +1,7 @@
 ﻿<!--
 > 📍 **位置**：素材池 → 实战样本库（samples/）
 > ⬆️ **上游**：对标书拆解阶段（Agent 按5条入池标准筛选）
-> ⚠️ **必读前置**：`templates/素材池/拆解方法论.md` → Reference 入池5条标准
+> ⚠️ **必读前置**：`templates/pools/拆解方法论.md` → Reference 入池5条标准
 > 📚 **相关参考**：
 > - `素材池/reference/techniques/` — 写作技巧方法论（先看原理知道方向）
 > - `references/anti-ai.md` — 叙事质感指南（判断样本质量的标准）

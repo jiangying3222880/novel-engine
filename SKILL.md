@@ -99,13 +99,13 @@ version: 1.4.0
 |---|------|
 | 拆哪些内容 | 对标书 ×5 池：`author_dna`(句式/节奏/词汇/文风) · `planner`(卷结构/爽点密度/伏笔编排) · `reference`(精选段落 200-500字) · `unit`(前20章关键事件) · `knowledge`(可溯源领域知识) |
 | 什么入池 | DNA=有可复现模式 · Planner=有清晰结构 · Reference=过非AI味5条≥4条 · Unit=有"起因→决策→结果→情绪"四闭环 · Knowledge=可溯源可复用。Agent 是"筛选+分析"不是"复制粘贴" |
-| 格式如何 | 填空式模板见 `templates/素材池/拆书规范.md`；各池完整字段模板见 `author_dna/_template.md` / `planner/_template.md` / `unit/_template.md` / `reference/_README.md` / `knowledge/_README.md` |
+| 格式如何 | 填空式模板见 `templates/pools/拆书规范.md`；各池完整字段模板见 `author_dna/_template.md` / `planner/_template.md` / `unit/_template.md` / `reference/_README.md` / `knowledge/_README.md` |
 
-> 完整执行手册：`templates/素材池/拆解方法论.md`（拆书前必读）· 池子架构：`templates/素材池/_README.md`
+> 完整执行手册：`templates/pools/拆解方法论.md`（拆书前必读）· 池子架构：`templates/pools/_README.md`
 向用户提供以上选项，用户决定对标书和拆解深度后：
-1. 从 `templates/素材池/` 初始化项目的 `素材池/` 目录
+1. 从 `templates/pools/` 初始化项目的 `素材池/` 目录
 2. Agent 执行快速预览 → 用户确认 → Agent 执行深度拆解
-3. 拆解判断标准见 `templates/素材池/拆书规范.md` + `_README.md`
+3. 拆解判断标准见 `templates/pools/拆书规范.md` + `_README.md`
 4. 拆解完成后进入①。
 
 ---
@@ -123,7 +123,7 @@ version: 1.4.0
   - `故事/真相/relationships.md` —— 关系网络
   - `故事/真相/objects.md` —— 物品状态（关键道具持有链）
   - `故事/真相/timeline.md` —— 时间线（当前故事时间锚点）
-  - `大纲/细纲.md`（如存在且 ≤2KB）—— 本章承诺（核心事件/情绪弧/伏笔埋收/字数预估）必读，防细纲→规划脱节（E 回填）
+  - `大纲/细纲_第X章.md`（本章对应细纲，如存在且 ≤2KB）—— 本章承诺（核心事件/情绪弧/伏笔埋收/字数预估）必读，防细纲→规划脱节（E 回填）
   > 若文件不存在，从 `templates/truth/` 初始化后再继续。
 - **推荐加载（按场景）**：
   - `素材池/reference/techniques/` 对应技巧 —— 知道方法论
@@ -197,7 +197,7 @@ version: 1.4.0
 
 - 单状态文件 ≤ 8KB
 - 单次对话强制加载总量 ≤ 12KB
-- SKILL.md 本身 ≤ 8KB（路由入口 + 五阶段SOP概要；detail 下沉 `references/workflow-detail.md`）
+- SKILL.md 为路由中枢（当前约 16KB，含三铁律/初始化核对/流程门禁/五阶段SOP；超标时 detail 下沉 references/，避免 Agent 加载过重）
 
 ## 文件索引
 

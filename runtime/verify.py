@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Novel Engine v1.4 流程门禁（verify.py）
@@ -53,16 +53,17 @@ def main():
         missing = [d for d in dirs if not os.path.isdir(os.path.join(root, d))]
         check('目录结构', not missing, '缺失: ' + ','.join(missing) if missing else '')
 
-    # 2 真相防污染（机器可读）
-    truth_dir = os.path.join(root, '故事/真相')
+    # 2 数据层防污染（机器可读：truth + meta 均禁双链）
     polluted = []
-    if os.path.isdir(truth_dir):
-        for f in sorted(os.listdir(truth_dir)):
-            if f.endswith('.md'):
-                p = os.path.join(truth_dir, f)
-                if BANNED in open(p, encoding='utf-8').read():
-                    polluted.append(f)
-    check('真相防污染', not polluted, '含双链: ' + ','.join(polluted) if polluted else '')
+    for data_dir in ['故事/真相', '故事/元数据']:
+        d = os.path.join(root, data_dir)
+        if os.path.isdir(d):
+            for f in sorted(os.listdir(d)):
+                if f.endswith('.md'):
+                    p = os.path.join(d, f)
+                    if BANNED in open(p, encoding='utf-8').read():
+                        polluted.append(os.path.join(data_dir, f))
+    check('数据层防污染', not polluted, '含双链: ' + ','.join(polluted) if polluted else '')
 
     # 3-5 叙事总览层
     if args.scope in ('narrative', 'all'):

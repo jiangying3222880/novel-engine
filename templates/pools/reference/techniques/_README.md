@@ -1,7 +1,7 @@
 ﻿<!--
 > 📍 **位置**：素材池 → 写作技巧方法论（techniques/）
 > ⬆️ **上游**：对标书拆解时提炼 + 方法论整理
-> ⚠️ **必读前置**：`templates/素材池/拆解方法论.md`
+> ⚠️ **必读前置**：`templates/pools/拆解方法论.md`
 > 📚 **相关参考**：
 > - `素材池/reference/samples/` — 实战样本（看具体怎么落地的）
 > - `references/writing-guide.md` — 冰山法则 + 对话不对称

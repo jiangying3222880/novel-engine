@@ -1,8 +1,6 @@
 ﻿# Novel Engine v1.4
 
-工业级网文写作 Skill：纯 Markdown 状态机（主）+ 检索运行时（
-
-untime/，BM25+FTS 已落地，ZVEC 规划中，唯一 Python 部件）。**技能只存模板，项目存内容。**
+工业级网文写作 Skill：纯 Markdown 状态机（主）+ 检索运行时（runtime/，BM25+FTS 已落地，ZVEC 可选增强，唯一 Python 部件）。**技能只存模板，项目存内容。**
 
 ## 解决什么问题
 
@@ -92,7 +90,7 @@ untime/，BM25+FTS 已落地，ZVEC 规划中，唯一 Python 部件）。**技�
 
 
 
-* SKILL.md ≤ 5KB（路由入口）
+* SKILL.md 为路由中枢（三铁律+五阶段+初始化核对+流程门禁，当前约 16KB；体积约束适用于状态文件，SKILL 需保持精简，超标时应拆分到 references/）
 
 * 单状态文件 ≤ 8KB
 

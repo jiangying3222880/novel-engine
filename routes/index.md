@@ -34,7 +34,7 @@
 ```
 上游：SKILL.md（"开新书/导入"触发）
 前置：无
-相关：templates/truth/ · templates/voice-profile-template.md · templates/素材池/拆书规范.md（拆什么/入池/格式三问）· templates/素材池/_README.md · templates/素材池/拆解方法论.md
+相关：templates/truth/ · templates/voice-profile-template.md · templates/pools/拆书规范.md（拆什么/入池/格式三问）· templates/pools/_README.md · templates/pools/拆解方法论.md
 下游：references/session-start.md（初始化完成 → 阶段①）
 ```
 
@@ -118,7 +118,7 @@
 | `library/identities/` | 身份档案模板（作者/编剧/编辑/读者） | ⓪/全程 |
 | `library/market-research.md` | 市场调查三档路由 | ⓪ |
 | `library/packaging.md` | 卖点包装 + 反套路提案（doubao 融合） | ⓪/投稿/包装 |
-| `templates/素材池/` | 素材池模板（author_dna/planner/unit/knowledge/reference + 拆解方法论） | ⓪ |
+| `templates/pools/` | 素材池模板（author_dna/planner/unit/knowledge/reference + 拆解方法论） | ⓪ |
 
 ## 四、素材库导航（用户级 + 项目级）
 

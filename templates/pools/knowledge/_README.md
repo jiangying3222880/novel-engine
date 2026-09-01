@@ -1,10 +1,10 @@
 ﻿<!--
 > 📍 **位置**：素材池 → 知识池（Knowledge Pool）
 > ⬆️ **上游**：对标书拆解阶段 / 自行整理补充
-> ⚠️ **必读前置**：`templates/素材池/拆解方法论.md` → Knowledge 入池标准
+> ⚠️ **必读前置**：`templates/pools/拆解方法论.md` → Knowledge 入池标准
 > 📚 **相关参考**：
-> - `templates/素材池/_README.md` — 素材池总览
-> - `templates/素材池/拆解方法论.md` — 拆解执行手册
+> - `templates/pools/_README.md` — 素材池总览
+> - `templates/pools/拆解方法论.md` — 拆解执行手册
 > ⬇️ **下游**：阶段②写作（涉及专业领域时调用查证）
 -->
 

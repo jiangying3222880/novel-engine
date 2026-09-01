@@ -8,12 +8,12 @@
 > - `library/genres/` — 题材风格库
 > - `library/knowledge/` — 通用知识库
 > 📚 **相关参考**：
-> - `templates/素材池/拆解方法论.md` — Agent 拆书执行手册（拆书前必读）
-> - `templates/素材池/author_dna/_template.md` — Author DNA 模板
-> - `templates/素材池/planner/_template.md` — Planner 结构模板
-> - `templates/素材池/unit/_template.md` — Unit 事件单元模板
-> - `templates/素材池/reference/_README.md` — 文学素材池说明
-> - `templates/素材池/knowledge/_README.md` — 知识池说明
+> - `templates/pools/拆解方法论.md` — Agent 拆书执行手册（拆书前必读）
+> - `templates/pools/author_dna/_template.md` — Author DNA 模板
+> - `templates/pools/planner/_template.md` — Planner 结构模板
+> - `templates/pools/unit/_template.md` — Unit 事件单元模板
+> - `templates/pools/reference/_README.md` — 文学素材池说明
+> - `templates/pools/knowledge/_README.md` — 知识池说明
 > ⬇️ **下游**：
 > - 阶段①规划（加载 DNA + Planner 校准风格和节奏）
 > - 阶段②写作（按需加载 Reference + Unit 参考）
