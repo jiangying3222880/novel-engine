@@ -18,7 +18,7 @@
 - `library/` （有说明）
 - `references/` （有说明）
 - `routes/` （有说明）
-- `runtime/` （缺说明，运行 doc_sync update 生成）
+- `runtime/` （有说明）
 - `story/` （有说明）
 - `templates/` （有说明）
 <!-- AUTO-LIST-END -->
