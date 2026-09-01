@@ -30,7 +30,7 @@
 | anti-ai-词级信号.md | 3.8K | 6. 词级 AI 味信号（诊断 → 真人引导，不是禁止） | 2026-09-01 |
 | anti-ai.md | 10.1K | 阶段④：叙事质感指南 | 2026-09-01 |
 | change-report-spec.md | 3.0K | Change Report 格式规范 | 2026-09-01 |
-| chat-outsource.md | 4.5K | 1. 何时用 / 何时不用 | 2026-08-31 |
+| chat-outsource.md | 4.8K | 1. 何时用 / 何时不用 | 2026-09-01 |
 | hooks-and-memory.md | 6.6K | 阶段⑤：状态落库与 Change Report | 2026-09-01 |
 | human-signal-zh.md | 11.0K | 去 AI 味方法库（human-signal 沉淀） | 2026-09-01 |
 | human-signal-模式库.md | 5.2K | 五、高频 AI 味模式库（完整版 · 04 §1 四模式的扩充） | 2026-09-01 |
