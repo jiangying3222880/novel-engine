@@ -35,7 +35,7 @@
 
 ### 子目录
 
-- `identity/` （缺说明，运行 doc_sync update 生成）
+- `identity/` （有说明）
 - `meta/` （有说明）
 - `narrative/` （有说明）
 - `pools/` （有说明）
