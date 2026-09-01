@@ -15,7 +15,7 @@
     ▼
 [阶段② 写作] 读取 writing-guide.md
     │ （按需加载 素材池/reference/samples/ 同类场景样本）
-    │ 输出：正文初稿（无 YAML；元数据写 故事/元数据/chapter_XXX.md，功能三）
+    │ 输出：正文初稿（无 YAML；元数据写 故事/元数据/chapter_XXXX.md，功能三）
     ▼
 [阶段③ 自检] 读取 self-review.md
     │ 4问行为验证检测（不是"自夸"，是检测行为模式）
@@ -73,7 +73,7 @@ Agent 读取：writing-guide.md（内化写作原则）
 Agent 执行：
   1. 有对话戏 → 先在脑中完成嘴心5问
   2. 按规划清单写作
-  3. 写完后元数据写入 故事/元数据/chapter_XXX.md（含 change_summary + review_status，正文无 YAML）
+  3. 写完后元数据写入 故事/元数据/chapter_XXXX.md（含 change_summary + review_status，正文无 YAML）
 Agent 输出：完整正文初稿
 ```
 

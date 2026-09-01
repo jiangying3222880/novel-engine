@@ -1,10 +1,10 @@
 ﻿<!--
-> 📍 **位置**：项目 `故事/元数据/chapter_XXX.md`
+> 📍 **位置**：项目 `故事/元数据/chapter_XXXX.md`
 > ⬆️ **上游**：功能三 YAML 迁移 —— 原章节 Frontmatter 迁出正文，集中到此
 > ⚠️ **用途**：承接原 Frontmatter 的 causal_links / hooks / emotion_arc / change_summary 等元数据
 > 📚 **相关参考**：`templates/meta/index.md`（索引）· `references/change-report-spec.md`（⑤落库）
 -->
-# 章节元数据：第 X 章
+# 章节元数据：第 000X 章
 
 - **标题**：（章节标题）
 - **字数量级**：（预估/实际字数）

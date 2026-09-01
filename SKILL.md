@@ -15,7 +15,7 @@ version: 1.4.0
 ## 写作三铁律（写前必读）
 
 1. **写前必读**：创作前必须且仅读取项目目录下 `故事/真相/` 6个状态文件（characters/world/hooks/relationships/objects/timeline）+ `novel-config.json` + `故事/元数据/上一章` + `故事/元数据/index.md`。禁止全量加载设定集——全量加载会导致上下文溢出、Agent 跳读、声线崩塌。
-2. **章节优先（v1.4 索引驱动）**：以"章节"为唯一基本单元。章节元数据（causal_links / hooks / emotion_arc / change_summary）统一记入 `故事/元数据/chapter_XXX.md`（集中式索引，正文文件保持干净无 YAML）；进度唯一真相源 = `故事/元数据/index.md`。状态文件（故事/真相/）维护 5 通用字段（status / transition / valid_until / visibility / source_chapter），供检索（功能八）与一致性校验共用。
+2. **章节优先（v1.4 索引驱动）**：以"章节"为唯一基本单元。章节元数据（causal_links / hooks / emotion_arc / change_summary）统一记入 `故事/元数据/chapter_XXXX.md`（集中式索引，正文文件保持干净无 YAML）；进度唯一真相源 = `故事/元数据/index.md`。状态文件（故事/真相/）维护 5 通用字段（status / transition / valid_until / visibility / source_chapter），供检索（功能八）与一致性校验共用。
 3. **写后自检**：初稿完成后必须执行 4 问行为验证自检。无正文 `evidence_ids` 证据链的自检报告一律判定无效，必须重检。修正最多 3 轮，保留 Best Version。
 
 ---
@@ -123,7 +123,7 @@ version: 1.4.0
   - `故事/真相/relationships.md` —— 关系网络
   - `故事/真相/objects.md` —— 物品状态（关键道具持有链）
   - `故事/真相/timeline.md` —— 时间线（当前故事时间锚点）
-  - `大纲/细纲_第X章.md`（本章对应细纲，如存在且 ≤2KB）—— 本章承诺（核心事件/情绪弧/伏笔埋收/字数预估）必读，防细纲→规划脱节（E 回填）
+  - `大纲/细纲_第000X章.md`（本章对应细纲，如存在且 ≤2KB）—— 本章承诺（核心事件/情绪弧/伏笔埋收/字数预估）必读，防细纲→规划脱节（E 回填）
   > 若文件不存在，从 `templates/truth/` 初始化后再继续。
 - **推荐加载（按场景）**：
   - `素材池/reference/techniques/` 对应技巧 —— 知道方法论
@@ -147,7 +147,7 @@ version: 1.4.0
 - 按需调取：`素材池/reference/samples/` 同类场景样本
 - 执行：按规划清单+章态写作，有重点对话戏时先做嘴心5问隐式思考
 - 写前防御（`references/prompt-defense.md` §4.1）：动笔前先输出**防 AI 味声明**（本场景 AI 味风险点 + 人感抓手），缺失即重来
-- 产出：**干净正文初稿**（无 YAML；元数据写入 `故事/元数据/chapter_XXX.md`）
+- 产出：**干净正文初稿**（无 YAML；元数据写入 `故事/元数据/chapter_XXXX.md`）
 
 ### 阶段③：行为验证自检 (Reviewing)
 - 读取参考：`references/self-review.md`
@@ -166,8 +166,8 @@ version: 1.4.0
 - 执行：
   1. 生成本章 **Change Report**（角色变化/新伏笔/伏笔回收/时间线/世界规则变化/关系变化/物品状态）
   2. 根据 Change Report 更新 `故事/真相/` 下的 6 个状态文件（含 objects/timeline）
-  3. 更新 `故事/元数据/chapter_XXX.md`（change_summary）+ `故事/元数据/index.md`（进度）
-  4. 写 `故事/日志/第XXX章.md` 流程日志（5 阶段合一）
+  3. 更新 `故事/元数据/chapter_XXXX.md`（change_summary）+ `故事/元数据/index.md`（进度）
+  4. 写 `故事/日志/第000X章.md` 流程日志（5 阶段合一）
   5. 联动更新 `叙事总览/`（功能五）+ 重建检索索引（功能八）：
      - BM25+FTS（默认启用，零依赖，必跑）：`python runtime/bm25_fts.py build --root <项目根>`
      - ZVEC（可选增强，仅装了 zvec SDK 时跑）：`python runtime/index.py build --root <项目根>`
@@ -216,7 +216,7 @@ version: 1.4.0
 | ④ 提示词防御 | `references/prompt-defense.md` |
 | ①/⑤ 检索 | `references/retrieval.md` |
 | ⑤ 格式 | `references/change-report-spec.md` |
-| ⑤ 日志 | `templates/log-template.md`（故事/日志/第XXX章.md） |
+| ⑤ 日志 | `templates/log-template.md`（故事/日志/第000X章.md） |
 | ②③④ 去味 | `references/human-signal-zh.md`（深度方法库：四模式+27模式+人感注入） |
 | 外包分支 | `references/chat-outsource.md` |
 

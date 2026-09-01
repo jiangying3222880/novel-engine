@@ -95,9 +95,9 @@
 
 ### Step 3：写入元数据 + 日志 + 索引（功能三/四/八）
 
-- **元数据**：写入 `故事/元数据/chapter_XXX.md`（causal_links / hooks / emotion_arc / change_summary）。**正文文件保持干净无 YAML**（功能三 YAML 迁移）。
+- **元数据**：写入 `故事/元数据/chapter_XXXX.md`（causal_links / hooks / emotion_arc / change_summary）。**正文文件保持干净无 YAML**（功能三 YAML 迁移）。
 - **进度**：更新 `故事/元数据/index.md`（进度唯一真相源）。
-- **流程日志**：写 `故事/日志/第XXX章.md`（5 阶段合一，模板见 `templates/log-template.md`）。
+- **流程日志**：写 `故事/日志/第000X章.md`（5 阶段合一，模板见 `templates/log-template.md`）。
 - **联动总览**：更新 `叙事总览/`（功能五：新角色卡/伏笔卡/章节地图）。
 - **增量索引**：ZVEC 可用时运行 `python runtime/index.py upsert --chapter N`（功能八）。
 

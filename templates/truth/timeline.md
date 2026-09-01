@@ -9,7 +9,7 @@
 # 时间线（timeline.md · 功能七新增）
 # 用途：全局时间轴，章号 ↔ 故事时间 ↔ 事件
 # 防剧透：按 in_story_time 排序时，未来事件自动后置；visibility 区分作者真相/读者已知
-# 5 通用字段：status / transition / valid_until / visibility / source_chapter
+# 5 通用字段：status / transition / valid_until / visibility / source_chapter(4位章号)
 # 阶段①强制加载；每章结束后通过 Change Report 更新
 ---
 

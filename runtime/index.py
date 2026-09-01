@@ -291,7 +291,7 @@ def _iter_truth_files(root):
 
 def _iter_meta_docs(root):
     """故事/元数据/chapter_*.md → 每条一条 meta 文档。
-    修复 BUG-5 问题 2：章号从文件名解析（chapter_007.md → 7），不再依赖正文里的 chapter_id 字段。"""
+    修复 BUG-5 问题 2：章号从文件名解析（chapter_0007.md → 7），不再依赖正文里的 chapter_id 字段。"""
     meta_dir = os.path.join(root, "故事", "元数据")
     docs = []
     if not os.path.isdir(meta_dir):

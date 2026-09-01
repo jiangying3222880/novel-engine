@@ -81,5 +81,5 @@
 1. **必须生成**：每章写作完成后必须生成 Change Report，不得跳过
 2. **只记变化**：没有变化的项目写"无变化"或直接删除该小节
 3. **引用原文**：伏笔回收、角色重大变化等关键节点，必须附上原文片段作为证据
-4. **同步更新**：Change Report 生成后，根据报告内容更新 `故事/真相/` 下的 6 个状态文件（含 objects/timeline）+ `故事/元数据/chapter_XXX.md`（change_summary）+ `故事/元数据/index.md`（进度）+ `故事/日志/第XXX章.md`（流程日志）
+4. **同步更新**：Change Report 生成后，根据报告内容更新 `故事/真相/` 下的 6 个状态文件（含 objects/timeline）+ `故事/元数据/chapter_XXXX.md`（change_summary）+ `故事/元数据/index.md`（进度）+ `故事/日志/第000X章.md`（流程日志）
 5. **可追溯**：Change Report 与正文一同保存，后续章节可回溯任意时间点的状态

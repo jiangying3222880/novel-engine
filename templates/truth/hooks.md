@@ -12,11 +12,11 @@
 # status: active（生效中） / resolved（已回收） / abandoned（已废弃） / pending（未埋设）
 # v1.4 功能七 G 定稿：新增【推进状态 status_progress】+【下一回收点 next_resolved_at】两列
 # status_progress: pending(未动) / partial(部分揭示) / due(临近回收)
-# 5 通用字段：status / transition / valid_until / visibility / source_chapter
+# 5 通用字段：status / transition / valid_until / visibility / source_chapter(4位章号)
 # 阶段①强制加载；每章结束后通过 Change Report 更新
 ---
 
-| ID | 类型 | 内容 | 埋设章(source_chapter) | 计划回收章 | 实际回收章 | 推进状态 | 下一回收点 | 状态 | 可见性 |
+| ID | 类型 | 内容 | 埋设章(source_chapter(4位章号)) | 计划回收章 | 实际回收章 | 推进状态 | 下一回收点 | 状态 | 可见性 |
 |----|------|------|--------|------------|------------|----------|------------|------|--------|
 | h_001 | mystery/emotion/chekhov | （伏笔内容） | 1 | （计划章节） | - | pending | - | active | public |
 | h_002 | （类型） | （内容） | （章节） | （计划章节） | - | pending | - | active | public |

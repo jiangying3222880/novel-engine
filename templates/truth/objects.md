@@ -8,11 +8,11 @@
 ---
 # 物品状态库（objects.md · 功能七新增）
 # 状态机 artifact：owned · lost · destroyed · sealed · transferred
-# 5 通用字段：status / transition / valid_until / visibility / source_chapter
+# 5 通用字段：status / transition / valid_until / visibility / source_chapter(4位章号)
 # 阶段①强制加载；每章结束后通过 Change Report 更新
 ---
 
-| 物品ID | 名称 | 状态 | 当前持有者 | 持有链历史 | 关键性 | 产生于章(source_chapter) | 可见性(visibility) | 备注 |
+| 物品ID | 名称 | 状态 | 当前持有者 | 持有链历史 | 关键性 | 产生于章(source_chapter(4位章号)) | 可见性(visibility) | 备注 |
 |--------|------|------|-----------|-----------|--------|--------------------------|--------------------|------|
 | obj_001 | （物品名） | owned | （持有者） | 谁→谁→谁 | plot-critical / 普通 | 1 | public | （用途/去向） |
 

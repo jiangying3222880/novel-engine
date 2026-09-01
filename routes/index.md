@@ -112,7 +112,7 @@
 | `templates/chapter-template.md` | 章节 Frontmatter 模板 | ② |
 | `templates/voice-profile-template.md` | 角色声线基线档案模板 | ① |
 | `templates/truth/` | 6个状态文件模板（characters/world/hooks/relationships/objects/timeline） | ⓪ |
-| `templates/meta/` | 章节元数据模板（chapter_XXX.md + index.md 索引） | ⓪/② |
+| `templates/meta/` | 章节元数据模板（chapter_XXXX.md + index.md 索引） | ⓪/② |
 | `templates/narrative/` | Obsidian 叙事总览模板（00作品/01角色/02世界观/03伏笔/04地图/05关系网） | ⑤ |
 | `templates/log-template.md` | 每章流程日志（5阶段合一） | ①~⑤ |
 | `library/identities/` | 身份档案模板（作者/编剧/编辑/读者） | ⓪/全程 |
