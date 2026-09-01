@@ -99,7 +99,7 @@ version: 1.4.0
 |---|------|
 | 拆哪些内容 | 对标书 ×5 池：`author_dna`(句式/节奏/词汇/文风) · `planner`(卷结构/爽点密度/伏笔编排) · `reference`(精选段落 200-500字) · `unit`(前20章关键事件) · `knowledge`(可溯源领域知识) |
 | 什么入池 | DNA=有可复现模式 · Planner=有清晰结构 · Reference=过非AI味5条≥4条 · Unit=有"起因→决策→结果→情绪"四闭环 · Knowledge=可溯源可复用。Agent 是"筛选+分析"不是"复制粘贴" |
-| 格式如何 | 填空式模板见 `templates/pools/拆书规范.md`；各池完整字段模板见 `author_dna/_template.md` / `planner/_template.md` / `unit/_template.md` / `reference/_README.md` / `knowledge/_README.md` |
+| 格式如何 | 填空式模板见 `templates/pools/拆书规范.md`；各池完整字段模板见 `templates/pools/author_dna/_template.md` / `templates/pools/planner/_template.md` / `templates/pools/unit/_template.md` / `templates/pools/reference/_README.md` / `templates/pools/knowledge/_README.md` |
 
 > 完整执行手册：`templates/pools/拆解方法论.md`（拆书前必读）· 池子架构：`templates/pools/_README.md`
 向用户提供以上选项，用户决定对标书和拆解深度后：
@@ -198,6 +198,12 @@ version: 1.4.0
 - 单状态文件 ≤ 8KB
 - 单次对话强制加载总量 ≤ 12KB
 - SKILL.md 为路由中枢（当前约 16KB，含三铁律/初始化核对/流程门禁/五阶段SOP；超标时 detail 下沉 references/，避免 Agent 加载过重）
+
+## 技能维护规范（改文件 → 同步说明）
+
+- 每个目录的 `_README.md` = 人工语义头 + 自动文件清单（由 `runtime/doc_sync.py` 维护，勿手改自动区）。
+- **修改技能文件后**：运行 `python runtime/doc_sync.py update` 刷新各目录自动清单；发布前运行 `python runtime/doc_sync.py check`（退出码 1 = 存在缺失/过期的说明文档）。
+- **大文件拆分原则**：超 15KB 的文档，把"示范/素材/清单"类大块下沉独立子文件，主文件保留骨架 + 链接（参照 `references/anti-ai.md` → `anti-ai-示范库.md` / `anti-ai-词级信号.md`、`human-signal-zh.md` → `human-signal-模式库.md`）。引用一律走主文件入口，子文件按需展开。
 
 ## 文件索引
 
