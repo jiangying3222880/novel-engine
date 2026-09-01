@@ -69,13 +69,7 @@ version: 1.4.0
 
 **第一层：用户级素材库（内置，跨项目共享）**
 
-项目初始化时，根据本书题材和目标平台，从 `library/` 中选定参考基准：
-1. 从 `library/genres/` 选 1-2 个题材风格包（写玄幻选辰东式，写都市神话选斩神式）
-2. 从 `library/techniques/` 选 2-3 个核心方法论作为写作指导
-3. 从 `library/platforms/` 确认目标平台的风格偏好
-4. 从 `library/knowledge/` 预加载本书需要的知识素材
-
-> 用户级素材库是通用参考打底，不替代项目级对标书拆解。
+项目初始化时，按 `library/_README.md` 选定参考基准：从 `library/genres/` 选 1-2 个题材风格包、从 `library/techniques/` 选核心方法论、从 `library/platforms/` 确认平台偏好、从 `library/knowledge/` 预加载知识素材。用户级素材库是通用打底，不替代项目级对标书拆解。
 
 **第二层：项目级素材池（每本书独立拆解）**
 
@@ -93,15 +87,7 @@ version: 1.4.0
 - 全量：五项全拆（约增加 8-12KB/章）
 
 
-**拆书规范速查（拆什么 / 什么入池 / 格式如何）：**
-
-| Q | 答案 |
-|---|------|
-| 拆哪些内容 | 对标书 ×5 池：`author_dna`(句式/节奏/词汇/文风) · `planner`(卷结构/爽点密度/伏笔编排) · `reference`(精选段落 200-500字) · `unit`(前20章关键事件) · `knowledge`(可溯源领域知识) |
-| 什么入池 | DNA=有可复现模式 · Planner=有清晰结构 · Reference=过非AI味5条≥4条 · Unit=有"起因→决策→结果→情绪"四闭环 · Knowledge=可溯源可复用。Agent 是"筛选+分析"不是"复制粘贴" |
-| 格式如何 | 填空式模板见 `templates/pools/拆书规范.md`；各池完整字段模板见 `templates/pools/author_dna/_template.md` / `templates/pools/planner/_template.md` / `templates/pools/unit/_template.md` / `templates/pools/reference/_README.md` / `templates/pools/knowledge/_README.md` |
-
-> 完整执行手册：`templates/pools/拆解方法论.md`（拆书前必读）· 池子架构：`templates/pools/_README.md`
+**拆书规范速查**：拆什么 / 什么入池 / 格式如何 → 见 `templates/pools/拆书规范.md`；完整执行手册见 `templates/pools/拆解方法论.md`（拆书前必读）· 池子架构 `templates/pools/_README.md` · 各池字段模板见 `templates/pools/` 下对应 `_template.md` / `_README.md`。
 向用户提供以上选项，用户决定对标书和拆解深度后：
 1. 从 `templates/pools/` 初始化项目的 `素材池/` 目录
 2. Agent 执行快速预览 → 用户确认 → Agent 执行深度拆解
@@ -207,24 +193,4 @@ version: 1.4.0
 
 ## 文件索引
 
-完整文件→阶段映射、上下游关系、素材库导航见 **`routes/index.md`**（唯一真相源）。此处仅列五阶段路由入口：
-
-| 阶段 | 路由入口文件 |
-|------|-------------|
-| ⓪ 项目初始化 | `references/project-setup.md` |
-| ① 本章规划 | `references/session-start.md` |
-| ② 正文写作 | `references/writing-guide.md` |
-| ③ 行为验证自检 | `references/self-review.md` |
-| ④ 反AI味润色 | `references/anti-ai.md` |
-| ⑤ 状态落库 | `references/hooks-and-memory.md` |
-| 全程参考 | `references/workflow-detail.md` |
-| ③/④ 身份路由 | `references/identity-routing.md` |
-| ④ 提示词防御 | `references/prompt-defense.md` |
-| ①/⑤ 检索 | `references/retrieval.md` |
-| ⑤ 格式 | `references/change-report-spec.md` |
-| ⑤ 日志 | `templates/log-template.md`（故事/日志/第000X章.md） |
-| ②③④ 去味 | `references/human-signal-zh.md`（深度方法库：四模式+27模式+人感注入） |
-| 外包分支 | `references/chat-outsource.md` |
-
-**项目级文件**（每本书独立，不在技能目录中）：
-> 详见 `routes/index.md` 第五节。
+完整文件→阶段映射、上下游关系、素材库导航见 **`routes/index.md`**（唯一真相源）；项目级文件见其第五节。五阶段路由入口已在上文各阶段标注，此处不再重复列表。

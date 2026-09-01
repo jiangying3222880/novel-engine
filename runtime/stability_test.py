@@ -180,7 +180,7 @@ def check_zvec(root_dir, index_path, window):
     # 查询：用 idx._embed 真实内容向量（修复 BUG-7 问题 3，有语义意义的召回）
     # 全量实测修正：查询词从项目 truth 自动提取，跨项目通用
     query_hits = {}
-    for text in _extract_queries(os.path.join(root_dir, "story", "truth")):
+    for text in _extract_queries(os.path.join(root_dir, "故事", "真相")):
         q = zvec.Query(field_name="dense", vector=idx._embed(text))
         try:
             res = col.query(q, topk=5)
@@ -226,8 +226,8 @@ def main():
     args = ap.parse_args()
 
     root_dir = args.root
-    truth_dir = os.path.join(root_dir, "story", "truth")
-    index_path = args.index or os.path.join(root_dir, "story", "index", "w")
+    truth_dir = os.path.join(root_dir, "故事", "真相")
+    index_path = args.index or os.path.join(root_dir, "故事", "索引", "w")
     results = {"window": args.window, "checks": {}}
 
     ok_s, d_s = check_structure(truth_dir)
