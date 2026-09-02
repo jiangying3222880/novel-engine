@@ -68,7 +68,49 @@ def _doc_by_id(collection, results):
     return pool
 
 
+def _zvec_available():
+    try:
+        import zvec  # noqa: F401
+        return True
+    except Exception:
+        return False
+
+
+def _run_bm25_fallback(text, cutoff, visibility):
+    """zvec 缺失时的真回退：读 BM25 索引查询（输出风格与 zvec 路径一致）。"""
+    import bm25_fts
+    idx_path = os.path.join(PROJECT_ROOT, *bm25_fts.CONFIG["bm25_path"].split("/"))
+    if not os.path.exists(idx_path):
+        print(f"BM25 索引不存在（{idx_path}），先运行 python runtime/bm25_fts.py build")
+        return
+    idx = bm25_fts.BM25Index()
+    idx.load(idx_path)
+    hits = idx.query(text, cutoff=None, visibility=None, topk=50)
+    rows, locked = [], []
+    for _s, _did, d in hits:
+        sc = d.get("source_chapter", 0)
+        vis = d.get("visibility", "public")
+        if sc > cutoff:
+            locked.append(f"[未解锁：第{sc}章 / {d.get('entity_cn','')}]")
+        elif visibility == "all" or vis == visibility or vis == "public":
+            rows.append(f"[{sc}] {d.get('entity_cn','')} {d.get('text','')[:60]}")
+    print("== zvec 不可用，已回退 BM25 检索 ==")
+    print("== 已解锁结果 ==")
+    for row in rows[:10]:
+        print(row)
+    if not rows:
+        print("（已解锁范围无命中）")
+    if locked:
+        for lk in locked:
+            print(lk)
+    else:
+        print("（未解锁范围无命中）")
+
+
 def run(text, cutoff, visibility):
+    if not _zvec_available():
+        _run_bm25_fallback(text, cutoff, visibility)
+        return
     collection = _open_collection()
     try:
         # 两路查询：dense + FTS，各取 top20

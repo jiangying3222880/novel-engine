@@ -25,6 +25,18 @@
 | `objects.md` | 物品状态 + 持有链（【新增】） | artifact（owned/lost/destroyed/sealed/transferred） | 每章 |
 | `timeline.md` | 全局时间轴：章号↔故事时间↔事件（【新增】） | 回溯/连集对齐/防剧透 | 每章 |
 
+**5 通用字段 ↔ 模板列 统一映射（功能七 · 单一真相源；index.py 按别名解析，缺省 status=''/visibility=public/source_chapter=0）**：
+
+| 通用字段 | characters.md | world.md | hooks.md | objects.md | relationships.md | timeline.md |
+|---------|---------------|----------|----------|------------|------------------|-------------|
+| `status` | 状态列(mortal) | 状态列(location_phase) | 状态列 | 状态列 | （无） | （无） |
+| `transition` | （预留） | 变更于章 | （预留） | （预留） | （预留） | （预留） |
+| `valid_until` | （预留） | （预留） | （预留） | （预留） | （预留） | （预留） |
+| `visibility` | 可见性列 | 可见性列 | 可见性列 | 可见性列 | （无） | 可见性列 |
+| `source_chapter` | 更新于章列 | 产生于章列 | 埋设章列 | 产生于章列 | （无） | 章号列 |
+
+> **索引边界**：hooks/objects/characters/world 四类**实体状态**由 index.py 按上表列名解析 `source_chapter` / `visibility` / `status`（缺省兜底）；relationships/timeline 的**关系/时间信息不产独立实体索引**，靠全文检索 + 阶段①原文加载。
+
 > **完整设定档案**（`设定/角色声线.md`、`设定/世界观.md`）是深度参考，不在强制加载范围内。只有当声线存疑或需要深挖设定时才读取。
 
 ---

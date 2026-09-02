@@ -5,8 +5,9 @@
 # jieba / pyyaml / pypinyin 已随仓库打包于 runtime/deps/，运行时通过 sys.path 自动加载。
 # 如需手动升级：pip install --target runtime/deps --no-deps jieba pyyaml pypinyin
 
-# ===== 可选增强：ZVEC 语义检索（编译型 wheel，平台绑定，Windows 可装）=====
-# 未安装时 index.py/query.py 走 BM25 兜底；想启用语义检索才装：
+# ===== 可选增强：ZVEC 检索（BM25 + 实验性词袋向量混合；编译型 wheel，平台绑定）=====
+# 未安装时 index.py/query.py 自动回退 BM25+FTS（真回退，见源码）。
+# 当前 dense 向量为 jieba 词袋向量（实验性，非语义 embedding）；bge-small-zh 为预留项未接入。
 zvec>=0.7.0
 
 # 说明：numpy / sentence-transformers 已弃用

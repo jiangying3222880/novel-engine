@@ -31,13 +31,13 @@
 | anti-ai.md | 10.1K | 阶段④：叙事质感指南 | 2026-09-01 |
 | change-report-spec.md | 3.0K | Change Report 格式规范 | 2026-09-01 |
 | chat-outsource.md | 4.8K | 1. 何时用 / 何时不用 | 2026-09-01 |
-| hooks-and-memory.md | 6.7K | 阶段⑤：状态落库与 Change Report | 2026-09-01 |
+| hooks-and-memory.md | 7.8K | 阶段⑤：状态落库与 Change Report | 2026-09-02 |
 | human-signal-zh.md | 11.0K | 去 AI 味方法库（human-signal 沉淀） | 2026-09-01 |
 | human-signal-模式库.md | 5.2K | 五、高频 AI 味模式库（完整版 · 04 §1 四模式的扩充） | 2026-09-01 |
 | identity-routing.md | 3.2K | 身份路由（作者 × 平台 × 题材 × 阶段 → 专业身份） | 2026-08-31 |
-| project-setup.md | 14.7K | 阶段⓪：项目初始化指南 | 2026-09-01 |
+| project-setup.md | 14.9K | 阶段⓪：项目初始化指南 | 2026-09-02 |
 | prompt-defense.md | 4.3K | 提示词防御（Prompt Defense） | 2026-08-31 |
-| retrieval.md | 8.0K | 检索层（功能八 · BM25+FTS 默认 + ZVEC 可选） | 2026-08-31 |
+| retrieval.md | 9.1K | 检索层（功能八 · BM25+FTS 默认 + ZVEC 可选） | 2026-09-02 |
 | self-review.md | 8.9K | 阶段③：行为验证自检协议 | 2026-09-01 |
 | session-start.md | 7.1K | 阶段①：项目启动与本章规划 SOP | 2026-08-31 |
 | short-story.md | 5.8K | 短故事创作模式（Short Story） | 2026-09-01 |

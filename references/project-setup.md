@@ -146,8 +146,8 @@
 python runtime/bm25_fts.py build --root <项目根>
 ```
 
-- 索引产物：`故事/索引/bm25/index.json`（truth + meta + 正文分块）
-- **检索层说明（告知用户）**：BM25+FTS=词法精确命中（专名检索）；ZVEC=词法+语义混合（可语义召回，需另装 zvec SDK）。两者都有防剧透+知情权过滤。写作期 L1 已够用；要语义检索再把 `runtime/config.yaml` 的 `retrieval.mode` 切到 `zvec`。
+- 索引产物：`故事/索引/bm25/index.json`（实体类 truth：characters/world/hooks/objects + meta + 正文分块；relationships/timeline 不产实体索引，靠全文检索）
+- **检索层说明（告知用户）**：BM25+FTS=词法精确命中（专名检索）；ZVEC=词法 + dense 实验性词袋向量混合（多一路近似召回；⚠️ dense 非语义 embedding，bge-small-zh 为预留未接入，需另装 zvec SDK）。两者都有防剧透+知情权过滤。写作期 L1 已够用；要近似召回再把 `runtime/config.yaml` 的 `retrieval.mode` 切到 `zvec`。
 - 每次落库（阶段⑤）后重建：`python runtime/bm25_fts.py build --root <项目根>`
 
 ### Step 6：对标书拆解（可选但强烈推荐）

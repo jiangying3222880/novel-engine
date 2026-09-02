@@ -1,6 +1,6 @@
 ﻿# Novel Engine v1.4
 
-工业级网文写作 Skill：纯 Markdown 状态机（主）+ 检索运行时（runtime/，BM25+FTS 已落地，ZVEC 可选增强，唯一 Python 部件）。**技能只存模板，项目存内容。**
+工业级网文写作 Skill：纯 Markdown 状态机（主）+ 检索运行时（runtime/，BM25+FTS 已落地，ZVEC 可选增强）。**技能只存模板，项目存内容。**整个系统**仅 `runtime/` 目录一处跑 Python**（内含 9 个脚本，其余全纯 Markdown；脚本清单见 `runtime/_README.md`）。
 
 ## 解决什么问题
 
@@ -27,15 +27,15 @@
 
 > 👉 安装 / 上手 / FAQ 见下文：`安装依赖` → `安装为技能` → `目录结构总览` → `常见问题 FAQ`。本 README 是唯一对外说明。
 
-### 0. 安装依赖（可选，仅 ZVEC 语义检索需要）
+### 0. 安装依赖（可选，仅 ZVEC 向量检索需要）
 
-> **纯 py 核心依赖（jieba / pypinyin / pyyaml，检索分词用）已离线 vendored 到 `runtime/deps/`**，脚本自动加载，clone 即用、无需安装。默认 BM25 词法检索零依赖。仅当你想启用 ZVEC 语义检索时才执行：
+> **纯 py 核心依赖（jieba / pypinyin / pyyaml，检索分词用）已离线 vendored 到 `runtime/deps/`**，脚本自动加载，clone 即用、无需安装。默认 BM25 词法检索零依赖。仅当你想启用 ZVEC 检索（BM25 + 实验性词袋向量混合）时才执行：
 
 ```bash
 pip install -r runtime/requirements.txt
 ```
 
-> 不装也能写（纯写作不依赖 Python）；装了才有"检索"功能。ZVEC 语义检索为可选增强，不装自动降级 BM25 词法检索。
+> 不装也能写（纯写作不依赖 Python）；装了才有"检索"功能。ZVEC（BM25 + 实验性词袋向量混合）为可选增强，不装时 `index.py`/`query.py` **自动回退 BM25+FTS**，功能不中断。
 
 ### 1. 安装为技能
 
@@ -196,7 +196,7 @@ novel-engine/
 - `doc_sync.py` 是**说明文档同步**：修改技能文件后自动刷新各目录 `_README.md` 清单。这俩是给助手/维护者用的，你无需手动运行。
 
 **Q：ZVEC 是什么？必须装吗？**
-可选增强。ZVEC 是语义检索（能查到"同义改写"的内容），比默认 BM25 词法检索更聪明，但要额外装 SDK、索引更大。不装就自动用 BM25，功能不中断。
+可选增强。ZVEC 集成"词法 BM25 + 实验性词袋向量"两路混合召回，比纯 BM25 多一路近似召回，但要额外装 SDK、索引更大。⚠️ 注意：当前 dense 向量是**本地 jieba 词袋向量（实验性，非语义 embedding）**，`references/retrieval.md` 中的 bge-small-zh 语义 embedding 为**预留项、尚未接入**。不装 zvec 时自动回退 BM25+FTS，功能不中断。
 
 **Q：为什么有的文件名带 `故事/真相`、`故事/元数据` 这种中文路径？**
 技能约定项目目录**统一中文命名**（协议文件名保持英文，如 `chapter_0001.md`）。项目建在技能目录之外，与技能本体隔离。

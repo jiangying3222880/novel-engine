@@ -27,7 +27,9 @@ INDEX_PATH = os.path.join(PROJECT_ROOT, "故事", "索引", "novel_index")
 DENSE_DIM = 512  # bge-small-zh-v1.5
 
 # 拼音归一映射：对象 → ASCII 键（entity_id）
-ENTITY_ID_MAP = {}  # 中文全名 -> ascii 键，运行时自动建立
+ENTITY_ID_MAP = {}  # 中文全名 -> ascii 键（幂等缓存：同一中文名永远返回同一键）
+_ASCII_OWNERS = {}  # ascii 键 -> 占用该键的中文名（碰撞检测）
+_ASCII_WARNED = set()  # 已提示的碰撞 base 键（避免重复刷屏）
 
 
 def _load_config(root):
@@ -57,11 +59,22 @@ def _load_config(root):
 
 _CONFIG = _load_config(PROJECT_ROOT)
 
+_ZVEC_OK = None
 
-def _ascii_key(cn_name):
-    """中文名 → ASCII entity_id（拼音键，zvec 0.7.0 实测 id 必须 ASCII 且不含 /）。"""
-    if cn_name in ENTITY_ID_MAP:
-        return ENTITY_ID_MAP[cn_name]
+
+def _zvec_available():
+    global _ZVEC_OK
+    if _ZVEC_OK is None:
+        try:
+            import zvec  # noqa: F401
+            _ZVEC_OK = True
+        except Exception:
+            _ZVEC_OK = False
+    return _ZVEC_OK
+
+
+def _tolower_pinyin_base(cn_name):
+    """生成拼音基础键（不含消歧后缀）。pypinyin 失败时退化为码点键（本身唯一，天然无碰撞）。"""
     try:
         from pypinyin import lazy_pinyin
         key = "".join(lazy_pinyin(cn_name))
@@ -69,6 +82,43 @@ def _ascii_key(cn_name):
         key = "u" + "_".join(str(ord(ch)) for ch in cn_name)
     key = re.sub(r"[^A-Za-z0-9_.\-]", "_", key)
     return key or "entity"
+
+
+def _disambiguate_suffix(cn_name):
+    """确定性消歧后缀：不同中文名的码点十六进制序列必不同 → base 相同时 id 也能全局唯一。"""
+    return "_".join(f"{ord(ch):x}" for ch in cn_name)
+
+
+def _warn_pinyin_collision(base, first, second):
+    """拼音键碰撞提示（P1-5）：非静默，提示检索可能召回对方内容。"""
+    if base in _ASCII_WARNED:
+        return
+    _ASCII_WARNED.add(base)
+    print(f"[index][warn] 拼音键碰撞「{base}」：「{first}」与「{second}」"
+          f"拼音相同，后出现者已加码点后缀消歧 id；检索两者时会互相召回")
+
+
+def _ascii_key(cn_name):
+    """中文名 → ASCII entity_id（拼音键；zvec 0.7.0 实测 id 必须 ASCII 且不含 /）。
+    对同一中文名始终返回同一键（幂等）。不同中文名若拼音相同（如"陈清"与"清晨"→ chenqing），
+    后出现者追加码点后缀消歧，保证 doc_id 全局唯一、不互相覆盖。"""
+    if cn_name in ENTITY_ID_MAP:
+        return ENTITY_ID_MAP[cn_name]
+    base = _tolower_pinyin_base(cn_name)
+    prev = _ASCII_OWNERS.get(base)
+    if prev is not None and prev != cn_name:
+        _warn_pinyin_collision(base, prev, cn_name)
+        suffix = _disambiguate_suffix(cn_name)
+        key = f"{base}_{suffix}"
+        n = 1
+        while key in _ASCII_OWNERS and _ASCII_OWNERS[key] != cn_name:
+            n += 1
+            key = f"{base}_{suffix}_{n}"
+    else:
+        key = base
+    _ASCII_OWNERS[key] = cn_name
+    ENTITY_ID_MAP[cn_name] = key
+    return key
 
 
 def _build_schema():
@@ -172,7 +222,7 @@ def _make_doc(doc_id, entity_cn, doc_type, chapter, source_chapter, visibility, 
 _FIELD_ALIASES = {
     "source_chapter": ["source_chapter", "埋设章", "产生于章", "章号"],
     "visibility": ["visibility", "可见性"],
-    "status": ["status", "状态"],
+    "status": ["status", "状态", "存活"],
 }
 
 
@@ -246,14 +296,15 @@ def _iter_truth_files(root):
                 continue
             cells = [c.strip() for c in line.strip("|").split("|")]
             is_sep = all(re.fullmatch(r"[-: ]+", c or "") for c in cells)
-            # 表头判定：本行下一行是分隔行（|---|）→ 本行为表头（比关键词更通用，characters 等无字段列也能识别）
+            # 表头判定：本行下一行是分隔行（|---|）→ 本行为表头。
+            # 每个表都重扫（一个文件可有多个表，characters 的基线摘要/当前状态各有表头）。
             next_is_sep = False
             if i + 1 < len(lines_list):
                 nxt = lines_list[i + 1]
                 if nxt.startswith("|"):
                     ncells = [c.strip() for c in nxt.strip("|").split("|")]
                     next_is_sep = all(re.fullmatch(r"[-: ]+", c or "") for c in ncells)
-            if header is None and next_is_sep:
+            if next_is_sep:
                 header = {}
                 for j, cname in enumerate(cells):
                     cc = cname.lower()
@@ -388,6 +439,12 @@ def main():
 
     try:
         if args.action == "build":
+            if not _zvec_available():
+                # 真回退：zvec 缺失 → BM25 全量重建（独立零依赖路径）
+                import bm25_fts
+                idx = bm25_fts.build(PROJECT_ROOT)
+                print(f"[index] zvec 不可用，已回退 BM25 全量索引：{idx.N} 条")
+                return
             # 先清空旧库，避免脏数据残留
             _reset_collection()
             collection, _ = _get_collection()
@@ -396,6 +453,10 @@ def main():
             finally:
                 collection.close()
         else:
+            if not _zvec_available():
+                print("[index] zvec 不可用，BM25 不支持增量 upsert/delete；"
+                      "请改用 `python runtime/bm25_fts.py build --root <项目根>` 全量重建")
+                return
             collection, existed = _get_collection()
             try:
                 if args.action == "upsert":
