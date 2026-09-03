@@ -26,21 +26,23 @@
 
 | 文件 | 大小 | 用途（首行标题） | 更新 |
 |------|------|-------------------|------|
-| anti-ai-示范库.md | 20.2K | 2. 对照式转换示范（选自公开出版文本，覆盖四种截然不同的题材） | 2026-09-01 |
-| anti-ai-词级信号.md | 3.8K | 6. 词级 AI 味信号（诊断 → 真人引导，不是禁止） | 2026-09-01 |
+| anti-ai-swaps.md | 3.0K | anti-ai-swaps.md — 功能导向换法表（写作纪律 ·  | 2026-09-02 |
+| anti-ai-┤╩╝╢╨┼║┼.md | 3.8K | 6. 词级 AI 味信号（诊断 → 真人引导，不是禁止） | 2026-09-01 |
+| anti-ai-╩╛╖╢┐Γ.md | 20.2K | 2. 对照式转换示范（选自公开出版文本，覆盖四种截然不同的题材） | 2026-09-01 |
 | anti-ai.md | 10.1K | 阶段④：叙事质感指南 | 2026-09-01 |
 | change-report-spec.md | 3.0K | Change Report 格式规范 | 2026-09-01 |
-| chat-outsource.md | 4.8K | 1. 何时用 / 何时不用 | 2026-09-01 |
+| chat-outsource.md | 5.7K | 1. 何时用 / 何时不用 | 2026-09-03 |
+| consistency-checklist.md | 2.2K | 阶段③ · 一致性自检清单（人工） | 2026-09-02 |
 | hooks-and-memory.md | 6.7K | 阶段⑤：状态落库与 Change Report | 2026-09-01 |
 | human-signal-zh.md | 11.0K | 去 AI 味方法库（human-signal 沉淀） | 2026-09-01 |
-| human-signal-模式库.md | 5.2K | 五、高频 AI 味模式库（完整版 · 04 §1 四模式的扩充） | 2026-09-01 |
-| identity-routing.md | 3.2K | 身份路由（作者 × 平台 × 题材 × 阶段 → 专业身份） | 2026-08-31 |
+| human-signal-─ú╩╜┐Γ.md | 5.2K | 五、高频 AI 味模式库（完整版 · 04 §1 四模式的扩充） | 2026-09-01 |
+| identity-routing.md | 5.9K | 身份路由（作者 × 平台 × 题材 × 阶段 → 专业身份） | 2026-09-03 |
 | project-setup.md | 14.7K | 阶段⓪：项目初始化指南 | 2026-09-01 |
-| prompt-defense.md | 4.3K | 提示词防御（Prompt Defense） | 2026-08-31 |
-| retrieval.md | 8.0K | 检索层（功能八 · BM25+FTS 默认 + ZVEC 可选） | 2026-08-31 |
-| self-review.md | 8.9K | 阶段③：行为验证自检协议 | 2026-09-01 |
-| session-start.md | 7.1K | 阶段①：项目启动与本章规划 SOP | 2026-08-31 |
+| prompt-defense.md | 4.3K | 提示词防御（Prompt Defense） | 2026-09-01 |
+| retrieval.md | 8.0K | 检索层（功能八 · BM25+FTS 默认 + ZVEC 可选） | 2026-09-01 |
+| self-review.md | 11.6K | 阶段③：行为验证自检协议 | 2026-09-03 |
+| session-start.md | 7.1K | 阶段①：项目启动与本章规划 SOP | 2026-09-01 |
 | short-story.md | 5.8K | 短故事创作模式（Short Story） | 2026-09-01 |
 | workflow-detail.md | 5.6K | 5 阶段 SOP 交互详解 | 2026-09-01 |
-| writing-guide.md | 8.7K | 阶段②：正文写作指南 | 2026-09-01 |
+| writing-guide.md | 11.8K | 阶段②：正文写作指南 | 2026-09-03 |
 <!-- AUTO-LIST-END -->
