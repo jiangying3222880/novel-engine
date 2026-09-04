@@ -43,7 +43,7 @@
 | self-review.md | 11.8K | 阶段③：行为验证自检协议 | 2026-09-04 |
 | session-start.md | 7.1K | 阶段①：项目启动与本章规划 SOP | 2026-08-31 |
 | short-story-rhythm-origin.md | 2.5K | 短故事节奏原理（用户验证版） | 2026-09-04 |
-| short-story.md | 3.5K | 短故事创作模式（Short Story） | 2026-09-04 |
+| short-story.md | 4.7K | 短故事创作模式（Short Story） | 2026-09-04 |
 | workflow-detail.md | 5.6K | 5 阶段 SOP 交互详解 | 2026-09-01 |
 | writing-guide.md | 11.9K | 阶段②：正文写作指南 | 2026-09-04 |
 <!-- AUTO-LIST-END -->
