@@ -19,6 +19,7 @@ Novel Engine v1.4 流程门禁（verify.py）
   [角色卡] 角色总览双链必须已有角色卡文件（防未出场角色转双链）
   [命名]   章节链接必须 4 位章号（第000X章）
   [配置]   novel-config.json 合法性（target_word_count/命名模板）
+  [落点]   相邻3章落点类型（开/合/转）去重（防收尾套路化）
 
 退出码：0=全部通过  1=存在失败项
 """
@@ -163,6 +164,23 @@ def main():
     else:
         check('config合法性', False, 'novel-config.json 不存在')
 
+    # 7 落点类型去重（防连载收尾套路化：相邻3章同类落点 FAIL；落库后跑 --scope all 生效）
+    landing_bad = []
+    if args.scope in ('all',):
+        outline_dir = os.path.join(root, '大纲')
+        chap_seq = []
+        if os.path.isdir(outline_dir):
+            for fn in sorted(os.listdir(outline_dir)):
+                m = re.match(r'^细纲_第(\d{4})章\.md$', fn)
+                if m:
+                    txt = open(os.path.join(outline_dir, fn), encoding='utf-8').read()
+                    lm = re.search(r'落点类型[:：]\s*(开|合|转)', txt)
+                    chap_seq.append((m.group(1), lm.group(1) if lm else None))
+        for i in range(len(chap_seq) - 2):
+            a, b, c = chap_seq[i][1], chap_seq[i + 1][1], chap_seq[i + 2][1]
+            if a and b and c and a == b == c:
+                landing_bad.append(f"{chap_seq[i][0]}-{chap_seq[i + 2][0]}连续3章同类落点({a})")
+        check('落点类型去重', not landing_bad, '; '.join(landing_bad) if landing_bad else '')
     # 汇总
     fails = [r for r in results if not r[1]]
     print(f'=== Novel Engine 流程门禁 ({args.scope}) ===')
