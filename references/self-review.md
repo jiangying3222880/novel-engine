@@ -1,4 +1,4 @@
-﻿> 阶段③ 行为验证自检 · 路由见 `routes/index.md`
+> 阶段③ 行为验证自检 · 路由见 `routes/index.md`
 
 <!-- 提示：如果不阅读本文件直接自检，会导致：Agent敷衍讨好、假自检、OOC漏检、越改越差。 -->
 
@@ -170,6 +170,29 @@ evidence_ids:
 
 ---
 
+### Q5：目标焦点检验（PMC Suppression 机制 · v1.5 新增）
+
+**检测行为**：检查当前章是否正确管理了目标焦点（focal goal / suppressed goal / achieved goal）。
+
+**验证步骤**：
+1. 检查本章 Frontmatter 的 `目标焦点追踪` 表：是否有 1 个且仅 1 个 `focal` goal？
+2. 如果有 suppressed goal，检查本章是否有 remention 触发重激活
+3. 检查 focal goal 是否有章内推进（因果支撑），还是空转/停滞？
+4. 检查是否有目标被遗忘风险（suppressed goal 超 5 章无 remention）
+
+**不通过信号**（满足任意一条）：
+- 本章引入新目标但未 remention 旧 focal goal（旧焦点断裂）
+- focal goal 章内无任何推进（读者在追踪一个没有进展的目标）
+- suppressed goal 超过 5 章无 remention 且未被 achieved（读者已遗忘）
+- 同一章存在 2 个 focal goal（读者焦点分散）
+
+**通过信号**：
+- focal goal 有章内推进
+- 旧 focal 被新目标取代时有 remention
+- suppressed goal 有 remention 时状态正确切换为 focal
+
+---
+
 ## 自检报告输出模板
 
 ```
@@ -206,7 +229,15 @@ Q4 因果与情绪：[通过/未通过]
       - source: 高潮 excerpt: "引用感官描写"
     分析：[传达了什么感官体验]
 
-结论：[X/4 通过]
+Q5 目标焦点：[通过/未通过]
+  检测：focal goal 唯一性 + 章内推进 + suppressed goal remention 检查
+  目标状态表：
+    - focal：[goal描述] → 章内推进：[有/无]
+    - suppressed：[goal描述] → remention：[有/无]
+  不通过信号命中：[旧焦点断裂 / focal空转 / suppressed遗忘 / 2个focal]
+  分析：[本章目标焦点管理是否正确]
+
+结论：[X/5 通过]
   - 通过项：[Q1, Q2, ...]
   - 未通过项：[Q3, ...]
   修正方向：[具体指出哪里需要改、怎么改。只改命中项，不全面重写]
@@ -246,9 +277,9 @@ Q4 因果与情绪：[通过/未通过]
 ### 最终状态标记
 
 3轮后如果仍有未通过项，在 Frontmatter 的 `review_status` 字段标注：
-- `full_pass` — 4/4 全部通过
-- `partial_pass` — 3/4 通过，剩余 1 项有瑕疵但可放行
-- `needs_human_review` — ≤2/4 通过，需要作者重点审稿
+- `full_pass` — 5/5 全部通过
+- `partial_pass` — 3/5 通过，剩余 2 项有瑕疵但可放行
+- `needs_human_review` — ≤2/5 通过，需要作者重点审稿
 
 > 注意：这个标记是给作者的提醒，不是"不合格打回"。作者最终审稿决定用不用。
 
@@ -260,6 +291,7 @@ Q4 因果与情绪：[通过/未通过]
 - 翻阅最近 5 章 Frontmatter 的 `change_summary` 和 `emotion_arc`，检查情绪是否断裂
 - 检查 `故事/真相/hooks.md` 中 active 超过 10 章未推进的钩子（标记"伏笔债务"）
 - 对照 `故事/真相/characters.md` 基线摘要，检查角色声线是否跨章漂移
+- **新增** 检查最近 5 章的目标焦点表：suppressed goal 是否有超 5 章未 remention 的风险？focal goal 是否始终有且仅有 1 个？
 
 
 
