@@ -1,4 +1,4 @@
-﻿> 阶段① 项目启动与本章规划 · 路由见 `routes/index.md`
+> 阶段① 项目启动与本章规划 · 路由见 `routes/index.md`
 
 <!-- 提示：如果不阅读本文件直接规划，会导致：前文因果断层、角色声线漂移(OCC)、伏笔漏回收。 -->
 
@@ -111,6 +111,11 @@
 读取完成后，内部判断（不输出）：
 - 以**编剧身份**主导规划（身份路由见 `references/identity-routing.md`）：上一章 change_summary 和 emotion_arc 的终点是什么？本章应从什么情绪开始？
 - hooks.md 中有哪些 active 钩子到了该回收或推进的时机？（含 status_progress=partial 的下一回收点）
+- **目标焦点检查（PMC Suppression · v1.5）**：检查 `故事/真相/hooks.md` 的目标焦点表（g_xxx）：
+  - 上一章的 focal goal 是什么？
+  - 本章是否引入新 focal goal？若是 → 旧focal→suppressed（必须在正文中 remention 旧目标）
+  - 有 suppressed goal 吗？本章是否 remention 了它？（remention=在正文中提及一句话即可）
+  - 本章 focal goal → 确认
 - 本章场景类型对应 `素材池/reference/techniques/` 的哪1-2个技巧分类？
 - 本章是否需要参考 `素材池/reference/samples/` 中的同类场景样本？
 - **参考素材三选一必填（C 回填）**：①技巧调阅 ②场景参考 ③明确声明"未拆池无素材，建议跑对标书快速预览拆解"——不许留空

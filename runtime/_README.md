@@ -6,7 +6,7 @@
 
 | 脚本 | 作用 | 何时调用 |
 |------|------|---------|
-| `verify.py` | **流程门禁**：检查项目目录/数据层防污染/总览骨架/双链/4位章号/config | 初始化后 `--scope init`、总览后 `--scope narrative`、每轮交付前 `all`；退出码 1=流程禁止继续 |
+| `verify.py` | **流程门禁**：检查项目目录/数据层防污染/总览骨架/双链/4位章号/config；**v1.5 新增 evidence 校验** | 初始化后 `--scope init`、总览后 `--scope narrative`、**证据校验 `--scope evidence`**、每轮交付前 `all`；退出码 1=流程禁止继续 |
 | `doc_sync.py` | **说明文档同步**：scan/check/update 各目录 `_README.md` 自动清单 | 修改技能文件后 `update`；发布前 `check` |
 | `bm25_fts.py` | BM25+FTS 索引构建（零依赖 jieba，默认启用） | 项目初始化/每章落库后重建索引 |
 | `index.py` | 章节元数据/正文/实体类真相（characters/world/hooks/objects）→ 索引文档（BM25 词项） | 被 bm25_fts 调用 |

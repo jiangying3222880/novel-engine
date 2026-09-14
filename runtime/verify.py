@@ -7,7 +7,7 @@ Novel Engine v1.4 流程门禁（verify.py）
 之后必须运行本脚本：PASS → 允许继续下一步；FAIL → 流程禁止继续，先修复再走。
 
 用法：
-  python runtime/verify.py --root <项目根> [--scope init|narrative|all]
+  python runtime/verify.py --root <项目根> [--scope init|narrative|evidence|all]
 
 检查项：
   [结构]   项目目录骨架（真相/元数据/正文/叙事总览…）
@@ -20,6 +20,7 @@ Novel Engine v1.4 流程门禁（verify.py）
   [命名]   章节链接必须 4 位章号（第000X章）
   [配置]   novel-config.json 合法性（target_word_count/命名模板）
   [落点]   相邻3章落点类型（开/合/转）去重（防收尾套路化）
+  [证据]   evidence_ids 格式校验 + 正文引用存在性（evidence 范围）
 
 退出码：0=全部通过  1=存在失败项
 """
@@ -38,7 +39,7 @@ def walk_md(root):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--root', required=True)
-    ap.add_argument('--scope', default='all', choices=['init', 'narrative', 'all'])
+    ap.add_argument('--scope', default='all', choices=['init', 'narrative', 'all', 'evidence'])
     args = ap.parse_args()
     root = os.path.abspath(args.root)
     if not os.path.isdir(root):
@@ -181,6 +182,89 @@ def main():
             if a and b and c and a == b == c:
                 landing_bad.append(f"{chap_seq[i][0]}-{chap_seq[i + 2][0]}连续3章同类落点({a})")
         check('落点类型去重', not landing_bad, '; '.join(landing_bad) if landing_bad else '')
+
+    # 8 evidence_ids 校验（scope=evidence 或 scope=all）
+    if args.scope in ('evidence', 'all'):
+        meta_dir = os.path.join(root, '故事/元数据')
+        body_dir = os.path.join(root, '正文')
+        if os.path.isdir(meta_dir):
+            import glob as _glob
+            meta_files = sorted(_glob.glob(os.path.join(meta_dir, 'chapter_*.md')))
+            evidence_issues = []
+            for mf_path in meta_files:
+                mf_name = os.path.basename(mf_path)
+                mf_txt = open(mf_path, encoding='utf-8').read()
+
+                # 提取 review_status
+                rs_m = re.search(r'review_status:\s*([^\s]+)', mf_txt)
+                review_status = rs_m.group(1).strip() if rs_m else ''
+
+                # 提取 chapter 号用于找正文文件
+                ch_m = re.search(r'chapter[_\s]*id[:：]\s*[^\d]*(\d{1,4})', mf_txt, re.IGNORECASE)
+                if not ch_m:
+                    continue
+                ch_num = ch_m.group(1).zfill(4)
+
+                # 提取正文文件路径（从 chapter_files 或实际扫描）
+                body_files = []
+                if os.path.isdir(body_dir):
+                    body_files = _glob.glob(os.path.join(body_dir, f'第{ch_num}章 *.md'))
+
+                # 读取正文内容（用于 excerpt 存在性校验）
+                body_text = ''
+                if body_files:
+                    for bf in body_files:
+                        body_text += open(bf, encoding='utf-8').read()
+
+                # 如果 review_status 非空（说明跑了自检），必须有 evidence_ids
+                if review_status:
+                    if 'evidence_ids' not in mf_txt:
+                        evidence_issues.append(f'{mf_name}: review_status={review_status} 但无 evidence_ids')
+                        continue
+
+                    # 提取 evidence_ids 块
+                    ids_m = re.search(r'evidence_ids:\s*\n((?:\s+- .+\n)*)', mf_txt)
+                    if not ids_m:
+                        evidence_issues.append(f'{mf_name}: evidence_ids 存在但格式错误（无条目）')
+                        continue
+
+                    ids_block = ids_m.group(1)
+                    entries = re.findall(r'^\s+-\s+source:\s*(.+?)\s+excerpt:\s*(.+?)\s*$',
+                                          ids_block, re.MULTILINE)
+                    if not entries:
+                        evidence_issues.append(f'{mf_name}: evidence_ids 无有效条目（缺 source/excerpt 字段）')
+                        continue
+
+                    # 逐条检查 source 和 excerpt 格式
+                    for entry_src, entry_excerpt in entries:
+                        src = entry_src.strip()
+                        excerpt = entry_excerpt.strip()
+                        if not src:
+                            evidence_issues.append(f'{mf_name}: evidence_ids 条目缺少 source 字段')
+                        if not excerpt:
+                            evidence_issues.append(f'{mf_name}: evidence_ids 条目缺少 excerpt 字段')
+                        # excerpt 至少 5 字符（防空引用）
+                        if excerpt and len(excerpt) < 5:
+                            evidence_issues.append(f'{mf_name}: evidence_ids excerpt 过短（<5字）：{excerpt[:20]}')
+                        # 如果正文存在，校验 excerpt 是否在正文中（允许模糊匹配）
+                        if body_text and excerpt:
+                            # 用截取前30字做模糊匹配（避免特殊字符差异）
+                            match_key = excerpt[:30] if len(excerpt) >= 30 else excerpt
+                            if match_key not in body_text:
+                                # 再试截取前15字
+                                short_key = excerpt[:15]
+                                if short_key not in body_text:
+                                    evidence_issues.append(
+                                        f'{mf_name}: excerpt 未在正文中找到（source={src}）：{excerpt[:40]}')
+
+            if evidence_issues:
+                check('evidence_ids校验', False, '; '.join(evidence_issues))
+            else:
+                # 如果没有任何元数据文件含 evidence_ids 也算通过（有写才算查）
+                checked = len(meta_files)
+                check('evidence_ids校验', True,
+                      f'已检查 {checked} 个元数据文件，无问题' if checked > 0
+                      else '无元数据文件，跳过')
     # 汇总
     fails = [r for r in results if not r[1]]
     print(f'=== Novel Engine 流程门禁 ({args.scope}) ===')

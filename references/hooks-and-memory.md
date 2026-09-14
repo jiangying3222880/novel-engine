@@ -1,4 +1,4 @@
-﻿> 阶段⑤ 状态落库与 Change Report · 路由见 `routes/index.md`
+> 阶段⑤ 状态落库与 Change Report · 路由见 `routes/index.md`
 
 <!-- 提示：如果不阅读本文件，会导致：伏笔状态紊乱、长篇逻辑前后矛盾。 -->
 
@@ -76,6 +76,45 @@
 - 如果 `active` 超过 20 章未推进，强制在下一章规划中安排推进或废弃
 
 ---
+
+## 3b. 目标焦点追踪（v1.5 新增 · PMC Suppression 机制）
+
+> 详见 `references/target-focus.md`（完整机制说明）。本节为格式速查。
+
+**目标钩子（g_xxx）与信息钩子（h_xxx）并列。**
+
+### 三种目标状态
+
+| 状态 | 含义 | PMC依据 |
+|------|------|---------|
+| `focal` | 读者正在追踪的主角目标 | remention时反应时714ms，维持激活 |
+| `suppressed` | 被新目标取代的旧目标，读者仍有印象但不活跃 | new goal引入后反应时908ms，旧目标被主动抑制 |
+| `achieved` | 目标已达成（成功/失败/主动放弃），不再追踪 | — |
+
+### 核心规则
+- 每章最多 1 个 focal goal
+- 新目标引入时旧 focal goal → suppressed（必须 remention，否则读者焦点断裂）
+- suppressed goal remention → 自动恢复 focal（PMC重激活机制）
+- focal + suppressed 总数建议 ≤ 3 个
+
+### 格式模板
+
+```markdown
+## 目标焦点追踪（v1.5 · PMC Suppression）
+
+| ID | 目标描述 | 角色 | 状态 | 埋设章 | 备注 |
+|----|---------|------|------|--------|------|
+| g_001 | [一句话目标] | [角色名] | focal/suppressed/achieved | [章号] | [来源/变化] |
+```
+
+### 落库时更新规则
+
+| 事件 | 更新动作 |
+|------|---------|
+| 旧 focal goal 被新目标取代 | 旧goal状态→suppressed + 新goal→focal + remention旧goal |
+| suppressed goal 被 remention | 状态→focal |
+| focal goal 完成/失败/放弃 | 状态→achieved |
+| 每章落库 | 检查focal goal因果支撑 + suppressed remention检查 |
 
 ## 4. Change Report 生成与落库流程
 

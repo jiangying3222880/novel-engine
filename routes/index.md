@@ -1,4 +1,4 @@
-﻿# 路由台账（文件 → 阶段 · 唯一真相源）
+# 路由台账（文件 → 阶段 · 唯一真相源）
 
 > 本文件是 novel-engine 全部文件的**导航唯一真相源**。任何文件改名/增删/阶段调整，只改本文件，不再遍历各文件头。
 > 各 references / templates 文件头仅保留一行 `> 阶段② · 路由见 routes/index.md`，详细上下游关系一律见本文件。
@@ -22,6 +22,8 @@
 | ③/④ 身份 | 自检/润色切换身份 | `references/identity-routing.md` |
 | ④ 防御 | 全程防诱导 | `references/prompt-defense.md` |
 | ①/⑤ 检索 | 写前查状态/落库建索引 | `references/retrieval.md` |
+| ①/⑤ 目标焦点 | PMC suppression机制（g_xxx目标钩子） | `references/target-focus.md` |
+| 全程 模型 | 各阶段模型选择/提示策略/限制补偿 | `references/model-guide.md` |
 
 | ②③④ 去味 | 深度方法库(human-signal 沉淀) | references/human-signal-zh.md |
 | ② 外包 | 写作外包网页chat(流程分支) | references/chat-outsource.md |
@@ -102,6 +104,23 @@
 相关：故事/真相/characters|world|hooks|relationships（变更目标）
 下游：无（格式规范文件，被阶段⑤落库 hooks-and-memory.md 调用）
 ```
+
+### target-focus.md · 目标焦点管理（PMC Suppression · v1.5 新增）
+```
+上游：SKILL.md（v1.5 新增机制）
+前置：PMC4266429 认知科学依据（goal remention 714ms vs new goal 908ms, p<.001）
+相关：references/hooks-and-memory.md（目标焦点表 g_xxx + suppressed机制）· references/session-start.md §5（规划时检查）· references/self-review.md Q5（自检验证）
+下游：阶段①规划（必须检查 focal goal 状态）/ 阶段⑤落库（更新 focal/suppressed/achieved 状态）
+```
+
+### model-guide.md · 模型文档（v1.5 新增）
+```
+上游：SKILL.md（v1.5 新增）
+前置：skill v1.5.0 全链路分析
+相关：references/chat-outsource.md（外包分支）· templates/outsource-prompt.md（外包提示词模板）
+下游：全程（模型选择参考）/ templates/outsource-prompt.md（编译依据）
+```
+
 
 ### short-story.md · 短故事创作模式（单篇完结）
 ```
