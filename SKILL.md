@@ -12,6 +12,11 @@ version: 1.5.0
 
 ## v1.5.0 更新（2026-09-13 · 基线测试回填 + PMC suppression机制）
 
+### 炼丹补充（job-0007~0009 · 2026-09-14）
+- **新增 library/techniques/高潮突转技法库.md（T-010）**：五类高潮+突转技法+小高潮vs大高潮结构，支撑C-004
+- **新增 library/techniques/代入感技法.md（T-012）**：代入感三要素+读者群差异+爽感公式，支撑C-001/P-002
+- **references/anti-ai.md 原则三扩展**：对话形式三式交替+防错清单+四步法（job-0008提炼）
+
 ### 基线测试回填（E-002）
 - **建立基线测试集**：B-001/B-002/B-003（都市/仙侠/悬疑各1本×5章），`05_experiments/基线测试_5章3题材.md`
 - **verify.py 新增 evidence 校验**：`--scope evidence`（review_status→evidence_ids格式/正文引用存在性）
