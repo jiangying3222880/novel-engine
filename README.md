@@ -1,4 +1,4 @@
-﻿# Novel Engine v1.4
+# Novel Engine v1.4
 
 工业级网文写作 Skill：纯 Markdown 状态机（主）+ 检索运行时（runtime/，BM25+FTS 已落地，ZVEC 可选增强）。**技能只存模板，项目存内容。**整个系统**仅 `runtime/` 目录一处跑 Python**（内含 9 个脚本，其余全纯 Markdown；脚本清单见 `runtime/_README.md`）。
 
@@ -36,6 +36,35 @@ pip install -r runtime/requirements.txt
 ```
 
 > 不装也能写（纯写作不依赖 Python）；装了才有"检索"功能。ZVEC（BM25 + 实验性词袋向量混合）为可选增强，不装时 `index.py`/`query.py` **自动回退 BM25+FTS**，功能不中断。
+
+### 0.5 Python 依赖说明（是否必须）
+
+> **核心结论：Python 完全可选。** 没有 Python，你仍然可以使用本技能的所有核心功能。
+
+| 功能 | 是否需要Python | 替代方案 |
+|------|--------------|---------|
+| **所有技法文件**（T-001~T-015） | ❌ 不需要 | 直接阅读Markdown即可 |
+| **所有题材风格包**（genres/） | ❌ 不需要 | 直接阅读Markdown即可 |
+| **workflow流程**（workflow-detail.md） | ❌ 不需要 | 手动按流程执行 |
+| **anti-ai去AI味指南** | ❌ 不需要 | 手动对照词级信号改写 |
+| **自检流程**（4问行为验证） | ❌ 不需要 | 手动检查并记录evidence_ids |
+| **verify.py 流程门禁** | ⚠️ 可选 | 手动检查目录结构和命名规范 |
+| **check_text.py 词级检测** | ⚠️ 可选 | 手动搜索高频词并改写 |
+| **bm25_fts.py 检索** | ⚠️ 可选 | 手动全文搜索 |
+| **doc_sync.py 文档同步** | ⚠️ 可选 | 手动更新清单 |
+
+**没有Python时的使用方法：**
+1. 助手直接读取 `SKILL.md` → 触发完整工作流
+2. 自检时手动对照自检表回答4问，记录evidence_ids
+3. 去AI味时手动对照 `references/anti-ai-词级信号.md` 改写
+4. 流程门禁（verify.py）跳过，由助手自行判断
+
+**有Python时的额外好处：**
+- 机器校验替代人工自觉（verify.py确保流程不走偏）
+- 自动词级AI味检测（check_text.py --strict）
+- BM25全文检索（快速定位章节/角色/物品）
+
+> 建议：新手或团队协作时安装Python以确保流程规范；单人使用且信任助手自觉时可选安装。
 
 ### 1. 安装为技能
 
