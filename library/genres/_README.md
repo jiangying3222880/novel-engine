@@ -62,4 +62,7 @@
 
 - `urban-myth-zanshen/` （有说明）
 - `xuanhuan-chendong/` （有说明）
+- `仙侠修真/` （有说明）
+- `悬疑/` （有说明）
+- `都市/` （有说明）
 <!-- AUTO-LIST-END -->

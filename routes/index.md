@@ -13,6 +13,7 @@
 |------|---------|---------|
 | ⓪ 项目初始化 | "开新书/帮我建项目/导入" | `references/project-setup.md` |
 | ① 本章规划 | "写下一章/规划第X章/继续写" | `references/session-start.md` |
+| 全程 地基 | 写前必读（内核三联+驱动标注） | `references/narrative-kernel.md` |
 | ② 正文写作 | 规划完成 | `references/writing-guide.md` |
 | ③ 自检 | 初稿完成 | `references/self-review.md` |
 | ④ 反AI润色 | 自检通过 | `references/anti-ai.md` |
@@ -28,6 +29,8 @@
 | ②③④ 去味 | 深度方法库(human-signal 沉淀) | references/human-signal-zh.md |
 | ② 外包 | 写作外包网页chat(流程分支) | references/chat-outsource.md |
 | 短篇 | 短故事一次成篇(单篇完结) | references/short-story.md |
+| 短篇 引擎 | 文梗引擎库(情绪债务×兑现) | references/short-story-engines.md |
+| 版本历史 | job级明细/版本摘要 | references/变更历史.md |
 
 ---
 
@@ -125,9 +128,17 @@
 ### short-story.md · 短故事创作模式（单篇完结）
 ```
 上游：SKILL.md（"写个短故事/短篇/抖音推文风"触发）
-前置：无（输入脑洞即可，不建项目/不拆书/不走 truth）
-相关：references/anti-ai.md（强制过检）· references/prompt-defense.md（版权纪律）· templates/short-story-template.md
+前置：无（输入脑洞即可，不建项目/不拆书/不走 truth）；写前必填驱动标注（§1.5，4字段）
+相关：references/anti-ai.md（强制过检）· references/prompt-defense.md（版权纪律）· templates/short-story-template.md · references/short-story-engines.md（引擎选择）· references/narrative-kernel.md（内核适配）
 下游：交付单篇（短故事不进入五阶段状态机）
+```
+
+### short-story-engines.md · 短篇文梗引擎库（v1.7 新增）
+```
+上游：SKILL.md（短篇分支）· references/short-story.md（节奏层）
+前置：确定短篇题材/文梗后，按触发词选引擎（信息差/牺牲觉醒/死亡后悔/掠夺反杀/反常识钩子/公开处刑）
+相关：references/short-story.md（憋压三段式）· library/techniques/单元讲法-*.md（兑现方式）· library/techniques/身份逆转反转法.md
+下游：引擎卡 → 驱动标注（§1.5）→ 三段式生成
 ```
 
 ---

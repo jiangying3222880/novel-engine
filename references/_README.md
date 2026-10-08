@@ -28,22 +28,30 @@
 |------|------|-------------------|------|
 | anti-ai-swaps.md | 3.0K | anti-ai-swaps.md — 功能导向换法表（写作纪律 ·  | 2026-09-04 |
 | anti-ai-示范库.md | 20.2K | 2. 对照式转换示范（选自公开出版文本，覆盖四种截然不同的题材） | 2026-09-01 |
-| anti-ai-词级信号.md | 3.8K | 6. 词级 AI 味信号（诊断 → 真人引导，不是禁止） | 2026-09-01 |
-| anti-ai.md | 10.1K | 阶段④：叙事质感指南 | 2026-09-01 |
+| anti-ai-词级信号.md | 5.9K | 6. 词级 AI 味信号（诊断 → 真人引导，不是禁止） | 2026-09-14 |
+| anti-ai.md | 12.4K | 阶段④：叙事质感指南 | 2026-09-17 |
 | change-report-spec.md | 3.0K | Change Report 格式规范 | 2026-09-01 |
 | chat-outsource.md | 5.8K | 1. 何时用 / 何时不用 | 2026-09-04 |
 | consistency-checklist.md | 2.3K | 阶段③ · 一致性自检清单（人工） | 2026-09-04 |
-| hooks-and-memory.md | 7.8K | 阶段⑤：状态落库与 Change Report | 2026-09-02 |
+| hooks-and-memory.md | 9.3K | 阶段⑤：状态落库与 Change Report | 2026-09-14 |
 | human-signal-zh.md | 11.0K | 去 AI 味方法库（human-signal 沉淀） | 2026-09-01 |
 | human-signal-模式库.md | 5.2K | 五、高频 AI 味模式库（完整版 · 04 §1 四模式的扩充） | 2026-09-01 |
 | identity-routing.md | 6.0K | 身份路由（作者 × 平台 × 题材 × 阶段 → 专业身份） | 2026-09-04 |
+| model-guide.md | 8.1K | 模型文档 · 各阶段适用模型与提示策略 | 2026-09-14 |
+| narrative-kernel.md | 7.4K | 叙事内核（Narrative Kernel · 冻结版） | 2026-09-14 |
 | project-setup.md | 14.9K | 阶段⓪：项目初始化指南 | 2026-09-02 |
 | prompt-defense.md | 4.3K | 提示词防御（Prompt Defense） | 2026-08-31 |
 | retrieval.md | 9.1K | 检索层（功能八 · BM25+FTS 默认 + ZVEC 可选） | 2026-09-02 |
-| self-review.md | 11.8K | 阶段③：行为验证自检协议 | 2026-09-04 |
-| session-start.md | 7.1K | 阶段①：项目启动与本章规划 SOP | 2026-08-31 |
+| self-review.md | 13.4K | 阶段③：行为验证自检协议 | 2026-09-14 |
+| session-start.md | 7.5K | 阶段①：项目启动与本章规划 SOP | 2026-09-14 |
+| short-story-engines.md | 11.3K | 短篇文梗引擎库（Short Story Engines） | 2026-09-12 |
 | short-story-rhythm-origin.md | 2.5K | 短故事节奏原理（用户验证版） | 2026-09-04 |
-| short-story.md | 4.7K | 短故事创作模式（Short Story） | 2026-09-04 |
-| workflow-detail.md | 5.6K | 5 阶段 SOP 交互详解 | 2026-09-01 |
+| short-story.md | 5.9K | 短故事创作模式（Short Story） | 2026-10-08 |
+| target-focus.md | 6.6K | 目标焦点管理：PMC Suppression 机制与 Skill 实 | 2026-09-14 |
+| workflow-detail.md | 10.0K | 5 阶段 SOP 交互详解 | 2026-09-15 |
 | writing-guide.md | 11.9K | 阶段②：正文写作指南 | 2026-09-04 |
+| 变更历史.md | 9.8K | 变更历史（novel-engine） | 2026-10-08 |
+| 商业立意与题材选择.md | 4.7K | 商业立意与题材选择 | 2026-09-14 |
+| 简介写法.md | 3.2K | 简介写法 | 2026-09-14 |
+| 读者吸引技法.md | 3.6K | 读者吸引技法 | 2026-09-16 |
 <!-- AUTO-LIST-END -->
