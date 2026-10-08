@@ -1,6 +1,8 @@
-# Novel Engine v1.4
+# Novel Engine v1.7
 
 工业级网文写作 Skill：纯 Markdown 状态机（主）+ 检索运行时（runtime/，BM25+FTS 已落地，ZVEC 可选增强）。**技能只存模板，项目存内容。**整个系统**仅 `runtime/` 目录一处跑 Python**（内含 9 个脚本，其余全纯 Markdown；脚本清单见 `runtime/_README.md`）。
+
+> ⚠️ 本文档为对外说明（安装 / 设计 / FAQ）。**助手执行路由以 `SKILL.md` 为准，全文件地图以 `routes/index.md` 为准**（唯一真相源）。
 
 ## 解决什么问题
 
@@ -43,7 +45,7 @@ pip install -r runtime/requirements.txt
 
 | 功能 | 是否需要Python | 替代方案 |
 |------|--------------|---------|
-| **所有技法文件**（T-001~T-015） | ❌ 不需要 | 直接阅读Markdown即可 |
+| **所有技法文件**（library/techniques/，T-001~T-118） | ❌ 不需要 | 直接阅读Markdown即可 |
 | **所有题材风格包**（genres/） | ❌ 不需要 | 直接阅读Markdown即可 |
 | **workflow流程**（workflow-detail.md） | ❌ 不需要 | 手动按流程执行 |
 | **anti-ai去AI味指南** | ❌ 不需要 | 手动对照词级信号改写 |
@@ -80,7 +82,7 @@ pip install -r runtime/requirements.txt
 
 5. 新角色首次登场时，Agent 自动按模板建立基线档案
 
-**短故事单篇**：说 "写个短故事" / "抖音推文风" → 按幕拆 5 单元生成（不建项目），见 `references/short-story.md`。
+**短故事单篇**：说 "写个短故事" / "抖音推文风" → 三段式单情绪弧憋压爆发（高压注水开场 → 憋压蓄力 → 大坝决堤），按节分单元生成，**写前必填驱动标注 4 字段**（制造什么期待 / 第几段引爆 / 憋到什么程度给 / 读者翻页动力），不建项目，见 `references/short-story.md`；题材/文梗选型见 `references/short-story-engines.md`（六引擎：情绪债务×兑现）。
 
 **外包写作（提示词组装）**：说 "这章外包" / "整本书走外包模式" → 阶段①照跑后，技能自动读 6 状态文件 + 规划清单 + 作者身份，编译一份**自包含最终提示词**（含身份/状态/目标/手法/防剧透/字数验收），贴入任意网页 chat 写作，正文贴回后继续阶段③自检 → ④去AI味（必须跑满）→ ⑤落库。模板见 `templates/outsource-prompt.md`，流程见 `references/chat-outsource.md`。
 
@@ -182,7 +184,7 @@ novel-engine/
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | `SKILL.md`        | 路由入口 + 3 铁律 + 5 阶段 SOP 概要                                                                                                          |
 | `routes/index.md` | **路由台账（唯一真相源）**                                                                                                                    |
-| `references/`     | 五阶段详细参考（project-setup / session-start / writing-guide / self-review / anti-ai / hooks-and-memory / workflow-detail / prompt-defense / retrieval / human-signal-zh / chat-outsource / change-report-spec / identity-routing / short-story） |
+| `references/`     | 五阶段详细参考（project-setup / session-start / writing-guide / self-review / anti-ai / hooks-and-memory / workflow-detail / prompt-defense / retrieval / human-signal-zh / chat-outsource / change-report-spec / identity-routing / short-story / short-story-engines / short-story-rhythm-origin / narrative-kernel / target-focus / model-guide / 变更历史） |
 | `library/`        | 用户级素材库（techniques /genres/knowledge /platforms/identities /market-research）                                                        |
 | `templates/`      | 模板层（novel-config /chapter/voice-profile /truth/pools /meta/narrative /log-template /short-story-template）                                                |
 
@@ -257,5 +259,11 @@ novel-engine/
 | **v1.3.1** | 对标书拆解靠人工 | Agent 自动拆解两阶段 + 入池 5 条标准 + 强制加载刚性 + 每书独立建池 |
 | **v1.3.2** | 素材不够用户级 / 导航缺失 | library/ 四库 + 拆解方法论 + 全文件导航 + 第 1 章实战验证 |
 | **v1.4.0** | 功能规划 + 五章实测回填 | 目录规范化 / 身份路由 / YAML 迁 meta / 流程日志 / 叙事总览 / 6 状态 / 检索 runtime / 深度去 AI 味 / 外包分支（提示词组装·含身份约束）/ 短故事按幕分单元生成 |
+| **v1.4.1** | 写作方法论细化 | 身份重构为"作者定纲领+讲述者出文字"双身份 / 章末自然未完状态（允许平静出口）/ 节奏随场景功能变化 |
+| **v1.4.2** | 短故事节奏底层重构 | 旧四幕反转 → 单情绪弧憋压爆发（憋全场最后一口喂撑）/ 字数 8000-30000 自适应 / 借鉴长篇硬约束+2问自检+4大转换 |
+| **v1.4.3** | 短故事实测回填 | 分段生成强制化（2000-2500字/节）/ 憋压层次≥5层硬指标 / 微光边界判定 / 结尾余韵规则 |
+| **v1.5.0** | 叙事内核编译（炼丹炉 S-001） | 7 条冻结内核（C-001~C-007）编译回技能 / narrative-kernel.md / 阶段①强制内核三联 / Hook 升级为信息差设计 |
+| **v1.6.0** | 炼丹炉第二批编译（S-002） | C-008 高潮必经过程 / 4 个单元讲法入库 / 提示词工程强化（硬约束块）/ 爽点反派补强 / Profiles 填充 |
+| **v1.7.0** | 驱动标注编译 + 结构修复 | 短篇/长篇写前必填驱动标注 4 字段（制造什么期待/几段或字引爆/憋到什么程度给/读者翻页动力，编译自炼丹炉 ReaderLoop 驱动参数表）/ 恢复叙事内核段 / job 明细下沉 `references/变更历史.md` / doc_sync 全绿 |
 
 > 注：v1.3 曾把 self-review / anti-ai 文件名与阶段号错配，v1.4 已对齐；v1.4 起文件名一律去编号、语义化，与阶段号解耦（流程顺序只由`routes/index.md` 表达）。

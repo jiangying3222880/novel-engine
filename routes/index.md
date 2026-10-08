@@ -48,7 +48,7 @@
 ```
 上游：references/project-setup.md
 前置：故事/真相/ 6个状态文件（强制加载，含 objects/timeline）+ novel-config.json
-相关：templates/voice-profile-template.md · templates/细纲模板.md（B/E 回填：主角主动表达+参考素材槽位）· 配置/身份/（项目级身份覆盖）· 素材池/author_dna/ · 素材池/planner/ · 素材池/reference/techniques/ · 素材池/reference/samples/
+相关：templates/voice-profile-template.md · templates/细纲模板.md（B/E 回填：主角主动表达+参考素材槽位）· 配置/身份/（项目级身份覆盖）· 素材池/author_dna/ · 素材池/planner/ · 素材池/reference/techniques/ · 素材池/reference/samples/ · references/narrative-kernel.md（内核三联 + 信息差方向，写前必填）· references/short-story.md §1.5（驱动标注格式，长短篇同名4字段）
 下游：references/writing-guide.md（规划完成 → 阶段②）
 ```
 
@@ -119,7 +119,7 @@
 ### model-guide.md · 模型文档（v1.5 新增）
 ```
 上游：SKILL.md（v1.5 新增）
-前置：skill v1.5.0 全链路分析
+前置：skill v1.7.0 链路分析（2026-10-08 刷新；驱动标注为执行层工具、模型无关，不改变模型矩阵结论）
 相关：references/chat-outsource.md（外包分支）· templates/outsource-prompt.md（外包提示词模板）
 下游：全程（模型选择参考）/ templates/outsource-prompt.md（编译依据）
 ```

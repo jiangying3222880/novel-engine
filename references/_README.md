@@ -12,6 +12,9 @@
 - **跨阶段能力**：retrieval（检索层）/ identity-routing（身份路由）/ prompt-defense（提示词防御）/ change-report-spec（Change Report）/ chat-outsource（外包分支）/ workflow-detail（SOP 交互）
 - **去AI味三件套**：`anti-ai.md`（速查骨架）→ `anti-ai-示范库.md`（四类真人对照）/ `anti-ai-词级信号.md`（词级信号）
 - **深度方法库**：`human-signal-zh.md`（主文件）→ `human-signal-模式库.md`（27 模式）
+- **短故事创作**：`short-story.md`（三段式憋压爆发 + §1.5 驱动标注写前必填）→ `short-story-rhythm-origin.md`（憋压原理·用户验证版）/ `short-story-engines.md`（六引擎：情绪债务×兑现）
+- **叙事内核（写前地基）**：`narrative-kernel.md`（L0/L1 冻结内核表 + 编译落点，修改须走 CCP+用户批准）
+- **版本与模型**：`变更历史.md`（各版本 job 明细）/ `model-guide.md`（各阶段模型推荐）/ `target-focus.md`（目标焦点管理）
 
 ## 使用
 
@@ -37,14 +40,14 @@
 | human-signal-zh.md | 11.0K | 去 AI 味方法库（human-signal 沉淀） | 2026-09-01 |
 | human-signal-模式库.md | 5.2K | 五、高频 AI 味模式库（完整版 · 04 §1 四模式的扩充） | 2026-09-01 |
 | identity-routing.md | 6.0K | 身份路由（作者 × 平台 × 题材 × 阶段 → 专业身份） | 2026-09-04 |
-| model-guide.md | 8.1K | 模型文档 · 各阶段适用模型与提示策略 | 2026-09-14 |
-| narrative-kernel.md | 7.4K | 叙事内核（Narrative Kernel · 冻结版） | 2026-09-14 |
+| model-guide.md | 8.2K | 模型文档 · 各阶段适用模型与提示策略 | 2026-10-08 |
+| narrative-kernel.md | 7.9K | 叙事内核（Narrative Kernel · 冻结版） | 2026-10-08 |
 | project-setup.md | 14.9K | 阶段⓪：项目初始化指南 | 2026-09-02 |
 | prompt-defense.md | 4.3K | 提示词防御（Prompt Defense） | 2026-08-31 |
 | retrieval.md | 9.1K | 检索层（功能八 · BM25+FTS 默认 + ZVEC 可选） | 2026-09-02 |
 | self-review.md | 13.4K | 阶段③：行为验证自检协议 | 2026-09-14 |
-| session-start.md | 7.5K | 阶段①：项目启动与本章规划 SOP | 2026-09-14 |
-| short-story-engines.md | 11.3K | 短篇文梗引擎库（Short Story Engines） | 2026-09-12 |
+| session-start.md | 8.8K | 阶段①：项目启动与本章规划 SOP | 2026-10-08 |
+| short-story-engines.md | 11.6K | 短篇文梗引擎库（Short Story Engines） | 2026-10-08 |
 | short-story-rhythm-origin.md | 2.5K | 短故事节奏原理（用户验证版） | 2026-09-04 |
 | short-story.md | 5.9K | 短故事创作模式（Short Story） | 2026-10-08 |
 | target-focus.md | 6.6K | 目标焦点管理：PMC Suppression 机制与 Skill 实 | 2026-09-14 |

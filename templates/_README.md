@@ -29,9 +29,9 @@
 | chapter-template.md | 1.7K | 第X章 章节标题 | 2026-09-04 |
 | log-template.md | 4.4K | 章节流程日志：第 X 章 | 2026-09-01 |
 | outsource-prompt.md | 5.1K | 外包写作 · 最终提示词模板（自包含） | 2026-09-04 |
-| short-story-template.md | 1.5K | 短故事骨架模板 | 2026-09-04 |
+| short-story-template.md | 1.9K | 短故事骨架模板 | 2026-10-08 |
 | voice-profile-template.md | 2.1K | 角色声线基线档案模板 | 2026-08-31 |
-| 细纲模板.md | 2.5K | 细纲模板：第 X 章 | 2026-09-04 |
+| 细纲模板.md | 3.0K | 细纲模板：第 X 章 | 2026-10-08 |
 
 ### 子目录
 
