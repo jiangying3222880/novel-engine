@@ -10,8 +10,8 @@
 
 | 文件 | 大小 | 用途（首行标题） | 更新 |
 |------|------|-------------------|------|
-| README.md | 18.6K | Novel Engine v1.7 | 2026-10-08 |
-| SKILL.md | 21.2K | Novel Engine v1.7.0 (小说创作引擎) | 2026-10-08 |
+| README.md | 18.8K | Novel Engine v1.7 | 2026-10-08 |
+| SKILL.md | 22.4K | Novel Engine v1.7.1 (小说创作引擎) | 2026-10-08 |
 | pr-body.md | 1.9K | Summary | 2026-10-08 |
 
 ### 子目录

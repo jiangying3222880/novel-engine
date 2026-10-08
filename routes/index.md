@@ -28,7 +28,7 @@
 
 | ②③④ 去味 | 深度方法库(human-signal 沉淀) | references/human-signal-zh.md |
 | ② 外包 | 写作外包网页chat(流程分支) | references/chat-outsource.md |
-| 短篇 | 短故事一次成篇(单篇完结) | references/short-story.md |
+| 短篇 | 短故事分段生成（单篇完结） | references/short-story.md（三段式憋压 + 每节字数门禁） |
 | 短篇 引擎 | 文梗引擎库(情绪债务×兑现) | references/short-story-engines.md |
 | 版本历史 | job级明细/版本摘要 | references/变更历史.md |
 
@@ -129,6 +129,7 @@
 ```
 上游：SKILL.md（"写个短故事/短篇/抖音推文风"触发）
 前置：无（输入脑洞即可，不建项目/不拆书/不走 truth）；写前必填驱动标注（§1.5，4字段）
+流程：分段生成（强制，§2）段一1节→段二2-3节→段三1节；每节字数校验门禁（§2.1，≥2000字/节，不足用§2.2中段加厚清单补足重写）；全篇验收 target±15%（v1.7.1 方案B）
 相关：references/anti-ai.md（强制过检）· references/prompt-defense.md（版权纪律）· templates/short-story-template.md · references/short-story-engines.md（引擎选择）· references/narrative-kernel.md（内核适配）
 下游：交付单篇（短故事不进入五阶段状态机）
 ```
@@ -158,7 +159,7 @@
 | `library/market-research.md` | 市场调查三档路由 | ⓪ |
 | `library/packaging.md` | 卖点包装 + 反套路提案（doubao 融合） | ⓪/投稿/包装 |
 | `templates/pools/` | 素材池模板（author_dna/planner/unit/knowledge/reference + 拆解方法论） | ⓪ |
-| `templates/short-story-template.md` | 短故事极简骨架（故事核/导语/四幕/断章） | 短篇 |
+| `templates/short-story-template.md` | 短故事极简骨架（驱动标注4字段/三段式/每节字数门禁/自检清单） | 短篇 |
 
 ## 四、素材库导航（用户级 + 项目级）
 

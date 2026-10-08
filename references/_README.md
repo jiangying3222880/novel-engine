@@ -49,11 +49,11 @@
 | session-start.md | 8.8K | 阶段①：项目启动与本章规划 SOP | 2026-10-08 |
 | short-story-engines.md | 11.6K | 短篇文梗引擎库（Short Story Engines） | 2026-10-08 |
 | short-story-rhythm-origin.md | 2.5K | 短故事节奏原理（用户验证版） | 2026-09-04 |
-| short-story.md | 5.9K | 短故事创作模式（Short Story） | 2026-10-08 |
+| short-story.md | 9.6K | 短故事创作模式（Short Story） | 2026-10-08 |
 | target-focus.md | 6.6K | 目标焦点管理：PMC Suppression 机制与 Skill 实 | 2026-09-14 |
 | workflow-detail.md | 10.0K | 5 阶段 SOP 交互详解 | 2026-09-15 |
 | writing-guide.md | 11.9K | 阶段②：正文写作指南 | 2026-09-04 |
-| 变更历史.md | 9.8K | 变更历史（novel-engine） | 2026-10-08 |
+| 变更历史.md | 11.4K | 变更历史（novel-engine） | 2026-10-08 |
 | 商业立意与题材选择.md | 4.7K | 商业立意与题材选择 | 2026-09-14 |
 | 简介写法.md | 3.2K | 简介写法 | 2026-09-14 |
 | 读者吸引技法.md | 3.6K | 读者吸引技法 | 2026-09-16 |
