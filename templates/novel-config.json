@@ -13,5 +13,12 @@
   },
   "current_arc": "第一卷",
   "body_filename_template": "第000X章 {title}.md",
-  "notes": "首次使用时把 project_name/author/genre 改成你的作品信息。target_word_count 为每章要求字数：用户给区间（如6000-8000）则取中点（7000）；给单值（如3000）则直接用。字数验收按 target±15% 判定（写作流程执行，非本文件）。body_filename_template 决定正文文件名格式（4位章号+空格+标题）。"
+  "modules": {
+    "short_story": true,
+    "chat_outsource": true,
+    "pool_teardown": true,
+    "obsidian_overview": false,
+    "zvec": false
+  },
+  "notes": "首次使用时把 project_name/author/genre 改成你的作品信息。target_word_count 为每章要求字数：用户给区间（如6000-8000）则取中点（7000）；给单值（如3000）则直接用。字数验收按 target±15% 判定（写作流程执行，非本文件）。body_filename_template 决定正文文件名格式（4位章号+空格+标题）。modules 为可选功能开关（v1.8，初始化 Step 5.6 每本书重新确认）：short_story=短故事模式（显式触发）、chat_outsource=外包写作（显式触发）、pool_teardown=对标书拆解、obsidian_overview=Obsidian 叙事总览（默认关，需装 Obsidian+加入知识库；仅长篇）、zvec=ZVEC 检索（默认关，未装 SDK 自动降级 BM25+提醒，不自动装）。"
 }

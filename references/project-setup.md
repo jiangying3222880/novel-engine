@@ -150,6 +150,26 @@ python runtime/bm25_fts.py build --root <项目根>
 - **检索层说明（告知用户）**：BM25+FTS=词法精确命中（专名检索）；ZVEC=词法 + dense 实验性词袋向量混合（多一路近似召回；⚠️ dense 非语义 embedding，bge-small-zh 为预留未接入，需另装 zvec SDK）。两者都有防剧透+知情权过滤。写作期 L1 已够用；要近似召回再把 `runtime/config.yaml` 的 `retrieval.mode` 切到 `zvec`。
 - 每次落库（阶段⑤）后重建：`python runtime/bm25_fts.py build --root <项目根>`
 
+### Step 5.6：模块清单确认（v1.8 新增 · 每本书必做）
+
+> 向用户展示可选 L3 模块清单，用户逐项拍板"开/关"，写入 `novel-config.json → modules`（SSOT，**每本书重新确认，不跨项目继承**）。作用白话说明见 `references/module-说明书.md`（初始化时读给用户看），Agent 调度卡见 `references/module-registry.md`。
+
+**提问环节（Agent 按说明书逐项列出，用户拍板）：**
+
+| 模块 | 默认 | 用户可问 | 写入 config |
+|------|------|---------|------------|
+| 短故事模式 M-001 | 开（显式触发） | 不用问 | modules.short_story=true |
+| 外包写作 M-002 | 开（显式触发） | 不用问 | modules.chat_outsource=true |
+| 对标书拆解 M-003 | 开（Step 6 自然走） | 用不用/拆几本 | modules.pool_teardown=true |
+| Obsidian 叙事总览 M-004 | **关** | 要不要开（**需装 Obsidian + 加入知识库**；短篇不建议） | modules.obsidian_overview=true/false |
+| ZVEC 检索 M-005 | **关** | 要不要开（**需装 zvec SDK，未装自动降级 BM25+提醒，不自动装**） | modules.zvec=true/false |
+
+**执行规则**：
+1. 只对"默认关 + 有依赖"的模块（M-004/M-005）提问；显式触发的模块（M-001/M-002/M-003）不用问，随用随触发
+2. 用户拍板后写入 config.modules；**每本书重新问一遍**，不跨项目继承（用户说"都开"也要走流程，防旧书配置污染新书）
+3. 未问清就进写作 = 模块配置未定，按默认值走并在日志说明
+4. 中途想改：用户随时说"开 Obsidian 总览/关 ZVEC" → 更新 config.modules + 日志记录
+
 ### Step 6：对标书拆解（可选但强烈推荐）
 
 > **池子是 Agent 自动拆解出来的，不是手动建出来的。空池子没有价值。**
