@@ -8,7 +8,7 @@
 用户："写第X章"
     │
     ▼
-[阶段① 规划] 读取 故事/真相/4文件 + session-start.md
+[阶段① 规划] 读取 故事/真相/6文件 + session-start.md
     │ （状态冲突按5级优先级裁决）
     │ （按需加载 素材池/ 素材 + techniques 技巧）
     │ 输出：规划清单
@@ -27,7 +27,7 @@
     │ 输出：精修稿
     ▼
 [阶段⑤ 落库] 读取 hooks-and-memory.md + change-report-spec.md
-    │ 输出：生成 Change Report → 更新 故事/真相/4文件 → 保存正文
+    │ 输出：生成 Change Report → 更新 故事/真相/6文件 → 保存正文
     ▼
 完成，等待用户下一指令
 ```
@@ -47,6 +47,8 @@ Agent 读取（强制）：
   故事/真相/world.md — 核心规则 + 当前状态
   故事/真相/hooks.md — 伏笔追踪
   故事/真相/relationships.md — 关系网络
+  故事/真相/objects.md — 物品状态（关键道具持有链）
+  故事/真相/timeline.md — 时间线（当前故事时间锚点）
   novel-config.json — 项目配置
   上一章 Frontmatter — change_summary + emotion_arc
 
