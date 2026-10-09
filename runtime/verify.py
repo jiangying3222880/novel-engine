@@ -7,7 +7,7 @@ Novel Engine v1.4 流程门禁（verify.py）
 之后必须运行本脚本：PASS → 允许继续下一步；FAIL → 流程禁止继续，先修复再走。
 
 用法：
-  python runtime/verify.py --root <项目根> [--scope init|narrative|evidence|all]
+  python runtime/verify.py --root <项目根> [--scope init|narrative|evidence|execution|all]
 
 检查项：
   [结构]   项目目录骨架（真相/元数据/正文/叙事总览…）
@@ -21,6 +21,7 @@ Novel Engine v1.4 流程门禁（verify.py）
   [配置]   novel-config.json 合法性（target_word_count/命名模板）
   [落点]   相邻3章落点类型（开/合/转）去重（防收尾套路化）
   [证据]   evidence_ids 格式校验 + 正文引用存在性（evidence 范围）
+  [执行]   config.modules 字段合法性 + 最新流程日志含 execution_mode 声明行（execution 范围，v1.8）
 
 退出码：0=全部通过  1=存在失败项
 """
@@ -39,7 +40,7 @@ def walk_md(root):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--root', required=True)
-    ap.add_argument('--scope', default='all', choices=['init', 'narrative', 'all', 'evidence'])
+    ap.add_argument('--scope', default='all', choices=['init', 'narrative', 'all', 'evidence', 'execution'])
     args = ap.parse_args()
     root = os.path.abspath(args.root)
     if not os.path.isdir(root):
@@ -265,6 +266,50 @@ def main():
                 check('evidence_ids校验', True,
                       f'已检查 {checked} 个元数据文件，无问题' if checked > 0
                       else '无元数据文件，跳过')
+
+    # 9 执行模式与模块配置校验（v1.8 · scope=execution 或 scope=all）
+    if args.scope in ('execution', 'all'):
+        # 9a config.modules 字段存在且合法（模块 SSOT）
+        cfg_path = os.path.join(root, 'novel-config.json')
+        mod_ok, mod_detail = True, ''
+        if not os.path.isfile(cfg_path):
+            mod_ok, mod_detail = False, '缺 novel-config.json'
+        else:
+            try:
+                cfg_data = json.load(open(cfg_path, encoding='utf-8'))
+                mods = cfg_data.get('modules')
+                if not isinstance(mods, dict):
+                    mod_ok, mod_detail = False, 'modules 字段缺失或非对象'
+                else:
+                    need_keys = ['short_story', 'chat_outsource', 'pool_teardown',
+                                 'obsidian_overview', 'zvec']
+                    missing = [k for k in need_keys if k not in mods]
+                    if missing:
+                        mod_ok, mod_detail = False, 'modules 缺键: ' + ','.join(missing)
+                    else:
+                        bad = [k for k, v in mods.items() if not isinstance(v, bool)]
+                        if bad:
+                            mod_ok, mod_detail = False, 'modules 值非布尔: ' + ','.join(bad)
+            except Exception as e:
+                mod_ok, mod_detail = False, f'config 解析失败: {e}'
+        check('模块配置(modules)', mod_ok, mod_detail)
+
+        # 9b 最新流程日志含 execution_mode 声明行（降级必须留痕）
+        log_dir = os.path.join(root, '故事', '日志')
+        em_ok, em_detail = True, ''
+        if not os.path.isdir(log_dir):
+            em_ok, em_detail = False, '缺 故事/日志/ 目录'
+        else:
+            logs = sorted([f for f in os.listdir(log_dir) if f.endswith('.md')])
+            if not logs:
+                em_ok, em_detail = False, '故事/日志/ 为空（无流程日志）'
+            else:
+                latest_log = logs[-1]
+                log_txt = open(os.path.join(log_dir, latest_log), encoding='utf-8').read()
+                if 'execution_mode' not in log_txt:
+                    em_ok, em_detail = False, f'最新日志({latest_log})缺 execution_mode 声明行（降级未留痕）'
+        check('执行模式声明(execution_mode)', em_ok, em_detail)
+
     # 汇总
     fails = [r for r in results if not r[1]]
     print(f'=== Novel Engine 流程门禁 ({args.scope}) ===')

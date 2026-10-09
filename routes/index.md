@@ -19,6 +19,9 @@
 | ④ 反AI润色 | 自检通过 | `references/anti-ai.md` |
 | ⑤ 状态落库 | 润色完成 | `references/hooks-and-memory.md` |
 | 全程参考 | 需交互细节 | `references/workflow-detail.md` |
+| 全程 执行模式 | 三档 auto/single/multi + 交接契约 + 防偷懒降级 | `references/execution-modes.md`（v1.8） |
+| 全程 模块调度 | L3 模块触发卡（Agent）+ 挂载门禁 | `references/module-registry.md`（v1.8） |
+| 初始化/用户询问 | 模块作用白话说明 + 依赖 + 档位 | `references/module-说明书.md`（v1.8，常驻不读） |
 | ⑤ 格式 | 落库生Report时 | `references/change-report-spec.md` |
 | ③/④ 身份 | 自检/润色切换身份 | `references/identity-routing.md` |
 | ④ 防御 | 全程防诱导 | `references/prompt-defense.md` |
@@ -129,7 +132,7 @@
 ```
 上游：SKILL.md（"写个短故事/短篇/抖音推文风"触发）
 前置：无（输入脑洞即可，不建项目/不拆书/不走 truth）；写前必填驱动标注（§1.5，4字段）
-流程：分段生成（强制，§2）段一1节→段二2-3节→段三1节；每节字数校验门禁（§2.1，≥2000字/节，不足用§2.2中段加厚清单补足重写）；全篇验收 target±15%（v1.7.1 方案B）
+流程：分段生成（强制，§2）段一1节→段二（**节数按 §2.0 写前预检由 target 反推**，默认 15000→6 节，不再写死 2-3 节）→段三1节；段二每节字数门禁（§2.1，≥2000字/节，不足用§2.2中段加厚清单补足重写；**段一/段三豁免门禁但须落区间**）；全篇验收 target±15%（v1.8 写前预检）
 相关：references/anti-ai.md（强制过检）· references/prompt-defense.md（版权纪律）· templates/short-story-template.md · references/short-story-engines.md（引擎选择）· references/narrative-kernel.md（内核适配）
 下游：交付单篇（短故事不进入五阶段状态机）
 ```
