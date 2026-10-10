@@ -114,7 +114,7 @@ version: 1.9.0
 - 入口 B：读取已有材料 → 映射标准结构 → 从当前章节往前推3章重建状态 → 素材准备
 
 **素材准备（双层）**：
-- **第一层 用户级素材库**（内置，跨项目共享）：按 `library/_README.md` 从 genres/ 选 1-2 题材包、techniques/ 选核心方法论、platforms/ 确认平台、knowledge/ 预加载
+- **第一层 用户级素材库**（内置，跨项目共享）：按 `library/_README.md` 从 genres/ 选 1-2 题材包、techniques/ 选核心方法论（场景→技法速查见 `references/技法速查索引.md`）、platforms/ 确认平台、knowledge/ 预加载
 - **第二层 项目级素材池**（每本书独立拆解，Agent 自动拆解非手动填表）：两阶段（快速预览 → 用户确认 → 深度拆解）；档位 轻量 2-3KB / 标准 4-6KB / 全量 8-12KB（每章）；规范见 `templates/pools/拆书规范.md` + `templates/pools/拆解方法论.md`
 
 **模块清单确认（v1.8 新增）**：初始化 Step 5.6 向用户列出可选 L3 模块（Obsidian 叙事总览 / ZVEC 检索 / 对标书拆解等），用户拍板后写入 `novel-config.json → modules`（SSOT，**每本书重新确认，不跨项目继承**）。作用说明见 `references/module-说明书.md`，调度卡见 `references/module-registry.md`。
