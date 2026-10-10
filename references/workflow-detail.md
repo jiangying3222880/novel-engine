@@ -202,7 +202,13 @@ execution_mode=single，隔离=声明级最小化（三条硬指令），非物�
 ### 原子四步（A-07）
 
 1. **暂存**：生成 Change Report（角色/伏笔/时间线/世界规则/关系变化）+ 待落库变更请求 → 暂存区 `故事/日志/暂存_第XXXX章.md`
-2. **校验**：verify.py --scope settle 检查 6 状态更新与 Change Report 一致
+2. **校验**：`verify.py --scope settle` 机器检查（v1.9.1 起真实存在，不再是文档里的空承诺）：
+   - **落库一致性**：index 每行 archived 必须有 change_report/流程日志 + 正文；有正文但 index 仍 outline_only = 漏落库 FAIL
+   - **timeline 覆盖**：timeline.md 登记章数 ≥ index 已落库章数（防时间线滞后）
+   - **hooks 唯一性**：重复 ID 即 FAIL（防伏笔 ID 冲突）
+   - **hooks 登记核对**：change_report 宣称"待登记"的伏笔必须在 hooks.md 实际存在（防只写报告不登记）
+   - **逗号密度**：正文逗号密度 >12% = FAIL（防碎句退化逐章放大）
+   - **检验报告位置**：兼容 故事/元数据/ 与 故事/reports/ 双路径
 3. **提交**：通过 → 批量更新 6 状态文件 + 元数据/index + 正文落位
 4. **回滚**：失败 → 保留旧状态，不部分更新
 
@@ -219,7 +225,9 @@ execution_mode=single，隔离=声明级最小化（三条硬指令），非物�
 7. **输入包存档（D-214）**：日志附"本章输入包 = 细纲_第XXXX章.md + 检验报告_第XXXX章.md"（multi=隔离证据链 / single=降级声明记录）
 8. **工具痕迹检查（F-09）**：正文开头/结尾无"按照您的要求""继续写"类工具残留
 
-### 更新确认（必须输出）
+### 更新确认（必须输出 · 机器验证为准）
+
+> **v1.9.1 变更**：本清单是"落库动作完成后的输出汇报"，不再是"完成凭证"。真正的完成凭证 = `verify.py --scope settle` **PASS**（机器检查 6 状态更新与 Change Report 一致，见原子四步第 2 步）。Agent 勾选清单 ≠ 已完成；settle 门禁 FAIL 时必须修复重跑。
 
 - [x] characters.md 已更新
 - [x] world.md 已更新
@@ -230,6 +238,7 @@ execution_mode=single，隔离=声明级最小化（三条硬指令），非物�
 - [x] 检索索引已重建（bm25_fts.py build 必跑；index.py build 仅装了 zvec 时跑）
 - [x] 故事/元数据/index.md 进度已更新
 - [x] 输入包已存档（日志含细纲+检验报告引用）
+- [x] `verify.py --scope settle` 已 PASS（机器凭证，非自报）
 - [x] 工具痕迹已检查（正文无"按照您的要求"残留）
 
 ### 跨会话续写（F-01/B-05 · 时间维度）

@@ -37,7 +37,7 @@
 | chat-outsource.md | 5.8K | 1. 何时用 / 何时不用 | 2026-10-10 |
 | consistency-checklist.md | 2.3K | S3 · 一致性自检清单（人工） | 2026-10-10 |
 | execution-modes.md | 7.0K | 执行模式与物理隔离（Execution Modes · v1.9） | 2026-10-10 |
-| hooks-and-memory.md | 10.2K | S4 落库：状态落库与 Change Report | 2026-10-10 |
+| hooks-and-memory.md | 10.4K | S4 落库：状态落库与 Change Report | 2026-10-10 |
 | human-signal-zh.md | 10.9K | 去 AI 味方法库（human-signal 沉淀） | 2026-10-10 |
 | human-signal-模式库.md | 5.1K | 五、高频 AI 味模式库（完整版 · 04 §1 四模式的扩充） | 2026-10-10 |
 | identity-routing.md | 5.9K | 身份路由（作者 × 平台 × 题材 × 阶段 → 专业身份） | 2026-10-10 |
@@ -54,7 +54,7 @@
 | short-story-rhythm-origin.md | 2.5K | 短故事节奏原理（用户验证版） | 2026-09-04 |
 | short-story.md | 15.7K | 短故事创作模式（Short Story） | 2026-10-10 |
 | target-focus.md | 6.7K | 目标焦点管理：PMC Suppression 机制与 Skill 实 | 2026-10-10 |
-| workflow-detail.md | 15.7K | S1-S4 物理隔离流水线详解（v1.9） | 2026-10-10 |
+| workflow-detail.md | 16.7K | S1-S4 物理隔离流水线详解（v1.9） | 2026-10-10 |
 | writing-guide.md | 15.5K | 阶段②：正文写作指南（S2 血肉 · 讲述者） | 2026-10-10 |
 | 变更历史.md | 26.5K | 变更历史（novel-engine） | 2026-10-10 |
 | 商业立意与题材选择.md | 4.8K | 商业立意与题材选择 | 2026-10-08 |

@@ -9,7 +9,7 @@
 > 多文件更新（6 状态 + 元数据 + index + 日志）中途失败 = "正文已写入但部分状态没更新"。S4 改为原子四步：
 
 1. **暂存**：生成 Change Report + 待落库变更请求 → 暂存区 `故事/日志/暂存_第XXXX章.md`
-2. **校验**：verify.py --scope settle 检查 6 状态更新与 Change Report 一致
+2. **校验**：`verify.py --scope settle` 机器检查（v1.9.1 起真实存在）：落库一致性 / timeline 覆盖 / hooks 唯一性 / hooks 登记核对 / 逗号密度 >12% FAIL / 检验报告双路径兼容。见 workflow-detail §S4 原子四步。
 3. **提交**：通过 → 批量更新 6 状态文件 + 元数据/index + 正文落位
 4. **回滚**：失败 → 保留旧状态，不部分更新；修正 Change Report 后重跑
 

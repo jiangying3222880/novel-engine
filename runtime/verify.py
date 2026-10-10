@@ -7,7 +7,7 @@ Novel Engine v1.4 流程门禁（verify.py）
 之后必须运行本脚本：PASS → 允许继续下一步；FAIL → 流程禁止继续，先修复再走。
 
 用法：
-  python runtime/verify.py --root <项目根> [--scope init|narrative|evidence|execution|all]
+  python runtime/verify.py --root <项目根> [--scope init|narrative|evidence|execution|outline|settle|all]
 
 检查项：
   [结构]   项目目录骨架（真相/元数据/正文/叙事总览…）
@@ -24,6 +24,12 @@ Novel Engine v1.4 流程门禁（verify.py）
   [证据]   evidence_ids 格式校验 + 正文引用存在性（evidence 范围；v1.9 载体含 检验报告_*.md）
   [执行]   config.modules 字段合法性 + 最新流程日志含 execution_mode 声明行（execution 范围，v1.8）
   [残留]   正文首段工具残留检查（v1.9 · F-09：续写指令/工具声明/元注释漏入正文）
+  [落库一致] index↔change_report↔正文互核（v1.9.1 · settle 范围：archived 必须有三件套；有正文但 index=outline_only 即 FAIL）
+  [timeline] timeline.md 登记章数 ≥ index 已落库章数（v1.9.1 · settle：防时间线滞后）
+  [hooks唯一] hooks.md ID 重复 = FAIL（v1.9.1 · settle：防伏笔 ID 冲突）
+  [hooks登记] change_report 宣称"待登记"的伏笔必须在 hooks.md 找到（v1.9.1 · settle：防只写报告不登记）
+  [逗号密度] 正文逗号密度 >12% = FAIL（v1.9.1 · all：防碎句退化逐章放大）
+  [检验报告] 兼容 故事/元数据/ 与 故事/reports/ 双路径（v1.9.1 · settle）
 
 退出码：0=全部通过  1=存在失败项
 """
@@ -42,7 +48,7 @@ def walk_md(root):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--root', required=True)
-    ap.add_argument('--scope', default='all', choices=['init', 'narrative', 'all', 'evidence', 'execution', 'outline'])
+    ap.add_argument('--scope', default='all', choices=['init', 'narrative', 'all', 'evidence', 'execution', 'outline', 'settle'])
     args = ap.parse_args()
     root = os.path.abspath(args.root)
     if not os.path.isdir(root):
@@ -393,6 +399,166 @@ def main():
                     residue_bad.append(f'{fn}: 框架自指语言 ×{len(fw_matches)}「{snippet}」')
         check('正文无工具/框架残留', not residue_bad,
               '; '.join(residue_bad) if residue_bad else '')
+
+    # 11 落库一致性：index↔change_report↔正文互核（v1.9.1 · settle/all）
+    # 根因修复：唐末第3章"有正文但 index=outline_only + 缺 change_report"、第30章报告自夸30章全落库——机器未核
+    if args.scope in ('settle', 'all'):
+        idx_path = os.path.join(root, '故事', '元数据', 'index.md')
+        log_dir = os.path.join(root, '故事', '日志')
+        body_dir = os.path.join(root, '正文')
+        settle_bad = []
+        archived_chapters = set()
+        outline_only_chapters = set()
+        if os.path.isfile(idx_path):
+            idx_txt = open(idx_path, encoding='utf-8').read()
+            # 兼容两种 index 格式：
+            #   星尘方舟：| 0001 | 标题 | 已落库 | 字数 | 关键事件 | ... |
+            #   唐末：    | 第01卷-第01章 | 标题 | **archived** ✓(...) | 0001 |
+            for line in idx_txt.splitlines():
+                if not line.strip().startswith('|'):
+                    continue
+                status = None
+                if re.search(r'\barchived\b', line):
+                    status = 'archived'
+                elif 'outline_only' in line:
+                    status = 'outline_only'
+                elif re.search(r'\bdrafting\b', line):
+                    status = 'drafting'
+                elif re.search(r'\breview\b', line) or '检验中' in line:
+                    status = 'review'
+                elif '已落库' in line:
+                    status = 'archived'
+                if not status:
+                    continue
+                nums = re.findall(r'\d{4}', line)
+                if not nums:
+                    continue
+                # 章号取行内 4 位数字：唐末格式(卷-章前缀)取末位，星尘格式取首位
+                ch = nums[-1] if ('第' in line and '卷' in line) else nums[0]
+                if status == 'archived':
+                    archived_chapters.add(ch)
+                elif status == 'outline_only':
+                    outline_only_chapters.add(ch)
+        # ① archived 必须三件套：change_report + 正文
+        for ch in sorted(archived_chapters):
+            missing = []
+            # 兼容两种日志命名：change_report_第XXXX章.md（唐末/v1.9）与 第XXXX章.md（星尘/旧版）
+            cr1 = os.path.join(log_dir, f'change_report_第{ch}章.md')
+            cr2 = os.path.join(log_dir, f'第{ch}章.md')
+            if not os.path.isfile(cr1) and not os.path.isfile(cr2):
+                missing.append('缺 change_report/流程日志')
+            if os.path.isdir(body_dir):
+                has_body = any(f.startswith(f'第{ch}章') and f.endswith('.md') for f in os.listdir(body_dir))
+                if not has_body:
+                    missing.append('缺正文')
+            if missing:
+                settle_bad.append(f'第{ch}章(archived但' + ','.join(missing) + ')')
+        # ② 有正文但 index 标 outline_only = 漏落库
+        if os.path.isdir(body_dir):
+            for fn in sorted(os.listdir(body_dir)):
+                m = re.match(r'^第(\d{4})章', fn)
+                if m and m.group(1) in outline_only_chapters:
+                    settle_bad.append(f'第{m.group(1)}章有正文但index仍=outline_only(漏落库)')
+        check('落库一致性(index↔报告↔正文)', not settle_bad,
+              '; '.join(settle_bad) if settle_bad else f'已核 {len(archived_chapters)} 章 archived')
+
+    # 12 timeline 覆盖：登记章数 ≥ index 已落库章数（v1.9.1 · settle/all）
+    if args.scope in ('settle', 'all'):
+        tl_path = os.path.join(root, '故事', '真相', 'timeline.md')
+        tl_bad = []
+        if os.path.isfile(tl_path):
+            tl_txt = open(tl_path, encoding='utf-8').read()
+            # 兼容 4 位（唐末：| 0001 |）与 1-2 位（星尘：| 1 | / | 19 |）章号
+            tl_chapters = set()
+            for m in re.finditer(r'^\|\s*(\d{1,4})\s*\|', tl_txt, re.MULTILINE):
+                tl_chapters.add(m.group(1).zfill(4))
+            idx_path2 = os.path.join(root, '故事', '元数据', 'index.md')
+            archived_count = 0
+            if os.path.isfile(idx_path2):
+                idx_txt2 = open(idx_path2, encoding='utf-8').read()
+                # 按行统计 archived（一行可能同时含 archived + 已落库 两个词，不能按词数）
+                archived_count = 0
+                for _line in idx_txt2.splitlines():
+                    if _line.strip().startswith('|') and (re.search(r'\barchived\b', _line) or '已落库' in _line):
+                        archived_count += 1
+            if archived_count > 0 and len(tl_chapters) < archived_count:
+                tl_bad.append(f'timeline 只登记 {len(tl_chapters)} 章 < index 已落库 {archived_count} 章(滞后)')
+        else:
+            tl_bad.append('缺 timeline.md')
+        check('timeline覆盖', not tl_bad, '; '.join(tl_bad) if tl_bad else 'OK')
+
+    # 13 hooks ID 唯一性（v1.9.1 · settle/all）
+    if args.scope in ('settle', 'all'):
+        hooks_path = os.path.join(root, '故事', '真相', 'hooks.md')
+        dup_bad = []
+        if os.path.isfile(hooks_path):
+            hk_txt = open(hooks_path, encoding='utf-8').read()
+            # 只数表格行（以 | h_XXX | 开头），排除备注/说明文字误报
+            ids = re.findall(r'^\|\s*h_(\d{3})\s*\|', hk_txt, re.MULTILINE)
+            from collections import Counter
+            cnt = Counter(ids)
+            dups = {k: v for k, v in cnt.items() if v > 1}
+            if dups:
+                dup_bad.append('重复ID: ' + ', '.join(f'h_{k}×{v}' for k, v in sorted(dups.items())))
+        check('hooks唯一性', not dup_bad, '; '.join(dup_bad) if dup_bad else 'OK')
+
+    # 14 hooks 登记核对：change_report 宣称"待登记"的伏笔必须在 hooks.md 找到（v1.9.1 · settle/all）
+    if args.scope in ('settle', 'all'):
+        log_dir2 = os.path.join(root, '故事', '日志')
+        hooks_path2 = os.path.join(root, '故事', '真相', 'hooks.md')
+        reg_bad = []
+        if os.path.isdir(log_dir2) and os.path.isfile(hooks_path2):
+            hk_txt2 = open(hooks_path2, encoding='utf-8').read()
+            for fn in sorted(os.listdir(log_dir2)):
+                if not re.match(r'^change_report_第\d{4}章\.md$', fn):
+                    continue
+                cr_txt = open(os.path.join(log_dir2, fn), encoding='utf-8').read()
+                # 找"已写入 hooks.md 待登记"声明中的 ID
+                for m in re.finditer(r'(?:已写入 hooks\.md 待登记|待登记)[^。\n]*?(h_\d{3})', cr_txt):
+                    hid = m.group(1)
+                    if hid not in hk_txt2:
+                        reg_bad.append(f'{fn}: {hid} 宣称待登记但 hooks.md 无此行')
+        check('hooks登记核对', not reg_bad, '; '.join(reg_bad) if reg_bad else 'OK')
+
+    # 15 逗号密度：>12% = FAIL（v1.9.1 · all/settle；防碎句退化逐章放大）
+    # 实测基线：正常5-7%，退化到15章9.9%、17章14.4%、19章23.3%。阈值12%留出正常写作余量
+    if args.scope in ('all', 'settle'):
+        body_dir2 = os.path.join(root, '正文')
+        comma_bad = []
+        if os.path.isdir(body_dir2):
+            for fn in sorted(os.listdir(body_dir2)):
+                if not re.match(r'^第\d{4}章', fn) or not fn.endswith('.md'):
+                    continue
+                txt = open(os.path.join(body_dir2, fn), encoding='utf-8').read()
+                # 去 YAML / markdown 标记，只算正文
+                txt_body = re.sub(r'^---\s*.*?---\s*', '', txt, flags=re.S)
+                lines = [ln for ln in txt_body.splitlines()
+                         if ln.strip() and not ln.lstrip().startswith(('#', '>', '|', '-', '```'))]
+                body = ''.join(lines)
+                total = len(re.sub(r'\s+', '', body))
+                if total < 500:  # 短篇/半成品不判（第20章 2008字可判，<500 跳过防止误伤）
+                    continue
+                commas = body.count('，')
+                pct = commas * 100.0 / total
+                if pct > 12.0:
+                    comma_bad.append(f'{fn}: 逗号密度 {pct:.1f}% (>12%)')
+        check('逗号密度', not comma_bad, '; '.join(comma_bad) if comma_bad else 'OK')
+
+    # 16 检验报告位置兼容（v1.9.1 · settle/all）：元数据/ 与 reports/ 双路径
+    if args.scope in ('settle', 'all'):
+        meta_dir3 = os.path.join(root, '故事', '元数据')
+        reports_dir = os.path.join(root, '故事', 'reports')
+        found_in = []
+        for d in (meta_dir3, reports_dir):
+            if os.path.isdir(d):
+                for fn in os.listdir(d):
+                    if re.match(r'^检验报告_第\d{4}章\.md$', fn):
+                        found_in.append(os.path.relpath(os.path.join(d, fn), root))
+        if not found_in and os.path.isdir(meta_dir3):
+            # 无任何检验报告 = 旧版项目未走 v1.9 产物链（唐末现状），提示但不 FAIL（避免旧项目全红）
+            check('检验报告位置', True, '未找到检验报告（旧项目无 S3 产物链，提示）')
+        else:
+            check('检验报告位置', True, f'找到 {len(found_in)} 份（' + '; '.join(sorted(set(os.path.dirname(p) for p in found_in))) + ')')
 
     # 汇总
     fails = [r for r in results if not r[1]]

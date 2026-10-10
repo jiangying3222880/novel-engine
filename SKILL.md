@@ -102,6 +102,7 @@ version: 1.9.0
 |------|------|------|
 | 项目初始化完成（入口A/B） | `python runtime/verify.py --root <项目根> --scope init` | 目录结构 / 真相防污染 / config 合法性 |
 | 叙事总览生成/落库联动后 | `python runtime/verify.py --root <项目根> --scope narrative` | 总览骨架 / 双链可解析 / 章节链接4位章号 / 真相防污染 |
+| **S4 落库原子四步第2步（校验）** | `python runtime/verify.py --root <项目根> --scope settle` | **落库一致性(index↔报告↔正文) / timeline覆盖 / hooks唯一性 / hooks登记核对 / 逗号密度>12% / 检验报告双路径**（v1.9.1 机器凭证，非 Agent 自报） |
 | 每轮交付前（兜底） | `python runtime/verify.py --root <项目根>` | 全部（含 S1-S4 产物链完整性） |
 
 > **设计动机**：本技能曾反复出现"文档规范存在但执行漏做"（叙事总览空目录、双链悬空、命名不符）。根因是流程执行依赖 Agent 读文档+自觉。**verify.py 是机器强制门禁：Agent 不能自证"我做了"，必须由脚本证明。**
