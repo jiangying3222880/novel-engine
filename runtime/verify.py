@@ -353,9 +353,10 @@ def main():
                     em_ok, em_detail = False, f'最新日志({latest_log})缺 execution_mode 声明行（降级未留痕）'
         check('执行模式声明(execution_mode)', em_ok, em_detail)
 
-    # 10 正文工具残留检查（v1.9 · F-09：AI 工具痕迹漏入正文）
+    # 10 正文工具/框架残留检查（v1.9 · F-09：AI 工具痕迹漏入正文）
     # 番茄实测案例：高潮点后新章开头整行"按照您的要求，对xx进行续写"——读者直接弃书。
-    # 检查正文第一段是否以工具残留开头（续写指令/工具声明/元注释）。
+    # 框架显形案例：写作期夹带"这是细纲第X节""我用一下X技巧"——破坏框架隐形原则（writing-guide §0.1）。
+    # 检查正文首段是否以工具残留开头，以及全文是否夹带框架自指语言。
     if args.scope in ('all', 'execution'):
         body_dir = os.path.join(root, '正文')
         residue_bad = []
@@ -364,6 +365,15 @@ def main():
                 r'^\s*(按照您的要求|根据您的要求|遵照要求|按您的要求|继续(续写|写作|写)|'
                 r'以下是(本章|正文|内容)|好的?，?(我|下面|现在)(来|开始)?(写|继续)|'
                 r'\[?(本章|本段|正文)?(草稿|初稿|正文|内容)\]?[:：]\s*$)'
+            )
+            # 框架自指语言（writing-guide §0.1 框架隐形）：写作期不应出现"我在按细纲/用技巧/检查因果循环"类元语言
+            framework_pat = re.compile(
+                r'(这是(细纲|骨架|冲突链|信息释放)(的|第|中)?|'
+                r'按(照|着)?(细纲|骨架|剧本|规划|安排)(来|写|展开)|'
+                r'(我|这里)(用(了|一下)?|套(用|了)?|参考(了|一下)?)(细纲|技巧|手法|技法|套路|写法)|'
+                r'(检查|核对|对照)(细纲|骨架|因果循环|内核|状态|声线)|'
+                r'(本章|本节|这段)(的)?(设计|安排|目的|意图)(是|为|在于)|'
+                r'(满足|符合)(了)?(C-00\d|内核三联|驱动标注|骨架)要求)'
             )
             for fn in sorted(os.listdir(body_dir)):
                 if not re.match(r'^第\d{4}章', fn) or not fn.endswith('.md'):
@@ -375,7 +385,13 @@ def main():
                     first_para = txt.strip().split('\n---\n', 1)[-1].strip().split('\n\n', 1)[0]
                 if residue_pat.search(first_para):
                     residue_bad.append(f'{fn}: 首段疑似工具残留「{first_para[:40]}」')
-        check('正文无工具残留', not residue_bad,
+                # 框架自指检查全文（首段已查过工具残留，此处查框架元语言）
+                fw_matches = list(framework_pat.finditer(txt))
+                if fw_matches:
+                    snippet_idx = fw_matches[0].start()
+                    snippet = txt[max(0, snippet_idx - 10): snippet_idx + 30].replace('\n', ' ')
+                    residue_bad.append(f'{fn}: 框架自指语言 ×{len(fw_matches)}「{snippet}」')
+        check('正文无工具/框架残留', not residue_bad,
               '; '.join(residue_bad) if residue_bad else '')
 
     # 汇总
