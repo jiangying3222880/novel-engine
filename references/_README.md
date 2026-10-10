@@ -31,13 +31,13 @@
 |------|------|-------------------|------|
 | anti-ai-swaps.md | 3.0K | anti-ai-swaps.md — 功能导向换法表（写作纪律 ·  | 2026-09-04 |
 | anti-ai-示范库.md | 20.2K | 2. 对照式转换示范（选自公开出版文本，覆盖四种截然不同的题材） | 2026-09-01 |
-| anti-ai-词级信号.md | 6.0K | 6. 词级 AI 味信号（诊断 → 真人引导，不是禁止） | 2026-10-08 |
+| anti-ai-词级信号.md | 7.4K | 6. 词级 AI 味信号（诊断 → 真人引导，不是禁止） | 2026-10-10 |
 | anti-ai.md | 15.0K | 叙事质感指南（AI 味判定与表达问题打回依据） | 2026-10-10 |
 | change-report-spec.md | 2.9K | Change Report 格式规范 | 2026-10-10 |
 | chat-outsource.md | 5.8K | 1. 何时用 / 何时不用 | 2026-10-10 |
 | consistency-checklist.md | 2.3K | S3 · 一致性自检清单（人工） | 2026-10-10 |
-| execution-modes.md | 7.0K | 执行模式与物理隔离（Execution Modes · v1.9） | 2026-10-10 |
-| hooks-and-memory.md | 10.4K | S4 落库：状态落库与 Change Report | 2026-10-10 |
+| execution-modes.md | 9.9K | 执行模式与物理隔离（Execution Modes · v1.9.1 | 2026-10-10 |
+| hooks-and-memory.md | 11.4K | S4 落库：状态落库与 Change Report | 2026-10-10 |
 | human-signal-zh.md | 10.9K | 去 AI 味方法库（human-signal 沉淀） | 2026-10-10 |
 | human-signal-模式库.md | 5.1K | 五、高频 AI 味模式库（完整版 · 04 §1 四模式的扩充） | 2026-10-10 |
 | identity-routing.md | 5.9K | 身份路由（作者 × 平台 × 题材 × 阶段 → 专业身份） | 2026-10-10 |
@@ -48,15 +48,15 @@
 | project-setup.md | 16.5K | 阶段⓪：项目初始化指南 | 2026-10-10 |
 | prompt-defense.md | 4.3K | 提示词防御（Prompt Defense） | 2026-10-10 |
 | retrieval.md | 9.1K | 检索层（功能八 · BM25+FTS 默认 + ZVEC 可选） | 2026-10-10 |
-| self-review.md | 15.3K | S3 检验：行为验证 + 双视角评估协议 | 2026-10-10 |
+| self-review.md | 17.6K | S3 检验：行为验证 + 双视角评估协议 | 2026-10-10 |
 | session-start.md | 9.5K | S1 骨架：项目启动与本章细纲 SOP | 2026-10-10 |
 | short-story-engines.md | 11.8K | 短篇文梗引擎库（Short Story Engines） | 2026-10-08 |
 | short-story-rhythm-origin.md | 2.5K | 短故事节奏原理（用户验证版） | 2026-09-04 |
 | short-story.md | 15.7K | 短故事创作模式（Short Story） | 2026-10-10 |
 | target-focus.md | 6.7K | 目标焦点管理：PMC Suppression 机制与 Skill 实 | 2026-10-10 |
-| workflow-detail.md | 16.7K | S1-S4 物理隔离流水线详解（v1.9） | 2026-10-10 |
-| writing-guide.md | 15.5K | 阶段②：正文写作指南（S2 血肉 · 讲述者） | 2026-10-10 |
-| 变更历史.md | 26.5K | 变更历史（novel-engine） | 2026-10-10 |
+| workflow-detail.md | 19.1K | S1-S4 物理隔离流水线详解（v1.9） | 2026-10-10 |
+| writing-guide.md | 16.8K | 阶段②：正文写作指南（S2 血肉 · 讲述者） | 2026-10-10 |
+| 变更历史.md | 30.1K | 变更历史（novel-engine） | 2026-10-10 |
 | 商业立意与题材选择.md | 4.8K | 商业立意与题材选择 | 2026-10-08 |
 | 技法速查索引.md | 11.2K | 技法速查索引（Technique Quick Index） | 2026-10-10 |
 | 简介写法.md | 3.2K | 简介写法 | 2026-10-08 |

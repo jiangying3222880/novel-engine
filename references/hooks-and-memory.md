@@ -80,11 +80,18 @@
 - **部分揭示**：status 仍 active，status_progress=partial，计划回收章更新为"已揭示 X + 剩 Y"，登记 next_resolved_at=下一回收点章号
 - **完整回收**：status=resolved + 实际回收章，status_progress + next_resolved_at 清空
 
-### 伏笔债务管理
+### 伏笔债务管理（v1.9.1 起为机器门禁 verify #28，不再靠 Agent 自觉）
 
-- `active` 超过 10 章未推进的钩子标记为"伏笔债务"（**排除 status_progress=partial 仍在推进的行**）
-- 每次落库时检查是否有债务，在报告末尾提示用户
-- 如果 `active` 超过 20 章未推进，强制在下一章规划中安排推进或废弃
+> 旧规则"active 超 10 章提示 / 超 20 章强制"是纯埋设年龄死阈值，会误杀计划 280 章才回收的长线伏笔。v1.9.1 起由 `verify.py --scope settle` 的 **#28 伏笔债务**判定，S4 settle 必跑：
+
+- **有计划回收章**（hooks 表"计划回收章"列）：当前章超过计划章 **+5** 仍 active 且推进状态为 pending = **FAIL（伏笔违约，必须本章推进/回收，或显式改计划）**；进入计划章 **−3** 区间 = **WARN（临近回收）**。
+- **无计划回收章**才按埋设年龄 + 伏笔类型分档（WARN / FAIL）：
+  - `chekhov`（契诃夫之枪/道具）：30 章 WARN / 50 章 FAIL（应较快兑现）
+  - `mystery` / `identity` / `emotion`（悬念/身份/情感）：60 章 WARN / 100 章 FAIL（允许长线）
+  - 其他类型：40 章 WARN / 80 章 FAIL
+- **排除**：推进状态为 `partial`（仍在揭示）/ `due`（临近回收）的行不算债务；埋设章在未来的规划伏笔跳过。
+- 章号识别排除"卷X"卷号、优先"约0XXX"/括号内章号（"卷1后期（约0050）"按 50 算）。
+- FAIL 处理：在本章或下一章 S1 细纲"伏笔计划"安排推进/回收，或在 hooks 表显式改计划回收章 / 标 `abandoned`（需备注原因），不得放任超期。
 
 ---
 
