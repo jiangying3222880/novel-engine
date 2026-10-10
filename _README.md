@@ -1,17 +1,12 @@
-﻿# 技能根 说明
-
-> ⚠️ 本说明由 doc_sync.py 自动生成。请在下方补充本目录的语义说明（定位/用法/上下游），自动文件清单见文末。
-
-<!-- 人工说明区（doc_sync 保留此区，不会覆盖） -->
-> 📍 **定位**：Novel Engine 技能包根目录。项目说明 / 安装 / 上手 / FAQ 见 **`README.md`**；安装依赖：`pip install -r runtime/requirements.txt`（可选，检索用）。各子目录 `_README.md` 为机器导航。
+> 导航见 `routes/index.md` §四（素材库导航）· 文件清单由 doc_sync.py 自动维护
 
 <!-- AUTO-LIST-START: 由 doc_sync.py 自动维护，请勿手改 -->
 ## 文件清单（自动生成）
 
 | 文件 | 大小 | 用途（首行标题） | 更新 |
 |------|------|-------------------|------|
-| README.md | 20.8K | Novel Engine v1.7 | 2026-10-10 |
-| SKILL.md | 16.9K | Novel Engine v1.9.0 (小说创作引擎) | 2026-10-10 |
+| README.md | 5.2K | Novel Engine v1.9.0 | 2026-10-10 |
+| SKILL.md | 17.1K | Novel Engine v1.9.0 (小说创作引擎) | 2026-10-10 |
 | pr-body.md | 1.9K | Summary | 2026-10-08 |
 
 ### 子目录

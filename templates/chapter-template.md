@@ -1,12 +1,12 @@
 ﻿<!--
 > 📍 **位置**：章节输出 → 正文骨架模板（v1.4 功能三：无 YAML）
-> ⬆️ **上游**：阶段②写作完成后输出正文文件
-> ⚠️ **必读前置**：本章规划清单 + 故事/元数据/ 上一章
+> ⬆️ **上游**：S2 写作完成后输出正文文件
+> ⚠️ **必读前置**：本章细纲 + 故事/元数据/ 上一章
 > 📚 **相关参考**：
 > - `templates/meta/chapter_XXXX.md` — 本章元数据（原 Frontmatter 迁出地）
-> - `templates/log-template.md` — 每章流程日志（5 阶段合一）
-> - `references/session-start.md` — 阶段①规划章态
-> ⬇️ **下游**：阶段③自检 / 阶段⑤落库（元数据从 故事/元数据/ 读取，正文文件保持干净）
+> - `templates/log-template.md` — 每章流程日志（S1-S4 合一）
+> - `references/session-start.md` — S1 骨架细纲
+> ⬇️ **下游**：S3 检验 / S4 落库（元数据从 故事/元数据/ 读取，正文文件保持干净）
 -->
 # 第X章 章节标题
 
@@ -29,7 +29,7 @@
 > **v1.4 说明（功能三 YAML 迁移）：**
 > - 正文文件**不再包含 YAML Frontmatter**。章节元数据（causal_links / hooks / emotion_arc / change_summary）统一存放于 `故事/元数据/chapter_XXXX.md`。
 > - 每章流程日志（输入/输出/关键决策/身份）存放于 `故事/日志/第000X章.md`。
-> - 阶段①读取：故事/元数据/上一章 + index；阶段⑤落库：更新 meta + index + 状态文件。
+> - S1 骨架读取：故事/元数据/上一章 + index；S4 落库：更新 meta + index + 状态文件。
 > - 检索字段（source_chapter / visibility 等）随功能七状态文件维护，不写进正文。
 
 

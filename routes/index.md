@@ -1,7 +1,7 @@
 # 路由台账（文件 → 阶段 · 唯一真相源）
 
 > 本文件是 novel-engine 全部文件的**导航唯一真相源**。任何文件改名/增删/阶段调整，只改本文件，不再遍历各文件头。
-> 各 references / templates 文件头仅保留一行 `> 阶段② · 路由见 routes/index.md`，详细上下游关系一律见本文件。
+> 各 references / templates 文件头仅保留一行 `> S1/S4 · 路由见 routes/index.md`（旧"阶段②"兼容标注可不改），详细上下游关系一律见本文件。
 >
 > 路由链：`SKILL.md`（路由中枢/三铁律）→ `routes/index.md`（本文件）→ references / templates。
 
@@ -43,7 +43,7 @@
 上游：SKILL.md（"开新书/导入"触发）
 前置：无
 相关：templates/truth/ · templates/voice-profile-template.md · templates/pools/拆书规范.md（拆什么/入池/格式三问）· templates/pools/_README.md · templates/pools/拆解方法论.md
-下游：references/session-start.md（初始化完成 → 阶段①）
+下游：references/session-start.md（初始化完成 → S1）
 ```
 
 ### session-start.md · S1 骨架（编剧 · 本章细纲）
@@ -115,7 +115,7 @@
 上游：SKILL.md（v1.5 新增机制）
 前置：PMC4266429 认知科学依据（goal remention 714ms vs new goal 908ms, p<.001）
 相关：references/hooks-and-memory.md（目标焦点表 g_xxx + suppressed机制）· references/session-start.md §5（规划时检查）· references/self-review.md Q5（自检验证）
-下游：阶段①规划（必须检查 focal goal 状态）/ 阶段⑤落库（更新 focal/suppressed/achieved 状态）
+下游：S1 规划（必须检查 focal goal 状态）/ S4 落库（更新 focal/suppressed/achieved 状态）
 ```
 
 ### model-guide.md · 模型文档（v1.5 新增）
@@ -165,17 +165,44 @@
 | `templates/pools/` | 素材池模板（author_dna/planner/unit/knowledge/reference + 拆解方法论） | ⓪ |
 | `templates/short-story-template.md` | 短篇细纲模板（憋压三段式四维骨架 + 细纲门 + 每节字数门禁） | 短篇 S1 |
 
-## 四、素材库导航（用户级 + 项目级）
+## 四、素材库导航（用户级 + 项目级 · 全目录级）
 
-| 层 | 路径 | 说明 |
-|----|------|------|
-| 用户级 | `library/techniques/` | 通用写作方法论（按题材选 2-3 个）；场景→技法两级索引见 `references/技法速查索引.md` |
-| 用户级 | `library/genres/` | 题材风格包（写玄幻选辰东式，写都市神话选斩神式） |
-| 用户级 | `library/knowledge/` | 通用知识库（按本书题材预加载） |
-| 用户级 | `library/platforms/` | 平台适配指南（确认目标平台风格） |
-| 用户级 | `library/identities/` | 身份档案基线（作者/编剧/编辑/读者，项目级可覆盖） |
-| 用户级 | `library/market-research.md` | 市场调查三档路由（快速/标准/深度） |
-| 项目级 | `素材池/` | 对标书拆解出的素材池（author_dna/planner/unit/knowledge/reference） |
+> 各目录 `_README.md` 只承载 doc_sync 自动清单 + 内容本体（若有），**语义导航一律以本表为准**。
+
+### 用户级 `library/`
+
+| 路径 | 说明 |
+|------|------|
+| `library/techniques/` | 通用写作方法论 124 卡（T-001~T-118 + 方法论）；**场景→技法两级索引见 `references/技法速查索引.md`** |
+| `library/genres/` | 题材风格包：`xuanhuan-chendong`（辰东式玄幻）/ `urban-myth-zanshen`（斩神式都市神话）/ `都市` / `仙侠修真` / `悬疑`，各含 1-4 个 md |
+| `library/knowledge/` | 通用知识库：`corpus`（语料索引 4 份）/ `analysis`（技法对比 2 份） |
+| `library/platforms/` | 平台适配指南（**内容本体在 `_README.md`**：8 平台速览 + 写作要点 + 红线） |
+| `library/identities/` | 身份档案基线（作者/编剧/编辑/读者，项目级可覆盖） |
+| `library/market-research.md` | 市场调查三档路由（快速/标准/深度） |
+
+### 项目级模板 `templates/`
+
+| 路径 | 说明 |
+|------|------|
+| `templates/` | 模板总览（config/chapter/voice-profile/log/细纲/检验报告/短篇/外包） |
+| `templates/truth/` | 6 状态文件模板（characters/world/hooks/relationships/objects/timeline） |
+| `templates/meta/` | 章节元数据模板（chapter_XXXX.md + index.md） |
+| `templates/narrative/` | Obsidian 叙事总览模板（00作品/01角色/02世界观/03伏笔/04地图/05关系网） |
+| `templates/identity/` | 项目级身份覆盖模板 |
+| `templates/pools/` | 素材池模板（拆书规范 + 拆解方法论；author_dna/planner/unit/_template.md） |
+| `templates/pools/knowledge/` | 知识池说明（**内容本体在 `_README.md`**） |
+| `templates/pools/reference/` | 文学素材池说明（**内容本体在 `_README.md`**） |
+| `templates/pools/reference/techniques/` | 项目池技巧分类 8 大类（**内容本体在 `_README.md`**） |
+| `templates/pools/reference/samples/` | 实战样本库 7 类（coolness/suspense/action/humor/horror/worldbuilding/xianxia，各 1 份样本；**内容本体在 `_README.md`**） |
+
+### 其他目录
+
+| 路径 | 说明 |
+|------|------|
+| `references/` | 方法库（阶段参考，上下游见本文件 §二） |
+| `runtime/` | Python 运行时（脚本用途表见 `runtime/_README.md`） |
+| `routes/` | 本文件（路由台账唯一真相源） |
+| `story/` | 项目结构示意（仅示意） |
 
 ---
 

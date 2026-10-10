@@ -10,7 +10,7 @@
 | `doc_sync.py` | **说明文档同步**：scan/check/update 各目录 `_README.md` 自动清单 | 修改技能文件后 `update`；发布前 `check` |
 | `bm25_fts.py` | BM25+FTS 索引构建（零依赖 jieba，默认启用） | 项目初始化/每章落库后重建索引 |
 | `index.py` | 章节元数据/正文/实体类真相（characters/world/hooks/objects）→ 索引文档（BM25 词项） | 被 bm25_fts 调用 |
-| `query.py` | 检索查询：关键词 + 防剧透 cutoff + 知情权 visibility 过滤 | 阶段①⑤检索 |
+| `query.py` | 检索查询：关键词 + 防剧透 cutoff + 知情权 visibility 过滤 | S1/S4 检索 |
 | `check_text.py` | 文本合规检查（敏感词/边界） | 交付前 |
 | `safe_edit.py` | **安全编辑**：先校验全部锚点存在再写盘，缺失即报错不写盘 | 正文扩写/改写的 Python 锚点替换统一走它；`--replace "old|||new"` 可多次，`--check-only` 只校验，`--first-only` 只替换首处 |
 | `stability_test.py` | 稳定性测试（多轮采样验证） | 开发期验证 |

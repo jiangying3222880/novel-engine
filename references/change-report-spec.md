@@ -1,8 +1,8 @@
-﻿> 阶段⑤ Change Report 格式规范 · 路由见 `routes/index.md`
+﻿> S4 Change Report 格式规范 · 路由见 `routes/index.md`
 
 # Change Report 格式规范
 
-阶段⑤落库时必须生成本章 Change Report，作为状态更新的唯一依据。无 Change Report 的状态更新视为无效。
+S4 落库时必须生成本章 Change Report，作为状态更新的唯一依据。无 Change Report 的状态更新视为无效。
 
 ---
 

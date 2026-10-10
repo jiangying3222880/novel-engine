@@ -1,4 +1,4 @@
-﻿> 阶段①/⑤ · ZVEC 检索层 · 路由见 `routes/index.md`
+﻿> S1/S4 · ZVEC 检索层 · 路由见 `routes/index.md`
 
 <!-- 提示：检索层是"写前查状态/防剧透"和"落库后建索引"的运行时。ZVEC 不可用时回退 markdown 检索门，防剧透不丢失。 -->
 
@@ -31,14 +31,14 @@ novel-engine 从"纯 Markdown"升级为 **Markdown 主状态 + ZVEC 检索运行
 - **运行时位置**：`runtime/`（唯一 Python 部件：目录含 9 个脚本，其余零 Python）
 - **索引产物**：`故事/索引/`
 - **数据源**：故事/真相（仅四类实体状态：characters/world/hooks/objects）+ 故事/元数据（元数据）+ 正文（分块）+ 设定（按需）
-- **索引边界**：`relationships.md`、`timeline.md` 的关系/时间信息**不产独立实体索引**，靠全文检索（FTS/BM25）+ 阶段①原文加载（对齐 `references/hooks-and-memory.md` 映射表）
+- **索引边界**：`relationships.md`、`timeline.md` 的关系/时间信息**不产独立实体索引**，靠全文检索（FTS/BM25）+ S1 原文加载（对齐 `references/hooks-and-memory.md` 映射表）
 
 ## 2. 调用点
 
 | 阶段 | 调用 | 目的 |
 |------|------|------|
-| ① 规划前 | `query.py` 带 cutoff=本章-1 检索 | 查旧状态/伏笔/设定，防止写到未来 |
-| ⑤ 落库后 | `index.py` 增量 upsert 本章 | 正文块 + 实体类 truth（characters/world/hooks/objects）变更入索引；relationships/timeline 靠全文检索；正文改写按章删除重建 |
+| S1 规划前 | `query.py` 带 cutoff=本章-1 检索 | 查旧状态/伏笔/设定，防止写到未来 |
+| S4 落库后 | `index.py` 增量 upsert 本章 | 正文块 + 实体类 truth（characters/world/hooks/objects）变更入索引；relationships/timeline 靠全文检索；正文改写按章删除重建 |
 | 全程 | 手动检索 | 跨章查角色/地点/物品/伏笔 |
 
 ## 3. 索引 Schema（复用功能七 5 通用字段）

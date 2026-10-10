@@ -1,26 +1,4 @@
-﻿<!--
-> 📍 **位置**：素材池总览（项目级）
-> ⬆️ **上游**：`references/project-setup.md` Step 6（素材准备环节）
-> ⚠️ **必读前置**：无（了解池子全貌的入口文件）
-> 📚 **上层参考**：
-> - `library/_README.md` — 用户级素材库总览（跨项目共享的通用内容）
-> - `library/techniques/` — 通用写作方法论
-> - `library/genres/` — 题材风格库
-> - `library/knowledge/` — 通用知识库
-> 📚 **相关参考**：
-> - `templates/pools/拆解方法论.md` — Agent 拆书执行手册（拆书前必读）
-> - `templates/pools/author_dna/_template.md` — Author DNA 模板
-> - `templates/pools/planner/_template.md` — Planner 结构模板
-> - `templates/pools/unit/_template.md` — Unit 事件单元模板
-> - `templates/pools/reference/_README.md` — 文学素材池说明
-> - `templates/pools/knowledge/_README.md` — 知识池说明
-> ⬇️ **下游**：
-> - 阶段①规划（加载 DNA + Planner 校准风格和节奏）
-> - 阶段②写作（按需加载 Reference + Unit 参考）
-> - 阶段④润色（加载 DNA 校准文风）
--->
-
-# 素材池 — 总览（项目级）
+﻿# 素材池 — 总览（项目级）
 
 **池子是 Agent 自动拆解出来的，不是手动建出来的。空池子没有价值。**
 
@@ -230,7 +208,7 @@ Unit 除了满足事件完整性，还必须标注：
 
 | 文件 | 大小 | 用途（首行标题） | 更新 |
 |------|------|-------------------|------|
-| 拆书规范.md | 8.5K | 拆书规范（拆什么 / 什么入池 / 格式如何） | 2026-09-01 |
+| 拆书规范.md | 8.5K | 拆书规范（拆什么 / 什么入池 / 格式如何） | 2026-10-10 |
 | 拆解方法论.md | 15.7K | 对标书拆解方法论（Agent 执行手册） | 2026-09-01 |
 
 ### 子目录

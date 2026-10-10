@@ -1,8 +1,8 @@
 ﻿<!--
 > 📍 **位置**：模板 → 流程日志模板
-> ⬆️ **上游**：阶段①~⑤ 每阶段产出
-> ⚠️ **用途**：`故事/日志/第000X章.md` —— 每章 1 个日志文件、5 阶段合一
-> 📚 **相关参考**：`references/identity-routing.md`（每阶段主身份）· `references/change-report-spec.md`（⑤落库 Report）
+> ⬆️ **上游**：S1-S4 每阶段产出
+> ⚠️ **用途**：`故事/日志/第000X章.md` —— 每章 1 个日志文件、S1-S4 合一
+> 📚 **相关参考**：`references/identity-routing.md`（每阶段主身份）· `references/change-report-spec.md`（S4 落库 Report）
 -->
 ---
 # 章节流程日志：第 X 章

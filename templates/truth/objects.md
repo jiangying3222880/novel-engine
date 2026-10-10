@@ -1,15 +1,15 @@
 ﻿<!--
 > 📍 **位置**：状态中心 → 物品状态库
-> ⬆️ **上游**：阶段①强制加载；阶段⑤通过 Change Report 更新
+> ⬆️ **上游**：S1 强制加载；S4 通过 Change Report 更新
 > ⚠️ **必读前置**：无（项目初始化时从模板创建，后续持续更新）
 > 📚 **相关参考**：`references/change-report-spec.md` · `references/hooks-and-memory.md`
-> ⬇️ **下游**：阶段②写作（道具使用）/ 阶段⑤落库（持有链更新）
+> ⬇️ **下游**：S2 写作（道具使用）/ S4 落库（持有链更新）
 -->
 ---
 # 物品状态库（objects.md · 功能七新增）
 # 状态机 artifact：owned · lost · destroyed · sealed · transferred
 # 5 通用字段：status / transition / valid_until / visibility / source_chapter(4位章号)
-# 阶段①强制加载；每章结束后通过 Change Report 更新
+# S1 强制加载；每章结束后通过 Change Report 更新
 ---
 
 | 物品ID | 名称 | 状态 | 当前持有者 | 持有链历史 | 关键性 | 产生于章(source_chapter(4位章号)) | 可见性(visibility) | 备注 |

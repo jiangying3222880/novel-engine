@@ -46,7 +46,7 @@
 | `visibility` | 可见性列 | 可见性列 | 可见性列 | 可见性列 | （无） | 可见性列 |
 | `source_chapter` | 更新于章列 | 产生于章列 | 埋设章列 | 产生于章列 | （无） | 章号列 |
 
-> **索引边界**：hooks/objects/characters/world 四类**实体状态**由 index.py 按上表列名解析 `source_chapter` / `visibility` / `status`（缺省兜底）；relationships/timeline 的**关系/时间信息不产独立实体索引**，靠全文检索 + 阶段①原文加载。
+> **索引边界**：hooks/objects/characters/world 四类**实体状态**由 index.py 按上表列名解析 `source_chapter` / `visibility` / `status`（缺省兜底）；relationships/timeline 的**关系/时间信息不产独立实体索引**，靠全文检索 + S1原文加载。
 
 > **完整设定档案**（`设定/角色声线.md`、`设定/世界观.md`）是深度参考，不在强制加载范围内。只有当声线存疑或需要深挖设定时才读取。
 
