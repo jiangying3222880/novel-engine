@@ -19,9 +19,11 @@ Novel Engine v1.4 流程门禁（verify.py）
   [角色卡] 角色总览双链必须已有角色卡文件（防未出场角色转双链）
   [命名]   章节链接必须 4 位章号（第000X章）
   [配置]   novel-config.json 合法性（target_word_count/命名模板）
-  [落点]   相邻3章落点类型（开/合/转）去重（防收尾套路化）
-  [证据]   evidence_ids 格式校验 + 正文引用存在性（evidence 范围）
+  [落点]   相邻3章落点类型（开/合/转）去重（防收尾套路化；v1.9 细纲路径 大纲/ → 故事/元数据/，兼容旧路径）
+  [细纲门] S1 细纲硬性结构检查（v1.9 · scope=outline：任务字数非空/冲突链四节点/声线标注来源/角色状态最小摘要）
+  [证据]   evidence_ids 格式校验 + 正文引用存在性（evidence 范围；v1.9 载体含 检验报告_*.md）
   [执行]   config.modules 字段合法性 + 最新流程日志含 execution_mode 声明行（execution 范围，v1.8）
+  [残留]   正文首段工具残留检查（v1.9 · F-09：续写指令/工具声明/元注释漏入正文）
 
 退出码：0=全部通过  1=存在失败项
 """
@@ -40,7 +42,7 @@ def walk_md(root):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--root', required=True)
-    ap.add_argument('--scope', default='all', choices=['init', 'narrative', 'all', 'evidence', 'execution'])
+    ap.add_argument('--scope', default='all', choices=['init', 'narrative', 'all', 'evidence', 'execution', 'outline'])
     args = ap.parse_args()
     root = os.path.abspath(args.root)
     if not os.path.isdir(root):
@@ -170,12 +172,16 @@ def main():
     landing_bad = []
     if args.scope in ('all',):
         outline_dir = os.path.join(root, '大纲')
+        meta_dir_2 = os.path.join(root, '故事', '元数据')
         chap_seq = []
-        if os.path.isdir(outline_dir):
-            for fn in sorted(os.listdir(outline_dir)):
+        # v1.9 产物链：细纲落盘位置从 大纲/ 迁移到 故事/元数据/（兼容旧路径）
+        for base_dir in (meta_dir_2, outline_dir):
+            if not os.path.isdir(base_dir):
+                continue
+            for fn in sorted(os.listdir(base_dir)):
                 m = re.match(r'^细纲_第(\d{4})章\.md$', fn)
                 if m:
-                    txt = open(os.path.join(outline_dir, fn), encoding='utf-8').read()
+                    txt = open(os.path.join(base_dir, fn), encoding='utf-8').read()
                     lm = re.search(r'落点类型[:：]\s*(开|合|转)', txt)
                     chap_seq.append((m.group(1), lm.group(1) if lm else None))
         for i in range(len(chap_seq) - 2):
@@ -184,13 +190,50 @@ def main():
                 landing_bad.append(f"{chap_seq[i][0]}-{chap_seq[i + 2][0]}连续3章同类落点({a})")
         check('落点类型去重', not landing_bad, '; '.join(landing_bad) if landing_bad else '')
 
+    # 7b 细纲门硬性结构检查（v1.9 · scope=outline 或 scope=all）
+    # 细纲门第一道 = 程序可校验项（非语义判断）；软性删节推理由 S3 检验 Agent 做，程序不判
+    if args.scope in ('outline', 'all'):
+        meta_dir_2 = os.path.join(root, '故事', '元数据')
+        outline_gate_bad = []
+        if os.path.isdir(meta_dir_2):
+            for fn in sorted(os.listdir(meta_dir_2)):
+                m = re.match(r'^细纲_第(\d{4})章\.md$', fn)
+                if not m:
+                    continue
+                txt = open(os.path.join(meta_dir_2, fn), encoding='utf-8').read()
+                # 3.1 硬性结构检查 4 项
+                # ① 任务字数（每节数字非空）
+                has_task_words = bool(re.search(r'任务字数[:：]?\s*\d', txt))
+                # ② 冲突链四节点（想要/阻拦/弄砸/代价）
+                conflict_kws = ['想要', '阻拦', '弄砸', '代价']
+                has_conflict = all(kw in txt for kw in conflict_kws)
+                # ③ 声线要求标注来源（characters.md# 透传）
+                has_voice_src = bool(re.search(r'来源[:：]?\s*(characters|角色卡|设定)', txt))
+                # ④ 角色状态最小摘要存在
+                has_state_summary = bool(re.search(r'角色状态最小摘要', txt))
+                missing = []
+                if not has_task_words:
+                    missing.append('任务字数缺数字')
+                if not has_conflict:
+                    missing.append('冲突链四节点不完整')
+                if not has_voice_src:
+                    missing.append('声线未标注来源')
+                if not has_state_summary:
+                    missing.append('角色状态最小摘要缺失')
+                if missing:
+                    outline_gate_bad.append(f'{fn}: ' + ','.join(missing))
+        check('细纲门硬性结构', not outline_gate_bad,
+              '; '.join(outline_gate_bad) if outline_gate_bad else '')
+
     # 8 evidence_ids 校验（scope=evidence 或 scope=all）
     if args.scope in ('evidence', 'all'):
         meta_dir = os.path.join(root, '故事/元数据')
         body_dir = os.path.join(root, '正文')
         if os.path.isdir(meta_dir):
             import glob as _glob
-            meta_files = sorted(_glob.glob(os.path.join(meta_dir, 'chapter_*.md')))
+            # v1.9：evidence 载体从 chapter_*.md 扩展为 chapter_*.md + 检验报告_*.md
+            meta_files = (sorted(_glob.glob(os.path.join(meta_dir, 'chapter_*.md')))
+                          + sorted(_glob.glob(os.path.join(meta_dir, '检验报告_*.md'))))
             evidence_issues = []
             for mf_path in meta_files:
                 mf_name = os.path.basename(mf_path)
@@ -309,6 +352,31 @@ def main():
                 if 'execution_mode' not in log_txt:
                     em_ok, em_detail = False, f'最新日志({latest_log})缺 execution_mode 声明行（降级未留痕）'
         check('执行模式声明(execution_mode)', em_ok, em_detail)
+
+    # 10 正文工具残留检查（v1.9 · F-09：AI 工具痕迹漏入正文）
+    # 番茄实测案例：高潮点后新章开头整行"按照您的要求，对xx进行续写"——读者直接弃书。
+    # 检查正文第一段是否以工具残留开头（续写指令/工具声明/元注释）。
+    if args.scope in ('all', 'execution'):
+        body_dir = os.path.join(root, '正文')
+        residue_bad = []
+        if os.path.isdir(body_dir):
+            residue_pat = re.compile(
+                r'^\s*(按照您的要求|根据您的要求|遵照要求|按您的要求|继续(续写|写作|写)|'
+                r'以下是(本章|正文|内容)|好的?，?(我|下面|现在)(来|开始)?(写|继续)|'
+                r'\[?(本章|本段|正文)?(草稿|初稿|正文|内容)\]?[:：]\s*$)'
+            )
+            for fn in sorted(os.listdir(body_dir)):
+                if not re.match(r'^第\d{4}章', fn) or not fn.endswith('.md'):
+                    continue
+                txt = open(os.path.join(body_dir, fn), encoding='utf-8').read()
+                first_para = txt.strip().split('\n\n', 1)[0]
+                # 跳过 YAML frontmatter（正文文件应无 YAML，但防御性跳过）
+                if first_para.startswith('---'):
+                    first_para = txt.strip().split('\n---\n', 1)[-1].strip().split('\n\n', 1)[0]
+                if residue_pat.search(first_para):
+                    residue_bad.append(f'{fn}: 首段疑似工具残留「{first_para[:40]}」')
+        check('正文无工具残留', not residue_bad,
+              '; '.join(residue_bad) if residue_bad else '')
 
     # 汇总
     fails = [r for r in results if not r[1]]
