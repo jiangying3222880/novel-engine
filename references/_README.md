@@ -54,9 +54,9 @@
 | short-story-rhythm-origin.md | 2.5K | 短故事节奏原理（用户验证版） | 2026-09-04 |
 | short-story.md | 15.7K | 短故事创作模式（Short Story） | 2026-10-10 |
 | target-focus.md | 6.7K | 目标焦点管理：PMC Suppression 机制与 Skill 实 | 2026-10-10 |
-| workflow-detail.md | 19.2K | S1-S4 物理隔离流水线详解（v1.9） | 2026-10-14 |
+| workflow-detail.md | 19.5K | S1-S4 物理隔离流水线详解（v1.9） | 2026-10-14 |
 | writing-guide.md | 16.8K | 阶段②：正文写作指南（S2 血肉 · 讲述者） | 2026-10-10 |
-| 变更历史.md | 41.5K | 变更历史（novel-engine） | 2026-10-14 |
+| 变更历史.md | 44.3K | 变更历史（novel-engine） | 2026-10-14 |
 | 商业立意与题材选择.md | 4.8K | 商业立意与题材选择 | 2026-10-08 |
 | 技法速查索引.md | 11.2K | 技法速查索引（Technique Quick Index） | 2026-10-10 |
 | 简介写法.md | 3.2K | 简介写法 | 2026-10-08 |

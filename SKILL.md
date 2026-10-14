@@ -1,21 +1,24 @@
 ---
 name: novel-engine
 description: 工业级网文写作与长篇状态管理引擎，解决AI写作呆板、假自检与上下文溢出问题。
-version: 1.9.1.2
+version: 1.9.1.3
 ---
 
 <!--
 > 导航：全部文件的路由/上下游/素材库见 `routes/index.md`（唯一真相源）。
 -->
 
-# Novel Engine v1.9.1.2 (小说创作引擎)
+# Novel Engine v1.9.1.3 (小说创作引擎)
+
+## v1.9.1.3 hotfix（2026-10-14 · 检验语义边界 + 门禁回归基线 · D-30/D-31）
+
+- **D-30 检验语义边界**：#27 升两级——①标题存在性（原有）；②小节实质填写（模板占位符＿残留即 WARN）。机器到此为止：**槽位存在 ≠ 检查完成**，各节判断成立与否的语义验收归 S3（声明已写入检验报告模板头部 + workflow-detail 检验职责边界）。
+- **D-31 门禁回归基线**：新增 `runtime/selftest_gates.py`——8 场景 21 断言，在临时夹具上把 verify 关键行为固化成可重放回归（#8 接线/legacy 旗/证据双格式+跨文件口径/#27 槽位/#16/#21 落库一致/hooks 唯一/#32 空壳与跳号/batch 停机闸 trend_b）。**治"0 误报依赖仓库外两本事故书、第三方无法独立复现"**。约定：改 verify.py 先在此登记预期（预期先行），改完必跑、发版前必跑。
+- 静态示例夹具 `_selftest_v1912/` 保留（不打包）；`-v` 看断言明细、`--keep` 留临时夹具供人工检查。
 
 ## v1.9.1.2 hotfix（2026-10-14 · 门禁接线与证据契约 · D-28/D-29）
 
-- **#8 接入 settle/batch（D-28）**：此前每章 S4 必跑的 `--scope settle` 不含证据链校验，缺 evidence_ids 的检验报告可漏过落库门禁（#16 只查"报告存在"、不查"报告有证据"，同门禁口径割裂）。现 evidence/settle/batch/all 四 scope 全覆盖；v1.9.1.2 前遗留报告可建 `故事/日志/legacy-no-evidence.flag` 豁免（列章号=只豁免这些，空文件=全豁免，命中转 WARN 留痕）。
-- **证据契约对齐（D-29）**：检验报告模板新增 **§6 证据清单**（`- source: … excerpt: …`，同行/分行两种写法均解析）；source 指向本章正文才做逐字定位（失败 WARN），跨文件证据（上章末/细纲/状态文件）交 S3 人工核对——修复"Q6 双侧引用必然误报 WARN"与"按模板填写却被判无有效条目"双重错位。
-- **doc_sync 版本检查补盲（D-18 第二次复发修复）**：README 文末「## 版本」段曾回退 v1.9.0 而首行检查全绿；现改为 SKILL/README/变更历史**全文最高版本号**必须等于权威版本。
-- **配套卫生**：verify config 读取统一 utf-8-sig；routes S2 必读行修正（writing-guide 移出）；single/multi 禁读清单对齐；新增 `runtime/package.py` 发行打包脚本；runtime/_README 刷新；SKILL 版本段只留两版（回归 ≤17KB 红线，明细尽在变更历史）。
+> #8 接入 settle/batch（D-28，legacy-no-evidence.flag 豁免）；检验报告 §6 证据清单 + 解析器双格式/跨文件口径（D-29）；doc_sync 版本全文扫描补盲（README 文末版本段第 3 次复发）；routes S2 行修正 + 禁读清单对齐 + package.py 打包脚本。**明细见 `references/变更历史.md`**。
 
 ## v1.9.1.1 hotfix（2026-10-12 · 门禁收敛第一批）
 

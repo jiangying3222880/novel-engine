@@ -37,7 +37,8 @@ Novel Engine 流程门禁（verify.py · v1.9.1.1）
       #33章末雷同(末1句逐字≥35字FAIL/20-35WARN + 18组收尾意象在≥3章末出现=WARN)
   [残章/产物] #20残章字数(archived<target×0.7 FAIL,0.7-0.85 WARN;非archived半成品<0.5 WARN) /
       #21章级产物齐套+双向差集(有正文缺细纲、archived缺chapter元数据、正文达标但index无进度行=FAIL;半成品无行=WARN) /
-      #27 change_report充实度(<100字WARN)+检验报告Q1-Q7缺槽(WARN) / #29 init关键文件非空(作者身份+世界观)
+      #27 change_report充实度(<100字WARN)+检验报告Q1-Q7缺槽(WARN)+小节残留占位符＿未实质填写(WARN · v1.9.1.3 D-30：
+      机器只证"槽位存在且已填写"，判断成立与否的语义验收归 S3) / #29 init关键文件非空(作者身份+世界观)
   [状态/批跑] #23角色物品状态(物品/角色ID重复、同名物品同持有者重复行、同ID多行、表格内死而复生=FAIL;多人持有/同名持有者不一致/死者晚章正文出现=WARN) /
       #28伏笔债务(超过计划回收章+5仍active/pending=FAIL,临近=WARN;无计划章按类型化年龄 chekhov30/50、mystery等60/100;partial/due排除) /
       #32批跑断链(正文跳号、前章有正文未archived即续写后章、chapter元数据批量空壳≥10=FAIL;细纲跳号/超前正文>3章/空壳1-9=WARN)
@@ -1093,7 +1094,9 @@ def main():
                 if len(core) < 100:
                     cr_warn.append(f'{fn}: 实质内容仅{len(core)}字(<100)疑似敷衍')
         # 检验报告 Q1-Q7 必需小节（关键字须与 templates/检验报告模板.md 小节标题一致）；
-        # evidence 缺失是硬 FAIL（归 #8），小节缺失过渡期 WARN（推动新模板落地，不让 v1.9 旧稿全红）。
+        # 两层设计（v1.9.1.3 D-30）：①标题存在性——机器低成本结构门禁；②槽位实质填写——
+        # 模板槽位用全角下划线＿占位，小节正文残留 ＿ = 未实质填写（WARN）。
+        # 机器到此为止：小节内判断是否成立、证据是否对应，语义验收归 S3（标题存在≠检查完成）。
         review_slots = [('章节出口', 'Q1'), ('OOC', 'Q2'), ('遮名', 'Q2a'), ('质感', 'Q3'),
                         ('因果', 'Q4'), ('目标焦点', 'Q5'), ('章际', 'Q6'), ('设定宪法', 'Q7')]
         for rch in sorted(art_v['review'] & (set(archived_v) | body_set)):
@@ -1101,10 +1104,27 @@ def main():
             rtxt = open(rp, encoding='utf-8').read()
             # 只在 markdown 小节标题行匹配（检测"有无该小节"，避免正文零散词误满足）；
             # 新模板小节标题须含这些关键字（章节出口/OOC/遮名/质感/因果/目标焦点/章际/设定宪法）。
-            heads = '\n'.join(l for l in rtxt.splitlines() if l.lstrip().startswith('#'))
+            sections = {}   # 标题行 -> 小节正文行列表（保持出现顺序）
+            cur = None
+            for l in rtxt.splitlines():
+                if l.lstrip().startswith('#'):
+                    cur = l.strip()
+                    sections[cur] = []
+                elif cur is not None:
+                    sections[cur].append(l)
+            heads = '\n'.join(sections.keys())
             miss = [tag for kw, tag in review_slots if kw not in heads]
             if miss:
                 cr_warn.append(f'检验报告_第{rch}章.md: 缺小节 {",".join(miss)}')
+            unfilled = []
+            for kw, tag in review_slots:
+                sec_title = next((t for t in sections if kw in t), None)
+                if sec_title is None:
+                    continue  # 缺小节已单独报
+                if '＿' in '\n'.join(sections[sec_title]):
+                    unfilled.append(tag)
+            if unfilled:
+                cr_warn.append(f'检验报告_第{rch}章.md: 小节未实质填写(残留占位符＿) {",".join(unfilled)}')
         check('change_report充实度(#27)', 'warn' if cr_warn else 'pass', '; '.join(cr_warn[:6]) or 'OK')
 
     # ===== v1.9.1 状态一致性 / 伏笔债务 / 批跑断链（#23 / #28 / #32 · settle/all/batch）=====

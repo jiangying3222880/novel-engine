@@ -1,4 +1,4 @@
-# Novel Engine v1.9.1.2
+# Novel Engine v1.9.1.3
 
 工业级网文写作 Skill：纯 Markdown 状态机（主）+ 检索运行时（runtime/，BM25+FTS 已落地，ZVEC 可选增强）。**技能只存模板，项目存内容。**整个系统**仅 `runtime/` 目录一处跑 Python**（内含 9 个脚本，其余全纯 Markdown；脚本清单见 `runtime/_README.md`）。
 
@@ -78,4 +78,4 @@
 
 ## 版本
 
-最新：**v1.9.1.2**（门禁接线与证据契约：#8 证据链接入 settle/batch 每章落库门禁 + legacy-no-evidence.flag 豁免；检验报告模板 §6 证据清单与解析器双格式对齐；doc_sync 版本检查全文扫描补盲）。完整版本表见 [`references/变更历史.md`](references/变更历史.md)。
+最新：**v1.9.1.3**（检验语义边界与门禁回归基线：#27 升两级——标题存在 + 槽位实质填写，语义验收归 S3（D-30）；新增 `runtime/selftest_gates.py` 8 场景 21 断言门禁回归（D-31），改门禁先登记预期、发版前必跑）。完整版本表见 [`references/变更历史.md`](references/变更历史.md)。
