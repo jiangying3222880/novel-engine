@@ -1,4 +1,4 @@
-# Novel Engine v1.9.0
+# Novel Engine v1.9.1.1
 
 工业级网文写作 Skill：纯 Markdown 状态机（主）+ 检索运行时（runtime/，BM25+FTS 已落地，ZVEC 可选增强）。**技能只存模板，项目存内容。**整个系统**仅 `runtime/` 目录一处跑 Python**（内含 9 个脚本，其余全纯 Markdown；脚本清单见 `runtime/_README.md`）。
 

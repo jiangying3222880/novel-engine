@@ -11,7 +11,7 @@ doc_sync.py — 技能说明文档同步器
 
 用法：
   python runtime/doc_sync.py scan            # 列出全部目录的同步状态（缺 _README / 过期 / 正常）
-  python runtime/doc_sync.py check           # 门禁：有缺失或过期则 exit 1（供 verify.py 集成）
+  python runtime/doc_sync.py check           # 门禁：_README 缺失/过期，或 SKILL/README/变更历史版本号不一致，则 exit 1
   python runtime/doc_sync.py update          # 批量创建/刷新各目录 _README 的自动清单区
   python runtime/doc_sync.py update --root X # 指定技能根目录（默认=本文件上级）
 """
@@ -127,6 +127,39 @@ def status_of(root, rel, files):
     return "stale", "缺少自动清单区（运行 doc_sync update）"
 
 
+def extract_skill_version(root):
+    """权威版本号：取 SKILL.md frontmatter 的 version: 字段；取不到返回 ''。"""
+    txt = read(os.path.join(root, "SKILL.md"))
+    m = re.search(r'^version:\s*([0-9][0-9A-Za-z.\-]*)', txt, re.M)
+    return m.group(1).strip() if m else ""
+
+
+def check_version_consistency(root):
+    """D-18 跨文件版本一致性。
+
+    gen_autolist 只记录各文件首行标题，结构上抓不到"SKILL/README/变更历史三处版本号
+    互相矛盾"（v1.9.1 发布包曾出现 SKILL=v1.9.1 而 README 仍 v1.9.0）。故独立检查：
+    以 SKILL.md frontmatter version 为权威，README 首行标题、变更历史最新条目须含同号。
+    返回问题字符串列表（空=一致）。
+    """
+    problems = []
+    ver = extract_skill_version(root)
+    if not ver:
+        return ["SKILL.md frontmatter 未取到 version:（权威版本缺失）"]
+    readme = read(os.path.join(root, "README.md"))
+    rm = re.search(r'^#\s+(.+)$', readme, re.M)
+    rhead = rm.group(1).strip() if rm else ""
+    if ver not in rhead:
+        problems.append("README.md 首行标题未含版本 %s（实际：%s）"
+                        % (ver, (rhead[:40] or "无标题")))
+    hist = read(os.path.join(root, "references", "变更历史.md"))
+    found = re.findall(r'v?(\d+\.\d+\.\d+(?:\.\d+)?)', hist[:3000])  # 最新条目在文件顶部
+    if ver not in found:
+        problems.append("references/变更历史.md 顶部最新条目未含版本 %s（检测到最近：%s）"
+                        % (ver, found[0] if found else "无版本号"))
+    return problems
+
+
 def do_scan_or_check(root, check=False):
     bad = 0
     for rel, files, dirs in walk_dirs(root):
@@ -136,8 +169,11 @@ def do_scan_or_check(root, check=False):
         bad += 1
         label = "[缺说明]" if st == "missing" else "[已过期]"
         print("%s %s  (%s)" % (label, rel if rel != "." else "[根]", msg))
+    for vp in check_version_consistency(root):
+        bad += 1
+        print("[版本不一致] %s" % vp)
     if not bad:
-        print("全部目录说明文档已同步 ✓")
+        print("全部目录说明文档已同步，且 SKILL/README/变更历史版本一致 ✓")
     return 1 if (bad and check) else 0
 
 

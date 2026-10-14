@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Novel Engine v1.4 流程门禁（verify.py）
+Novel Engine 流程门禁（verify.py · v1.9.1.1）
 =====================================
 把"自动完成"从 Agent 自觉升级为程序强制。关键动作（初始化 / 落库 / 总览生成）
 之后必须运行本脚本：PASS → 允许继续下一步；FAIL → 流程禁止继续，先修复再走。
 
 用法：
-  python runtime/verify.py --root <项目根> [--scope init|narrative|evidence|execution|outline|settle|all]
+  python runtime/verify.py --root <项目根> [--scope init|narrative|evidence|execution|outline|settle|trend|batch|all]
 
 检查项：
   [结构]   项目目录骨架（真相/元数据/正文/叙事总览…）
@@ -29,16 +29,19 @@ Novel Engine v1.4 流程门禁（verify.py）
   [hooks唯一] hooks.md ID 重复 = FAIL（v1.9.1 · settle：防伏笔 ID 冲突）
   [hooks登记] change_report 宣称"待登记"的伏笔必须在 hooks.md 找到（v1.9.1 · settle：防只写报告不登记）
   [逗号密度] 正文逗号密度 >12% = FAIL（v1.9.1 · all：防碎句退化逐章放大）
-  [检验报告] 兼容 故事/元数据/ 与 故事/reports/ 双路径（v1.9.1 · settle）
-  [退化趋势] scope=trend：逐章逗号/破折号/短句指标 vs 前5章基线偏离>50%、连续5章爬升 = WARN（v1.9.1 · 预警逐章放大，不等超阈值）
+  [检验报告#16] archived 章缺检验报告 = FAIL（v1.9.1.1；兼容 reports/ 与 元数据/chapters/；legacy-no-review.flag 豁免转 WARN）
+  [退化趋势#31] trend/all：单章偏离基线>50%、连续5章爬升 = WARN；batch：连续5章爬升 = FAIL 停机（v1.9.1.1 逐章放大停机闸）
   [正文质量#17-#33] #17章内重复FAIL / #18跨章整句重复WARN / #19半角标点 / #24占位符FAIL / #25崩溃句FAIL /
       #26章末净化(引用块/细纲钩子句/元数据/markdown残留) / #30口癖密度(破折号≥5每千字或"的方向是">5=FAIL,破折号3-5或"了一下">15=WARN) /
       #33章末雷同(末1句逐字≥35字FAIL/20-35WARN + 18组收尾意象在≥3章末出现=WARN)
-  [残章/产物] #20残章字数(archived<target×0.7 FAIL,0.7-0.85 WARN;非archived半成品<0.5 WARN) / #21章级产物齐套 /
-      #27 change_report充实度(<100字WARN) / #29 init关键文件非空(作者身份+世界观)
-  [状态/批跑] #23角色物品状态(物品/角色ID重复、表格内死而复生=FAIL;多人持有/同名重复/同ID多行/死者晚章正文出现=WARN) /
+  [残章/产物] #20残章字数(archived<target×0.7 FAIL,0.7-0.85 WARN;非archived半成品<0.5 WARN) /
+      #21章级产物齐套+双向差集(有正文缺细纲、archived缺chapter元数据、正文达标但index无进度行=FAIL;半成品无行=WARN) /
+      #27 change_report充实度(<100字WARN)+检验报告Q1-Q7缺槽(WARN) / #29 init关键文件非空(作者身份+世界观)
+  [状态/批跑] #23角色物品状态(物品/角色ID重复、同名物品同持有者重复行、同ID多行、表格内死而复生=FAIL;多人持有/同名持有者不一致/死者晚章正文出现=WARN) /
       #28伏笔债务(超过计划回收章+5仍active/pending=FAIL,临近=WARN;无计划章按类型化年龄 chekhov30/50、mystery等60/100;partial/due排除) /
-      #32批跑断链(正文跳号、前章有正文未archived即续写后章=FAIL;细纲跳号/超前正文>3章=WARN)
+      #32批跑断链(正文跳号、前章有正文未archived即续写后章、chapter元数据批量空壳≥10=FAIL;细纲跳号/超前正文>3章/空壳1-9=WARN)
+  [batch闸] scope=batch=连续批写停机闸：正文硬指标(#15/#17-#33)+产物(#16/#20/#21/#27)+状态(#23/#28)+断链(#32)+退化趋势(连续爬升FAIL)；
+      不含 init/narrative/evidence/落库一致性等每章 settle 项（那些在每章 S4 已跑）
 
 结果三态：PASS / WARN（预警，不改变退出码）/ FAIL（退出码 1）。
 
@@ -155,38 +158,99 @@ def parse_index_status(root):
     return archived, smap
 
 
+def meta_dirs(root):
+    """章元数据目录候选：故事/元数据 及其 chapters 子目录（唐末集中式章元数据落在 chapters/）。"""
+    base = os.path.join(root, '故事', '元数据')
+    return [d for d in (base, os.path.join(base, 'chapters')) if os.path.isdir(d)]
+
+
+def report_dirs(root):
+    """检验报告目录候选：故事/reports（星尘）、故事/元数据、故事/元数据/chapters（唐末集中式）。"""
+    return [d for d in (os.path.join(root, '故事', 'reports'),
+                        os.path.join(root, '故事', '元数据'),
+                        os.path.join(root, '故事', '元数据', 'chapters'))
+            if os.path.isdir(d)]
+
+
+def outline_dirs(root):
+    """细纲目录候选：大纲（两书实测位置）、故事/元数据（v1.9 新路径）。"""
+    return [d for d in (os.path.join(root, '大纲'),
+                        os.path.join(root, '故事', '元数据')) if os.path.isdir(d)]
+
+
+def find_in_dirs(dirs, filename):
+    """在候选目录里找一个文件，返回首个命中的绝对路径，否则 None。"""
+    for d in dirs:
+        p = os.path.join(d, filename)
+        if os.path.isfile(p):
+            return p
+    return None
+
+
+def scan_artifacts(root):
+    """一次性扫描全书产物章号（D-03 统一路径探测，替代各处各写一套 listdir）。
+    返回 {body/outline/chapter_meta/review/change_report: set(4位章号字符串)}。
+    实测覆盖两种布局：唐末集中式（元数据/chapters/、0 报告、细纲在 大纲/）、
+    星尘分散式（报告在 故事/reports/、日志为旧版 第XXXX章.md、细纲在 大纲/）。"""
+    sets = {k: set() for k in ('body', 'outline', 'chapter_meta', 'review', 'change_report')}
+    body_dir = os.path.join(root, '正文')
+    if os.path.isdir(body_dir):
+        for f in os.listdir(body_dir):
+            m = re.match(r'^第(\d{4})章.*\.md$', f)
+            if m:
+                sets['body'].add(m.group(1))
+    for d in outline_dirs(root):
+        for f in os.listdir(d):
+            m = re.match(r'^细纲_第(\d{4})章\.md$', f)
+            if m:
+                sets['outline'].add(m.group(1))
+    for d in meta_dirs(root):
+        for f in os.listdir(d):
+            m1 = re.match(r'^chapter_(\d{4})\.md$', f)
+            if m1:
+                sets['chapter_meta'].add(m1.group(1))
+    for d in report_dirs(root):
+        for f in os.listdir(d):
+            m2 = re.match(r'^检验报告_第(\d{4})章\.md$', f)
+            if m2:
+                sets['review'].add(m2.group(1))
+    log_dir = os.path.join(root, '故事', '日志')
+    if os.path.isdir(log_dir):
+        for f in os.listdir(log_dir):
+            m = (re.match(r'^change_report_第(\d{4})章\.md$', f)
+                 or re.match(r'^第(\d{4})章\.md$', f))
+            if m:
+                sets['change_report'].add(m.group(1))
+    return sets
+
+
 def chapter_artifacts(root, ch):
-    """某章各产物存在性；change_report 兼容 change_report_第X章.md 与旧版 第X章.md 流程日志。"""
-    meta = os.path.join(root, '故事', '元数据')
+    """某章各产物存在性（D-03：复用统一目录探测，覆盖 chapters/ 子目录与 reports/）；
+    change_report 兼容 change_report_第X章.md 与旧版 第X章.md 流程日志。"""
     logs = os.path.join(root, '故事', '日志')
-    reports = os.path.join(root, '故事', 'reports')
-    outline_dir = os.path.join(root, '大纲')
     body_dir = os.path.join(root, '正文')
     body = os.path.isdir(body_dir) and any(
         f.startswith(f'第{ch}章') and f.endswith('.md') for f in os.listdir(body_dir))
     return {
         'body': bool(body),
-        'outline': os.path.isfile(os.path.join(outline_dir, f'细纲_第{ch}章.md')),
-        'chapter_meta': os.path.isfile(os.path.join(meta, f'chapter_{ch}.md')),
+        'outline': find_in_dirs(outline_dirs(root), f'细纲_第{ch}章.md') is not None,
+        'chapter_meta': find_in_dirs(meta_dirs(root), f'chapter_{ch}.md') is not None,
         'change_report': os.path.isfile(os.path.join(logs, f'change_report_第{ch}章.md'))
                           or os.path.isfile(os.path.join(logs, f'第{ch}章.md')),
-        'review': os.path.isfile(os.path.join(meta, f'检验报告_第{ch}章.md'))
-                   or os.path.isfile(os.path.join(reports, f'检验报告_第{ch}章.md')),
+        'review': find_in_dirs(report_dirs(root), f'检验报告_第{ch}章.md') is not None,
     }
 
 
 def project_uses_chapter_meta(root):
-    """分散式项目：元数据目录存在任一 chapter_XXXX.md（集中式仅 index.md，不要求章元数据）。"""
-    meta = os.path.join(root, '故事', '元数据')
-    return os.path.isdir(meta) and any(re.match(r'^chapter_\d{4}\.md$', f) for f in os.listdir(meta))
+    """项目是否使用章级元数据 chapter_XXXX.md（含集中式 元数据/chapters/ 子目录）。"""
+    return any(
+        any(re.match(r'^chapter_\d{4}\.md$', f) for f in os.listdir(d))
+        for d in meta_dirs(root))
 
 
 def project_has_reviews(root):
-    """项目是否走 v1.9 S3 产物链（存在任一检验报告）。"""
-    for d in (os.path.join(root, '故事', '元数据'), os.path.join(root, '故事', 'reports')):
-        if os.path.isdir(d) and any(f.startswith('检验报告_第') for f in os.listdir(d)):
-            return True
-    return False
+    """项目是否走 v1.9 S3 产物链（任一候选目录存在检验报告）。"""
+    return bool(scan_artifacts(root)['review'])
 
 
 def internal_duplicates(body, min_len=40, step=1):
@@ -278,7 +342,7 @@ def holder_multi(holder_cell):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--root', required=True)
-    ap.add_argument('--scope', default='all', choices=['init', 'narrative', 'all', 'evidence', 'execution', 'outline', 'settle', 'trend'])
+    ap.add_argument('--scope', default='all', choices=['init', 'narrative', 'all', 'evidence', 'execution', 'outline', 'settle', 'trend', 'batch'])
     args = ap.parse_args()
     root = os.path.abspath(args.root)
     if not os.path.isdir(root):
@@ -469,90 +533,66 @@ def main():
         check('细纲门硬性结构', not outline_gate_bad,
               '; '.join(outline_gate_bad) if outline_gate_bad else '')
 
-    # 8 evidence_ids 校验（scope=evidence 或 scope=all）
+    # 8 evidence_ids 校验（scope=evidence/all · D-02）
+    # 修复：①扫描覆盖 元数据/chapters/ 与 故事/reports/；②检验报告按文件名定章号、强制 evidence（C-006 主载体，
+    #   旧逻辑要求 chapter_id 字段导致报告被 continue 跳过、从不校验）；③"无文件默认 PASS"改为按落库状态判定。
     if args.scope in ('evidence', 'all'):
-        meta_dir = os.path.join(root, '故事/元数据')
+        art8 = scan_artifacts(root)
         body_dir = os.path.join(root, '正文')
-        if os.path.isdir(meta_dir):
-            import glob as _glob
-            # v1.9：evidence 载体从 chapter_*.md 扩展为 chapter_*.md + 检验报告_*.md
-            meta_files = (sorted(_glob.glob(os.path.join(meta_dir, 'chapter_*.md')))
-                          + sorted(_glob.glob(os.path.join(meta_dir, '检验报告_*.md'))))
-            evidence_issues = []
-            for mf_path in meta_files:
-                mf_name = os.path.basename(mf_path)
-                mf_txt = open(mf_path, encoding='utf-8').read()
+        evidence_issues, evidence_warn = [], []
 
-                # 提取 review_status
-                rs_m = re.search(r'review_status:\s*([^\s]+)', mf_txt)
-                review_status = rs_m.group(1).strip() if rs_m else ''
+        def body_text_of(ch_num):
+            if not os.path.isdir(body_dir):
+                return ''
+            for f in os.listdir(body_dir):
+                if re.match(rf'^第{ch_num}章.*\.md$', f):
+                    return open(os.path.join(body_dir, f), encoding='utf-8').read()
+            return ''
 
-                # 提取 chapter 号用于找正文文件
-                ch_m = re.search(r'chapter[_\s]*id[:：]\s*[^\d]*(\d{1,4})', mf_txt, re.IGNORECASE)
-                if not ch_m:
+        # (a) 检验报告：C-006 主载体，按文件名章号定章，强制 evidence_ids 有效条目
+        for rch in sorted(art8['review']):
+            rp = find_in_dirs(report_dirs(root), f'检验报告_第{rch}章.md')
+            rtxt = open(rp, encoding='utf-8').read()
+            btxt = body_text_of(rch)
+            if 'evidence_ids' not in rtxt:
+                evidence_issues.append(f'检验报告_第{rch}章.md: 无 evidence_ids（C-006 无证据判定无效）')
+                continue
+            entries = re.findall(r'-\s*source:\s*(.+?)\s+excerpt:\s*(.+?)\s*$', rtxt, re.MULTILINE)
+            if not entries:
+                evidence_issues.append(f'检验报告_第{rch}章.md: evidence_ids 无有效 source/excerpt 条目')
+                continue
+            for esrc, eexc in entries:
+                esrc, eexc = esrc.strip(), eexc.strip().strip('"“”')
+                if not esrc:
+                    evidence_issues.append(f'检验报告_第{rch}章.md: 条目缺 source')
+                if not eexc or len(eexc) < 5:
+                    evidence_issues.append(f'检验报告_第{rch}章.md: excerpt 为空或过短（<5字）')
+                # excerpt 是否逐字落在正文：机器只能做字符串核对，转述/截断会误判 → WARN 交 S3/人工，不阻断
+                if btxt and eexc and eexc[:15] not in btxt and eexc[:30] not in btxt:
+                    evidence_warn.append(f'检验报告_第{rch}章.md: excerpt 未能在正文逐字定位（{esrc}）：{eexc[:30]}')
+
+        # (b) chapter 元数据：仅当文件声明 review_status 时才要求 evidence（保留旧契约）
+        meta_checked = 0
+        for d in meta_dirs(root):
+            for mf in sorted(os.listdir(d)):
+                if not re.match(r'^chapter_\d{4}\.md$', mf):
                     continue
-                ch_num = ch_m.group(1).zfill(4)
+                meta_checked += 1
+                mtxt = open(os.path.join(d, mf), encoding='utf-8').read()
+                rsm = re.search(r'review_status:\s*([^\s]+)', mtxt)
+                review_status = rsm.group(1).strip() if rsm else ''
+                if review_status and 'evidence_ids' not in mtxt:
+                    evidence_issues.append(f'{mf}: review_status={review_status} 但无 evidence_ids')
 
-                # 提取正文文件路径（从 chapter_files 或实际扫描）
-                body_files = []
-                if os.path.isdir(body_dir):
-                    body_files = _glob.glob(os.path.join(body_dir, f'第{ch_num}章 *.md'))
-
-                # 读取正文内容（用于 excerpt 存在性校验）
-                body_text = ''
-                if body_files:
-                    for bf in body_files:
-                        body_text += open(bf, encoding='utf-8').read()
-
-                # 如果 review_status 非空（说明跑了自检），必须有 evidence_ids
-                if review_status:
-                    if 'evidence_ids' not in mf_txt:
-                        evidence_issues.append(f'{mf_name}: review_status={review_status} 但无 evidence_ids')
-                        continue
-
-                    # 提取 evidence_ids 块
-                    ids_m = re.search(r'evidence_ids:\s*\n((?:\s+- .+\n)*)', mf_txt)
-                    if not ids_m:
-                        evidence_issues.append(f'{mf_name}: evidence_ids 存在但格式错误（无条目）')
-                        continue
-
-                    ids_block = ids_m.group(1)
-                    entries = re.findall(r'^\s+-\s+source:\s*(.+?)\s+excerpt:\s*(.+?)\s*$',
-                                          ids_block, re.MULTILINE)
-                    if not entries:
-                        evidence_issues.append(f'{mf_name}: evidence_ids 无有效条目（缺 source/excerpt 字段）')
-                        continue
-
-                    # 逐条检查 source 和 excerpt 格式
-                    for entry_src, entry_excerpt in entries:
-                        src = entry_src.strip()
-                        excerpt = entry_excerpt.strip()
-                        if not src:
-                            evidence_issues.append(f'{mf_name}: evidence_ids 条目缺少 source 字段')
-                        if not excerpt:
-                            evidence_issues.append(f'{mf_name}: evidence_ids 条目缺少 excerpt 字段')
-                        # excerpt 至少 5 字符（防空引用）
-                        if excerpt and len(excerpt) < 5:
-                            evidence_issues.append(f'{mf_name}: evidence_ids excerpt 过短（<5字）：{excerpt[:20]}')
-                        # 如果正文存在，校验 excerpt 是否在正文中（允许模糊匹配）
-                        if body_text and excerpt:
-                            # 用截取前30字做模糊匹配（避免特殊字符差异）
-                            match_key = excerpt[:30] if len(excerpt) >= 30 else excerpt
-                            if match_key not in body_text:
-                                # 再试截取前15字
-                                short_key = excerpt[:15]
-                                if short_key not in body_text:
-                                    evidence_issues.append(
-                                        f'{mf_name}: excerpt 未在正文中找到（source={src}）：{excerpt[:40]}')
-
-            if evidence_issues:
-                check('evidence_ids校验', False, '; '.join(evidence_issues))
-            else:
-                # 如果没有任何元数据文件含 evidence_ids 也算通过（有写才算查）
-                checked = len(meta_files)
-                check('evidence_ids校验', True,
-                      f'已检查 {checked} 个元数据文件，无问题' if checked > 0
-                      else '无元数据文件，跳过')
+        if evidence_issues:
+            check('evidence_ids校验', False, '; '.join(evidence_issues[:10]))
+        else:
+            nrev = len(art8['review'])
+            check('evidence_ids校验', True,
+                  f'已核 {nrev} 份检验报告 + {meta_checked} 个章元数据，证据链齐全'
+                  if nrev else f'无检验报告（章元数据 {meta_checked} 个；报告完整性见 #16）')
+        if evidence_warn:
+            warn('evidence_ids校验', '; '.join(evidence_warn[:6]))
 
     # 9 执行模式与模块配置校验（v1.8 · scope=execution 或 scope=all）
     if args.scope in ('execution', 'all'):
@@ -733,7 +773,6 @@ def main():
             hk_txt = open(hooks_path, encoding='utf-8').read()
             # 只数表格行（以 | h_XXX | 开头），排除备注/说明文字误报
             ids = re.findall(r'^\|\s*h_(\d{3})\s*\|', hk_txt, re.MULTILINE)
-            from collections import Counter
             cnt = Counter(ids)
             dups = {k: v for k, v in cnt.items() if v > 1}
             if dups:
@@ -758,9 +797,10 @@ def main():
                         reg_bad.append(f'{fn}: {hid} 宣称待登记但 hooks.md 无此行')
         check('hooks登记核对', not reg_bad, '; '.join(reg_bad) if reg_bad else 'OK')
 
-    # 15 逗号密度：>12% = FAIL（v1.9.1 · all/settle；防碎句退化逐章放大）
-    # 实测基线：正常5-7%，退化到15章9.9%、17章14.4%、19章23.3%。阈值12%留出正常写作余量
-    if args.scope in ('all', 'settle'):
+    # 15 逗号密度：>12% = FAIL（v1.9.1 · all/settle/batch；防碎句退化逐章放大）
+    # 实测基线（口径=extract_body 纯正文，与 检验报告模板.md §3.0 同源）：
+    #   正常 5-7%；星尘方舟退化曲线 17章15.8% → 18章23.1% → 19章25.4%。阈值12%留出正常写作余量
+    if args.scope in ('all', 'settle', 'batch'):
         body_dir2 = os.path.join(root, '正文')
         comma_bad = []
         if os.path.isdir(body_dir2):
@@ -782,24 +822,37 @@ def main():
                     comma_bad.append(f'{fn}: 逗号密度 {pct:.1f}% (>12%)')
         check('逗号密度', not comma_bad, '; '.join(comma_bad) if comma_bad else 'OK')
 
-    # 16 检验报告位置兼容（v1.9.1 · settle/all）：元数据/ 与 reports/ 双路径
-    if args.scope in ('settle', 'all'):
-        meta_dir3 = os.path.join(root, '故事', '元数据')
-        reports_dir = os.path.join(root, '故事', 'reports')
-        found_in = []
-        for d in (meta_dir3, reports_dir):
-            if os.path.isdir(d):
-                for fn in os.listdir(d):
-                    if re.match(r'^检验报告_第\d{4}章\.md$', fn):
-                        found_in.append(os.path.relpath(os.path.join(d, fn), root))
-        if not found_in and os.path.isdir(meta_dir3):
-            # 无任何检验报告 = 旧版项目未走 v1.9 产物链（唐末现状），提示但不 FAIL（避免旧项目全红）
-            check('检验报告位置', True, '未找到检验报告（旧项目无 S3 产物链，提示）')
+    # 16 检验报告完整性（v1.9.1.1 · D-01：archived 章缺报告 = FAIL；旧逻辑只数份数、0 报告写死 PASS）
+    # 显式豁免：v1.9 前遗留项目可建 故事/日志/legacy-no-review.flag
+    #   文件内列 4 位章号 = 只豁免这些章；空文件 = 豁免全部。命中豁免转 WARN（留痕可审计），不静默 PASS。
+    if args.scope in ('settle', 'all', 'batch'):
+        art16 = scan_artifacts(root)
+        archived16, _ = parse_index_status(root)
+        rev16 = art16['review']
+        if archived16:
+            flag_path = os.path.join(root, '故事', '日志', 'legacy-no-review.flag')
+            excused = set()
+            if os.path.isfile(flag_path):
+                listed = set(re.findall(r'\d{4}', open(flag_path, encoding='utf-8').read()))
+                excused = listed if listed else set(archived16)
+            hard = sorted((archived16 - rev16) - excused)
+            soft = sorted((archived16 - rev16) & excused)
+            if hard:
+                zero = '（当前 0 份报告）' if not rev16 else ''
+                extra = f'；另 {len(soft)} 章 legacy 豁免' if soft else ''
+                check('检验报告完整性(#16)', False,
+                      f'{len(hard)} 章已落库但缺检验报告{zero}：{", ".join(hard[:12])}{extra}'
+                      f'（违反 C-006；v1.9 前遗留项目可建 legacy-no-review.flag）')
+            elif soft:
+                warn('检验报告完整性(#16)',
+                     f'[legacy 豁免] {len(soft)} 章无检验报告（{", ".join(soft[:12])}），已显式登记')
+            else:
+                check('检验报告完整性(#16)', True, f'已落库 {len(archived16)} 章检验报告齐全')
         else:
-            check('检验报告位置', True, f'找到 {len(found_in)} 份（' + '; '.join(sorted(set(os.path.dirname(p) for p in found_in))) + ')')
+            check('检验报告完整性(#16)', True, '尚无已落库章节，不要求检验报告')
 
-    # ===== v1.9.1 正文质量补盲（#17/#18/#19/#24/#25/#26/#33 · all/settle，一次遍历）=====
-    if args.scope in ('all', 'settle'):
+    # ===== v1.9.1 正文质量补盲（#17/#18/#19/#24/#25/#26/#33 · all/settle/batch，一次遍历）=====
+    if args.scope in ('all', 'settle', 'batch'):
         internal_bad, cross_hits, half_comma = [], [], []
         half_dot_warn, placeholder_bad, crash_bad, tail_purify_bad, md_star_warn = [], [], [], [], []
         dash_bad, fx_bad, dash_warn, le_warn = [], [], [], []   # #30 口癖（破折号FAIL/的方向是FAIL；破折号偏多/了一下 WARN）
@@ -936,14 +989,16 @@ def main():
         if dash_warn or le_warn:
             warn('口癖密度(#30)', '; '.join((dash_warn + le_warn)[:6]))
 
-    # ===== v1.9.1 落库产物补盲（#20 残章 / #21 产物齐套 / #27 报告敷衍 · settle/all）=====
-    if args.scope in ('settle', 'all'):
+    # ===== v1.9.1 落库产物补盲（#20 残章 / #21 产物齐套+双向差集 / #27 报告充实度+缺槽 · settle/all/batch）=====
+    if args.scope in ('settle', 'all', 'batch'):
         archived_v, smap_v = parse_index_status(root)
+        art_v = scan_artifacts(root)
         target_v = cfg.get('target_word_count', 3000)
-        residual_fail, residual_warn, ch_union = [], [], set(archived_v) | set(smap_v)
+        body_n = {}   # 章号(4位str) → 纯正文字数
+        residual_fail, residual_warn = [], []
         for ch, fn, raw, body in iter_chapter_bodies(root):
-            ch_union.add(ch)
             n = chapter_metrics(body)['chars']
+            body_n[ch] = n
             if n < 500:
                 continue
             if ch in archived_v and n < target_v * 0.7:
@@ -954,24 +1009,34 @@ def main():
                 residual_warn.append(f'第{ch}章仅{n}字(<{int(target_v * 0.5)})疑似半成品')
         check('残章字数(#20)', 'fail' if residual_fail else ('warn' if residual_warn else 'pass'),
               '; '.join(residual_fail + residual_warn)[:400] or 'OK')
-        outline_dir_v = os.path.join(root, '大纲')
-        if os.path.isdir(outline_dir_v):
-            for f in os.listdir(outline_dir_v):
-                mo = re.match(r'^细纲_第(\d{4})章\.md$', f)
-                if mo:
-                    ch_union.add(mo.group(1))
-        uses_meta, has_rev = project_uses_chapter_meta(root), project_has_reviews(root)
+
+        # ---------- #21 章级产物齐套 + 双向差集（v1.9.1.1 · D-04）----------
+        uses_meta = project_uses_chapter_meta(root)
         prod_bad, prod_warn = [], []
-        for ch in sorted(ch_union):
-            art = chapter_artifacts(root, ch)
-            if art['body'] and not art['outline']:
+        body_set, outline_set = art_v['body'], art_v['outline']
+        cmeta_set = art_v['chapter_meta']
+        # 正向：有正文 → 必须有细纲
+        for ch in sorted(body_set):
+            if ch not in outline_set:
                 prod_bad.append(f'第{ch}章有正文但缺细纲')
-            if uses_meta and ch in archived_v and not art['chapter_meta']:
+        # 反向：archived → 必须有 chapter 元数据（路径已覆盖 chapters/ 子目录）
+        for ch in sorted(archived_v):
+            if uses_meta and ch not in cmeta_set:
                 prod_bad.append(f'第{ch}章(archived)缺chapter元数据')
-            if has_rev and ch in archived_v and not art['review']:
-                prod_warn.append(f'第{ch}章(archived)缺检验报告')
+        # 正文存在但 index 完全无状态行（既非 archived 也非 outline_only/drafting/review）：
+        #   体量达标 = 漏落库 FAIL；半成品 = 未完成 WARN。
+        #   #11 只抓"index=outline_only"，抓不到"index 根本没这行"（星尘第20章即此类）。
+        indexed = set(archived_v) | set(smap_v)
+        for ch in sorted(body_set - indexed):
+            n = body_n.get(ch, 0)
+            if n >= target_v * 0.7:
+                prod_bad.append(f'第{ch}章正文{n}字已达合格体量但 index 无任何进度行(漏落库)')
+            else:
+                prod_warn.append(f'第{ch}章正文{n}字半成品且 index 无进度行(未完成,禁止续写后续章)')
         check('章级产物齐套(#21)', 'fail' if prod_bad else ('warn' if prod_warn else 'pass'),
               '; '.join(prod_bad + prod_warn)[:400] or 'OK')
+
+        # ---------- #27 change_report 充实度 + 检验报告 Q1-Q7 缺槽（v1.9.1.1 · D-22，缺槽 WARN 不回红旧稿）----------
         cr_dir = os.path.join(root, '故事', '日志')
         cr_warn = []
         if os.path.isdir(cr_dir):
@@ -982,10 +1047,23 @@ def main():
                 core = re.sub(r'\[[ xX✓√]\]', '', core)
                 if len(core) < 100:
                     cr_warn.append(f'{fn}: 实质内容仅{len(core)}字(<100)疑似敷衍')
+        # 检验报告 Q1-Q7 必需小节（关键字须与 templates/检验报告模板.md 小节标题一致）；
+        # evidence 缺失是硬 FAIL（归 #8），小节缺失过渡期 WARN（推动新模板落地，不让 v1.9 旧稿全红）。
+        review_slots = [('章节出口', 'Q1'), ('OOC', 'Q2'), ('遮名', 'Q2a'), ('质感', 'Q3'),
+                        ('因果', 'Q4'), ('目标焦点', 'Q5'), ('章际', 'Q6'), ('设定宪法', 'Q7')]
+        for rch in sorted(art_v['review'] & (set(archived_v) | body_set)):
+            rp = find_in_dirs(report_dirs(root), f'检验报告_第{rch}章.md')
+            rtxt = open(rp, encoding='utf-8').read()
+            # 只在 markdown 小节标题行匹配（检测"有无该小节"，避免正文零散词误满足）；
+            # 新模板小节标题须含这些关键字（章节出口/OOC/遮名/质感/因果/目标焦点/章际/设定宪法）。
+            heads = '\n'.join(l for l in rtxt.splitlines() if l.lstrip().startswith('#'))
+            miss = [tag for kw, tag in review_slots if kw not in heads]
+            if miss:
+                cr_warn.append(f'检验报告_第{rch}章.md: 缺小节 {",".join(miss)}')
         check('change_report充实度(#27)', 'warn' if cr_warn else 'pass', '; '.join(cr_warn[:6]) or 'OK')
 
-    # ===== v1.9.1 状态一致性 / 伏笔债务 / 批跑断链（#23 / #28 / #32 · settle/all）=====
-    if args.scope in ('settle', 'all'):
+    # ===== v1.9.1 状态一致性 / 伏笔债务 / 批跑断链（#23 / #28 / #32 · settle/all/batch）=====
+    if args.scope in ('settle', 'all', 'batch'):
         truth = os.path.join(root, '故事', '真相')
         archived_c, _ = parse_index_status(root)
         body_chs = sorted(int(c) for c, _, _, _ in iter_chapter_bodies(root))
@@ -1015,7 +1093,7 @@ def main():
                     if len(set(hs)) > 1:
                         c23_warn.append(f'同名物品「{nm}」{len(hs)}行且持有者不一致({"/".join(sorted(set(hs)))})')
                     else:
-                        c23_warn.append(f'同名物品「{nm}」重复登记{len(hs)}行(持有者均为{hs[0]})')
+                        c23_fail.append(f'同名物品「{nm}」重复登记{len(hs)}行(持有者均为{hs[0]},唯一性缺陷)')
         char_path = os.path.join(truth, 'characters.md')
         deads = {}   # 姓名 → 死亡章
         if os.path.isfile(char_path):
@@ -1035,7 +1113,7 @@ def main():
                        any(re.search(r'alive|resurrected|false_dead|missing', s) for s in sts):
                         c23_fail.append(f'角色 {cid} 当前状态表同时 true_dead 与存活状态(死而复生/状态冲突)')
                     else:
-                        c23_warn.append(f'角色ID {cid} 当前状态表重复{len(lst)}行(新旧状态未合并)')
+                        c23_fail.append(f'角色ID {cid} 当前状态表重复{len(lst)}行(新旧状态未合并,唯一性缺陷)')
         if deads:   # 死者在更晚章【正文】出现（WARN：念名单/回忆/闪回是正常的，复活行动才是穿帮；按死者聚合，人工确认）
             mention = {}
             for ch, fn, raw, body in iter_chapter_bodies(root):
@@ -1083,15 +1161,9 @@ def main():
         if c28_warn:
             warn('伏笔债务(#28)', '; '.join(c28_warn[:6]))
 
-        # ---------- #32 批跑章号连续 + 落库断链（错误不向下游传播的机器闸）----------
+        # ---------- #32 批跑章号连续 + 落库断链 + 未来空壳（错误不向下游传播的机器闸 · v1.9.1.1 D-06）----------
         c32_fail, c32_warn = [], []
-        outline_chs = set()
-        for d in (os.path.join(root, '故事', '元数据'), os.path.join(root, '大纲')):
-            if os.path.isdir(d):
-                for f in os.listdir(d):
-                    mo = re.match(r'^细纲_第(\d{4})章\.md$', f)
-                    if mo:
-                        outline_chs.add(int(mo.group(1)))
+        outline_chs = set(int(c) for c in art_v['outline'])
         if body_chs:
             for expect in range(body_chs[0], body_chs[-1] + 1):
                 if expect not in body_chs:
@@ -1106,6 +1178,17 @@ def main():
                     c32_warn.append(f'细纲缺第{expect:04d}章(跳号)')
             if body_chs and ohi > body_chs[-1] + 3:
                 c32_warn.append(f'细纲排到第{ohi:04d}章,超前正文第{body_chs[-1]:04d}章>3章(一章一闭环,勿批量预生成)')
+        # D-06：chapter 元数据批量预生成空壳（章号 > 正文末章+3 且无正文无细纲）
+        #   实测唐末 chapter_0031~0420 共约 387 个未来空壳。≥10 个 = FAIL，1-9 个 = WARN。
+        if body_chs:
+            body_max = body_chs[-1]
+            outline4 = set(int(c) for c in art_v['outline'])
+            shells = sorted(int(c) for c in art_v['chapter_meta']
+                            if int(c) > body_max + 3 and int(c) not in body_chs and int(c) not in outline4)
+            if len(shells) >= 10:
+                c32_fail.append(f'chapter元数据批量预生成到第{shells[-1]:04d}章(超前正文第{body_max:04d}章,{len(shells)}个空壳,违反一章一闭环)')
+            elif shells:
+                c32_warn.append(f'chapter元数据超前空壳 {len(shells)} 个(至第{shells[-1]:04d}章),确认非批量预生成')
         check('批跑章号连续/落库断链(#32)', not c32_fail, '; '.join(c32_fail[:6]))
         if c32_warn:
             warn('批跑章号连续/落库断链(#32)', '; '.join(c32_warn[:6]))
@@ -1131,10 +1214,13 @@ def main():
             init_bad.append('缺世界观实质内容（故事/真相/world.md 或 设定/世界观.md）')
         check('init关键文件非空(#29)', not init_bad, '; '.join(init_bad))
 
-    # 31 退化趋势 + 基线（v1.9.1 · scope=trend 或 all；WARN 预警，不改变退出码）
+    # 31 退化趋势 + 基线（v1.9.1.1 · trend/all=预警 WARN；batch=连续爬升 FAIL 停机 · D-07）
     # 治"逐章自我放大"：固定阈值抓不住早期爬坡（第10章 6.9% 未超标但在恶化），
-    # 用"前5章基线 + 连续3章上升"在超阈值前预警。
-    if args.scope in ('trend', 'all'):
+    # 用"前5章基线 + 连续5章爬升"在超阈值前发现。
+    # batch 是连续批写停机闸：b 类单调爬升说明文风正在逐章退化（唐末破折号9→68、星尘逗号5.6%→25.4%），
+    #   必须停机，不能等写到越界十几章才发现；a 类单章偏离可能是正常高潮章，batch 下仍只 WARN。
+    if args.scope in ('trend', 'all', 'batch'):
+        strict_trend = (args.scope == 'batch')
         series = []
         for ch, fn, raw, body in iter_chapter_bodies(root):
             mt = chapter_metrics(body)
@@ -1145,14 +1231,14 @@ def main():
             metric_defs = [('逗号密度%', 'comma_pct'), ('破折号/千字', 'dash_per_k'), ('短句占比', 'short_ratio')]
             base_n = min(5, len(series))
             baseline = {k: median([m[k] for _, m in series[:base_n]]) for _, k in metric_defs}
-            trend_msgs = []
-            # a) 单章指标较基线偏离 >50%
+            trend_a, trend_b = [], []
+            # a) 单章指标较基线偏离 >50%（可能是正常高潮章 → WARN）
             for ch, mt in series:
                 for label, k in metric_defs:
                     b = baseline[k]
                     if b > 1e-9 and mt[k] > b * 1.5:
-                        trend_msgs.append(f'第{ch}章 {label}={mt[k]:.2f} 高于基线{b:.2f}')
-            # b) 连续 ≥5 章非降且末值较首值增幅 ≥30%（窗口拉长，过滤早期 3 章正常起伏）
+                        trend_a.append(f'第{ch}章 {label}={mt[k]:.2f} 高于基线{b:.2f}')
+            # b) 连续 ≥5 章非降且末值较首值增幅 ≥30%（逐章放大 → batch 下 FAIL 停机）
             for label, k in metric_defs:
                 vals = [(ch, mt[k]) for ch, mt in series]
                 hit = None
@@ -1163,13 +1249,19 @@ def main():
                         hit = (window[0][0], window[-1][0], ws[0], ws[-1])
                         break
                 if hit:
-                    trend_msgs.append(f'{label} 第{hit[0]}→{hit[1]}章连续5章爬升({hit[2]:.2f}→{hit[3]:.2f})，疑似逐章放大')
+                    trend_b.append(f'{label} 第{hit[0]}→{hit[1]}章连续5章爬升({hit[2]:.2f}→{hit[3]:.2f})，疑似逐章放大')
             table = ['章号 | 逗号% | 破折号/千 | 短句%']
             for ch, mt in series:
                 table.append(f'{ch} | {mt["comma_pct"]:.1f} | {mt["dash_per_k"]:.1f} | {mt["short_ratio"]:.2f}')
-            detail = '退化曲线:\n    ' + '\n    '.join(table) + (
-                '\n    预警: ' + '；'.join(trend_msgs) if trend_msgs else '\n    预警: 无（指标平稳）')
-            check('退化趋势', 'warn' if trend_msgs else 'pass', detail)
+            detail = '退化曲线:\n    ' + '\n    '.join(table)
+            detail += '\n    停机信号(连续爬升): ' + ('；'.join(trend_b) if trend_b else '无')
+            detail += '\n    单章偏离预警: ' + ('；'.join(trend_a) if trend_a else '无')
+            if strict_trend and trend_b:
+                check('退化趋势', 'fail', detail + '\n    batch 停机：文风连续退化，禁止继续批写，先回溯锚定开篇文风')
+            elif trend_a or trend_b:
+                check('退化趋势', 'warn', detail)
+            else:
+                check('退化趋势', 'pass', detail)
         else:
             check('退化趋势', 'pass', f'有效章仅 {len(series)} 章（<3），无法判趋势')
 

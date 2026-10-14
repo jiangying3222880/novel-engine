@@ -7,9 +7,7 @@
   "tone": "冷峻、紧凑、强调感官细节",
   "rules": {
     "max_context_loading_kb": 12,
-    "require_evidence_chain": true,
-    "self_review_questions": 4,
-    "anti_ai_detection_items": 6
+    "require_evidence_chain": true
   },
   "current_arc": "第一卷",
   "body_filename_template": "第000X章 {title}.md",

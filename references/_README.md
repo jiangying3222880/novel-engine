@@ -44,11 +44,11 @@
 | model-guide.md | 8.7K | 模型文档 · 各阶段适用模型与提示策略 | 2026-10-10 |
 | module-registry.md | 6.4K | 模块注册表（Module Registry · Agent 调度版  | 2026-10-10 |
 | module-说明书.md | 5.4K | 模块说明书（Module Guide · 用户决策版 · v1.8） | 2026-10-10 |
-| narrative-kernel.md | 7.7K | 叙事内核（Narrative Kernel · 冻结版） | 2026-10-10 |
+| narrative-kernel.md | 8.1K | 叙事内核（Narrative Kernel · 冻结版） | 2026-10-12 |
 | project-setup.md | 16.5K | 阶段⓪：项目初始化指南 | 2026-10-10 |
 | prompt-defense.md | 4.3K | 提示词防御（Prompt Defense） | 2026-10-10 |
 | retrieval.md | 9.1K | 检索层（功能八 · BM25+FTS 默认 + ZVEC 可选） | 2026-10-10 |
-| self-review.md | 17.6K | S3 检验：行为验证 + 双视角评估协议 | 2026-10-10 |
+| self-review.md | 17.8K | S3 检验：行为验证 + 双视角评估协议 | 2026-10-12 |
 | session-start.md | 9.5K | S1 骨架：项目启动与本章细纲 SOP | 2026-10-10 |
 | short-story-engines.md | 11.8K | 短篇文梗引擎库（Short Story Engines） | 2026-10-08 |
 | short-story-rhythm-origin.md | 2.5K | 短故事节奏原理（用户验证版） | 2026-09-04 |
@@ -56,9 +56,13 @@
 | target-focus.md | 6.7K | 目标焦点管理：PMC Suppression 机制与 Skill 实 | 2026-10-10 |
 | workflow-detail.md | 19.1K | S1-S4 物理隔离流水线详解（v1.9） | 2026-10-10 |
 | writing-guide.md | 16.8K | 阶段②：正文写作指南（S2 血肉 · 讲述者） | 2026-10-10 |
-| 变更历史.md | 30.1K | 变更历史（novel-engine） | 2026-10-10 |
+| 变更历史.md | 36.7K | 变更历史（novel-engine） | 2026-10-12 |
 | 商业立意与题材选择.md | 4.8K | 商业立意与题材选择 | 2026-10-08 |
 | 技法速查索引.md | 11.2K | 技法速查索引（Technique Quick Index） | 2026-10-10 |
 | 简介写法.md | 3.2K | 简介写法 | 2026-10-08 |
 | 读者吸引技法.md | 3.7K | 读者吸引技法 | 2026-10-08 |
+
+### 子目录
+
+- `upstream/` （有说明）
 <!-- AUTO-LIST-END -->

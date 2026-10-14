@@ -4,7 +4,8 @@
 
 # 叙事内核（Narrative Kernel · 冻结版）
 
-> 来源：`F:\炼丹计划\03_core\narrative-core.md`（炼丹炉唯一宪法）
+> 唯一宪法（上游）：炼丹炉 `03_core/narrative-core.md`。**随包只读副本**：`references/upstream/narrative-core.md`（v1.9.1.1 起打包分发，跨宿主可核验，不再依赖本机硬编码路径）
+> 宪法指纹（sha256）：`82c984e423088c3ac41ab7b6aeccef1e8580c0bca06cbb4adf2fba1320fa9ac9`（5805 字节；副本与上游逐字节一致，指纹漂移即视为宪法被改动，须走 CCP）
 > 性质：**冻结内核不可修改**（L0/L1 修改必须走 Core Change Proposal + 用户批准）
 > 编译方式：内核 → 本文件的"Agent 执行落点"（规划强制项 / 自检问题 / 机器门禁）
 
