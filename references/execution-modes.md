@@ -72,7 +72,7 @@ novel-config.json（仅 target_word_count + body_dir）
 |--------|------|--------|
 | 角色重锚定 | 动笔前声明"以下仅讲述者身份产出，因果循环/内核三联/模块调度视为已完成背景" | 编剧/编辑身份抢讲述者的戏（框架显形） |
 | 输入最小化 | 只呈现细纲_第XXXX章.md 内容 + 目标字数进写作；细纲全文在盘上，不复制规则/状态/技法文本 | 上下文污染（多带=多干扰） |
-| 禁读清单 | 不 Read anti-ai.md / self-review.md / short-story.md / module-registry.md 全文 | 写后工具提前拉进写作窗口（边写边自检） |
+| 禁读清单 | 不 Read writing-guide.md / anti-ai.md / self-review.md / short-story.md / module-registry.md / 技法库 / 素材池 全文（v1.9.1.2 起与 multi §2.2 同口径） | 写后工具提前拉进写作窗口（边写边自检） |
 
 > ⚠️ **三条硬指令是 single 模式专用降级方案**（v1.8 的 ⑩ 保留改定位，不删除）。multi 物理隔离成立时不需要它们——物理上看不到比声明"看不到"可靠。
 

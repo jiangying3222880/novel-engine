@@ -14,7 +14,7 @@
 | ⓪ 项目初始化 | "开新书/帮我建项目/导入" | `references/project-setup.md` |
 | S1 骨架（编剧） | "写下一章/规划第X章/继续写" | `references/session-start.md` + `templates/细纲模板.md` |
 | 全程 地基 | 写前必读（内核三联+驱动标注） | `references/narrative-kernel.md` |
-| S2 血肉（讲述者） | 细纲门通过 | `references/writing-guide.md` |
+| S2 血肉（讲述者） | 细纲门通过 | 唯一输入包 = `templates/细纲模板.md` 产物（细纲_第XXXX章.md）+ config 字数；**禁读规则/状态/技法文件**（口径见 `references/execution-modes.md` §2.2，v1.9.1.2） |
 | S3 检验（编辑） | 初稿完成 | `references/self-review.md` + `templates/检验报告模板.md` |
 | S3 依据 | AI味判定/表达问题打回 | `references/anti-ai.md` |
 | S4 落库（档案员） | 检验通过 | `references/hooks-and-memory.md` |
@@ -54,10 +54,10 @@
 下游：references/writing-guide.md（细纲门通过 → S2）
 ```
 
-### writing-guide.md · S2 血肉（讲述者 · 正文写作）
+### writing-guide.md · 写作技法与文风库（S1 编译素材 · S3 打回依据 · S2 写作期禁读 · v1.9.1.2 澄清）
 ```
 上游：references/session-start.md（细纲_第XXXX章.md 四维骨架）
-前置：细纲文件（multi=唯一输入包）+ config 字数；single=三条硬指令模拟隔离
+前置：S2 写作期**禁读本文件**（v1.9 物理隔离；S2 输入包仅细纲+config 字数）。本文件由 S1 取材（声线透传/声音包编译）与 S3 打回时引用
 相关：素材池/reference/samples/（同类场景样本）· references/execution-modes.md §3（single 降级）
 下游：references/self-review.md（初稿 → S3 检验）
 ```
@@ -173,7 +173,7 @@
 
 | 路径 | 说明 |
 |------|------|
-| `library/techniques/` | 通用写作方法论 124 卡（T-001~T-118 + 方法论）；**场景→技法两级索引见 `references/技法速查索引.md`** |
+| `library/techniques/` | 通用写作方法论：T-卡 103 张（T-001~T-118，编号有空缺）+ 方法论 21 篇 = 124 文件；**场景→技法两级索引见 `references/技法速查索引.md`** |
 | `library/genres/` | 题材风格包：`xuanhuan-chendong`（辰东式玄幻）/ `urban-myth-zanshen`（斩神式都市神话）/ `都市` / `仙侠修真` / `悬疑`，各含 1-4 个 md |
 | `library/knowledge/` | 通用知识库：`corpus`（语料索引 4 份）/ `analysis`（技法对比 2 份） |
 | `library/platforms/` | 平台适配指南（**内容本体在 `_README.md`**：8 平台速览 + 写作要点 + 红线） |

@@ -144,7 +144,7 @@
 
 1. **角色重锚定**：动笔前先声明"以下正文仅由讲述者身份产出；因果循环/内核三联/断章规则/模块调度视为已完成背景，本窗口内不调用、不检查、不提及"。
 2. **输入最小化**：只呈现细纲_第XXXX章.md 内容 + 目标字数进写作；细纲全文已在盘上，不复制状态/规则/技法文本进写作上下文。
-3. **禁读清单**：不 Read anti-ai.md / self-review.md / short-story.md / module-registry.md 全文。
+3. **禁读清单**：不 Read writing-guide.md / anti-ai.md / self-review.md / short-story.md / module-registry.md / 技法库 / 素材池 全文（v1.9.1.2 起与 multi §2.2 同口径）。
 
 **降级声明记录（D-214 修正措辞）**：single 模式下，落盘证明只证明"Agent 声明了输入是细纲"，**证明不了物理上只看到细纲**。`故事/日志/第XXXX章.md` 记录一行：
 ```

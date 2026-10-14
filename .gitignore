@@ -13,3 +13,6 @@ story/index/
 # Python 缓存
 __pycache__/
 *.pyc
+
+# 打包产物（runtime/package.py 输出）
+dist/

@@ -21,7 +21,8 @@ Novel Engine 流程门禁（verify.py · v1.9.1.1）
   [配置]   novel-config.json 合法性（target_word_count/命名模板）
   [落点]   相邻3章落点类型（开/合/转）去重（防收尾套路化；v1.9 细纲路径 大纲/ → 故事/元数据/，兼容旧路径）
   [细纲门] S1 细纲硬性结构检查（v1.9 · scope=outline：任务字数非空/冲突链四节点/声线标注来源/角色状态最小摘要）
-  [证据]   evidence_ids 格式校验 + 正文引用存在性（evidence 范围；v1.9 载体含 检验报告_*.md）
+  [证据#8]  evidence_ids 格式校验 + 正文引用定位（evidence/settle/batch/all 四 scope · v1.9.1.2 D-28 接入每章落库门禁；
+            同行/分行两种条目写法均解析；source 指向本章正文才逐字定位，跨文件证据交 S3；legacy-no-evidence.flag 豁免）
   [执行]   config.modules 字段合法性 + 最新流程日志含 execution_mode 声明行（execution 范围，v1.8）
   [残留]   正文首段工具残留检查（v1.9 · F-09：续写指令/工具声明/元注释漏入正文）
   [落库一致] index↔change_report↔正文互核（v1.9.1 · settle 范围：archived 必须有三件套；有正文但 index=outline_only 即 FAIL）
@@ -40,8 +41,8 @@ Novel Engine 流程门禁（verify.py · v1.9.1.1）
   [状态/批跑] #23角色物品状态(物品/角色ID重复、同名物品同持有者重复行、同ID多行、表格内死而复生=FAIL;多人持有/同名持有者不一致/死者晚章正文出现=WARN) /
       #28伏笔债务(超过计划回收章+5仍active/pending=FAIL,临近=WARN;无计划章按类型化年龄 chekhov30/50、mystery等60/100;partial/due排除) /
       #32批跑断链(正文跳号、前章有正文未archived即续写后章、chapter元数据批量空壳≥10=FAIL;细纲跳号/超前正文>3章/空壳1-9=WARN)
-  [batch闸] scope=batch=连续批写停机闸：正文硬指标(#15/#17-#33)+产物(#16/#20/#21/#27)+状态(#23/#28)+断链(#32)+退化趋势(连续爬升FAIL)；
-      不含 init/narrative/evidence/落库一致性等每章 settle 项（那些在每章 S4 已跑）
+  [batch闸] scope=batch=连续批写停机闸：正文硬指标(#15/#17-#33)+产物(#8/#16/#20/#21/#27)+状态(#23/#28)+断链(#32)+退化趋势(连续爬升FAIL)；
+       不含 init/narrative 等初始化项（init 在项目初始化时已跑）
 
 结果三态：PASS / WARN（预警，不改变退出码）/ FAIL（退出码 1）。
 
@@ -533,10 +534,13 @@ def main():
         check('细纲门硬性结构', not outline_gate_bad,
               '; '.join(outline_gate_bad) if outline_gate_bad else '')
 
-    # 8 evidence_ids 校验（scope=evidence/all · D-02）
+    # 8 evidence_ids 校验（scope=evidence/settle/batch/all · D-02 + D-28）
     # 修复：①扫描覆盖 元数据/chapters/ 与 故事/reports/；②检验报告按文件名定章号、强制 evidence（C-006 主载体，
-    #   旧逻辑要求 chapter_id 字段导致报告被 continue 跳过、从不校验）；③"无文件默认 PASS"改为按落库状态判定。
-    if args.scope in ('evidence', 'all'):
+    #   旧逻辑要求 chapter_id 字段导致报告被 continue 跳过、从不校验）；③"无文件默认 PASS"改为按落库状态判定；
+    # ④v1.9.1.2 接入 settle/batch（D-28：此前每章 S4 必跑的 settle 不含 #8，缺证据报告可漏过落库门禁，
+    #   而 #16 只查"报告存在"、不查"报告有证据"，同门禁口径割裂）。
+    # 旧项目豁免：故事/日志/legacy-no-evidence.flag（列 4 位章号=只豁免这些；空文件=豁免全部；命中转 WARN 留痕，不静默 PASS）。
+    if args.scope in ('evidence', 'settle', 'batch', 'all'):
         art8 = scan_artifacts(root)
         body_dir = os.path.join(root, '正文')
         evidence_issues, evidence_warn = [], []
@@ -550,14 +554,46 @@ def main():
             return ''
 
         # (a) 检验报告：C-006 主载体，按文件名章号定章，强制 evidence_ids 有效条目
+        # legacy 豁免（镜像 #16 的 legacy-no-review.flag）：v1.9.1.2 前遗留报告可显式豁免证据要求
+        flag8_path = os.path.join(root, '故事', '日志', 'legacy-no-evidence.flag')
+        excused8 = set()
+        if os.path.isfile(flag8_path):
+            listed8 = set(re.findall(r'\d{4}', open(flag8_path, encoding='utf-8').read()))
+            excused8 = listed8 if listed8 else set(art8['review'])
         for rch in sorted(art8['review']):
+            if rch in excused8:
+                evidence_warn.append(f'检验报告_第{rch}章.md: legacy-no-evidence.flag 豁免（v1.9.1.2 前遗留，建议补证）')
+                continue
             rp = find_in_dirs(report_dirs(root), f'检验报告_第{rch}章.md')
             rtxt = open(rp, encoding='utf-8').read()
             btxt = body_text_of(rch)
             if 'evidence_ids' not in rtxt:
                 evidence_issues.append(f'检验报告_第{rch}章.md: 无 evidence_ids（C-006 无证据判定无效）')
                 continue
-            entries = re.findall(r'-\s*source:\s*(.+?)\s+excerpt:\s*(.+?)\s*$', rtxt, re.MULTILINE)
+            # 兼容两种条目写法（D-29：模板 §6 证据清单）：
+            #   同行式  - source: 正文 excerpt: ……
+            #   分行式  - source: 上章末
+            #           excerpt: ……
+            entries = []
+            rlines = rtxt.splitlines()
+            for idx, ln in enumerate(rlines):
+                ms = re.match(r'-\s*source:\s*(.*)$', ln.strip())
+                if not ms:
+                    continue
+                src_part = ms.group(1).strip()
+                exc = ''
+                m_same = re.search(r'\bexcerpt:\s*(.+)$', src_part)
+                if m_same:  # 同行式
+                    exc = m_same.group(1).strip()
+                    src_part = src_part[:m_same.start()].strip()
+                else:       # 分行式：向下看 1-2 行内的 excerpt:
+                    for j in (idx + 1, idx + 2):
+                        if j < len(rlines):
+                            m_next = re.match(r'excerpt:\s*(.+)$', rlines[j].strip())
+                            if m_next:
+                                exc = m_next.group(1).strip()
+                                break
+                entries.append((src_part, exc))
             if not entries:
                 evidence_issues.append(f'检验报告_第{rch}章.md: evidence_ids 无有效 source/excerpt 条目')
                 continue
@@ -567,8 +603,17 @@ def main():
                     evidence_issues.append(f'检验报告_第{rch}章.md: 条目缺 source')
                 if not eexc or len(eexc) < 5:
                     evidence_issues.append(f'检验报告_第{rch}章.md: excerpt 为空或过短（<5字）')
-                # excerpt 是否逐字落在正文：机器只能做字符串核对，转述/截断会误判 → WARN 交 S3/人工，不阻断
-                if btxt and eexc and eexc[:15] not in btxt and eexc[:30] not in btxt:
+                    continue
+                # excerpt 定位口径（D-29）：source 指向本章正文 → 在正文逐字核对，失败 WARN（转述/截断交 S3）；
+                # source 指向跨文件证据（上章末/细纲/状态文件等）→ 机器不做跨文件逐字裁决（交 S3 语义核对），
+                # 仅当 source 声明"上章"时尝试在上章正文定位，定位不到不判错（避免 Q6 双侧引用必然误报 WARN）。
+                if re.search(r'上章|上一章|细纲|检验报告|真相|chapter_|world|characters|hooks|timeline|总览|设定', esrc, re.I):
+                    if re.search(r'上章|上一章', esrc) and str(rch).isdigit():
+                        prev_txt = body_text_of('%04d' % (int(rch) - 1))
+                        if prev_txt and (eexc[:15] in prev_txt or eexc[:30] in prev_txt):
+                            pass  # 上章正文逐字命中
+                    continue
+                if btxt and eexc[:15] not in btxt and eexc[:30] not in btxt:
                     evidence_warn.append(f'检验报告_第{rch}章.md: excerpt 未能在正文逐字定位（{esrc}）：{eexc[:30]}')
 
         # (b) chapter 元数据：仅当文件声明 review_status 时才要求 evidence（保留旧契约）
@@ -603,7 +648,7 @@ def main():
             mod_ok, mod_detail = False, '缺 novel-config.json'
         else:
             try:
-                cfg_data = json.load(open(cfg_path, encoding='utf-8'))
+                cfg_data = json.load(open(cfg_path, encoding='utf-8-sig'))  # 容忍 BOM（与 :469 同口径）
                 mods = cfg_data.get('modules')
                 if not isinstance(mods, dict):
                     mod_ok, mod_detail = False, 'modules 字段缺失或非对象'

@@ -5,13 +5,15 @@
 
 | 文件 | 大小 | 用途（首行标题） | 更新 |
 |------|------|-------------------|------|
-| README.md | 5.2K | Novel Engine v1.9.1.1 | 2026-10-12 |
-| SKILL.md | 20.6K | Novel Engine v1.9.1.1 (小说创作引擎) | 2026-10-12 |
+| README.md | 5.6K | Novel Engine v1.9.1.2 | 2026-10-14 |
+| SKILL.md | 16.7K | Novel Engine v1.9.1.2 (小说创作引擎) | 2026-10-14 |
 | pr-body.md | 1.9K | Summary | 2026-10-08 |
 
 ### 子目录
 
+- `_selftest_v1912/` （有说明）
 - `_skill_analysis/` （有说明）
+- `dist/` （缺说明，运行 doc_sync update 生成）
 - `library/` （有说明）
 - `references/` （有说明）
 - `routes/` （有说明）

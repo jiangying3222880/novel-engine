@@ -1,4 +1,4 @@
-# Novel Engine v1.9.1.1
+# Novel Engine v1.9.1.2
 
 工业级网文写作 Skill：纯 Markdown 状态机（主）+ 检索运行时（runtime/，BM25+FTS 已落地，ZVEC 可选增强）。**技能只存模板，项目存内容。**整个系统**仅 `runtime/` 目录一处跑 Python**（内含 9 个脚本，其余全纯 Markdown；脚本清单见 `runtime/_README.md`）。
 
@@ -9,6 +9,8 @@
 ### 1. 安装为技能
 
 将 `novel-engine/` 整个目录复制到助手的技能目录（如豆包的 `.user_skills/novel-engine/`），保持目录名与 `SKILL.md` 的 `name` 一致。
+
+> **发行包建议**：用 `python runtime/package.py` 生成 ZIP——自动排除开发期文件（`_skill_analysis/`、`测试_基线*/`、`pr-body.md`、`.git`、`__pycache__` 等），避免把内部缺陷登记与分析材料一起发出去。手动复制时请按同样清单排除。
 
 **验证安装**：对助手说 "写个短故事"，能进入短篇模式即安装成功；再试 "开新书" 进入长篇小说初始化。
 
@@ -76,4 +78,4 @@
 
 ## 版本
 
-最新：**v1.9.0**（五阶段 SOP → S1-S4 物理隔离流水线：S1 编剧细纲 / S2 讲述者只读细纲写正文 / S3 检验打回 / S4 原子落库；短篇也走细纲门；滚动窗口 N-5~N）。完整版本表见 [`references/变更历史.md`](references/变更历史.md)。
+最新：**v1.9.1.2**（门禁接线与证据契约：#8 证据链接入 settle/batch 每章落库门禁 + legacy-no-evidence.flag 豁免；检验报告模板 §6 证据清单与解析器双格式对齐；doc_sync 版本检查全文扫描补盲）。完整版本表见 [`references/变更历史.md`](references/变更历史.md)。

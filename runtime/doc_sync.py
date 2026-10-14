@@ -139,13 +139,20 @@ def check_version_consistency(root):
 
     gen_autolist 只记录各文件首行标题，结构上抓不到"SKILL/README/变更历史三处版本号
     互相矛盾"（v1.9.1 发布包曾出现 SKILL=v1.9.1 而 README 仍 v1.9.0）。故独立检查：
-    以 SKILL.md frontmatter version 为权威，README 首行标题、变更历史最新条目须含同号。
+    ①以 SKILL.md frontmatter version 为权威，README 首行标题、变更历史最新条目须含同号；
+    ②v1.9.1.2 补盲（D-18 第二次复发）：README 文末「## 版本」段曾回退到 v1.9.0 而首行检查
+    全绿——改为对 SKILL/README/变更历史做**全文版本 token 扫描**，最高版本号必须等于权威
+    版本（容忍历史提法，专抓"最高版本落后"的漏改段）。
     返回问题字符串列表（空=一致）。
     """
     problems = []
     ver = extract_skill_version(root)
     if not ver:
         return ["SKILL.md frontmatter 未取到 version:（权威版本缺失）"]
+
+    def _ver_key(s):
+        return tuple(int(x) for x in re.findall(r'\d+', s))
+
     readme = read(os.path.join(root, "README.md"))
     rm = re.search(r'^#\s+(.+)$', readme, re.M)
     rhead = rm.group(1).strip() if rm else ""
@@ -157,6 +164,19 @@ def check_version_consistency(root):
     if ver not in found:
         problems.append("references/变更历史.md 顶部最新条目未含版本 %s（检测到最近：%s）"
                         % (ver, found[0] if found else "无版本号"))
+    # 全文最高版本号扫描（历史小版本号合法存在，只抓"最高版本落后"）。
+    # README/SKILL 用全文；变更历史只扫标题行——正文常合法引用未来版本（如"第二批宜进 vX.Y.Z"），
+    # 全文扫描会误报（v1.9.1.2 实测：登记表引文触发 1.9.2 ≠ 1.9.1.2 假阳性）。
+    skill_txt = read(os.path.join(root, "SKILL.md"))
+    hist_head = "\n".join(l for l in hist.splitlines() if l.lstrip().startswith('#'))
+    for fname, ftxt in (("SKILL.md", skill_txt), ("README.md", readme),
+                        ("references/变更历史.md", hist_head)):
+        toks = re.findall(r'\d+\.\d+\.\d+(?:\.\d+)?', ftxt)
+        if toks:
+            top = max(toks, key=_ver_key)
+            if _ver_key(top) != _ver_key(ver):
+                problems.append("%s 最高版本号 %s ≠ 权威版本 %s（疑有版本段漏更新）"
+                                % (fname, top, ver))
     return problems
 
 
