@@ -17,5 +17,5 @@
 | consistency-checklist.md | 2.2K | S3 · 一致性自检清单（人工） | 2026-10-15 |
 | human-signal-zh.md | 10.9K | 去 AI 味方法库（human-signal 沉淀） | 2026-10-15 |
 | human-signal-模式库.md | 5.1K | 五、高频 AI 味模式库（完整版 · 04 §1 四模式的扩充） | 2026-10-15 |
-| self-review.md | 17.9K | S3 检验：行为验证 + 双视角评估协议 | 2026-10-15 |
+| self-review.md | 17.9K | S3 检验：行为验证 + 双视角评估协议 | 2026-10-16 |
 <!-- AUTO-LIST-END -->

@@ -1,7 +1,7 @@
 ---
 name: ne-memory
 description: 小说状态落库、跨会话续写与检索（S4）。当用户说"存盘""落库""续写上次的""跨会话恢复""检索前文""更新叙事总览""写 Change Report"时使用。含滚动窗口与六状态文件维护。
-version: 2.0.0
+version: 2.1.1
 agent_created: 2026-10-15
 ---
 

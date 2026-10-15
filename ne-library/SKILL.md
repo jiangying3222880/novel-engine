@@ -1,7 +1,7 @@
 ---
 name: ne-library
 description: 小说写作素材库。当用户问"有什么技法""群像/对话/开篇怎么写""拆对标书""找素材""平台风格""身份档案"时使用。技法、题材、身份、知识、平台、拆书素材池的检索入口，按需加载不常驻。
-version: 2.0.0
+version: 2.1.1
 agent_created: 2026-10-15
 ---
 
@@ -17,7 +17,7 @@ agent_created: 2026-10-15
 | `library/techniques/` | 写作技法（场景→技法速查） | 124 |
 | `library/genres/` | 题材风格包 | 16 |
 | `library/knowledge/` | 知识库 | 9 |
-| `library/identities/` | 身份档案（作者/编剧/**讲述者**/编辑/读者） | 5 |
+| `library/identities/` | 身份档案（作者/编剧/编辑/读者/档案员） | 5 |
 | `library/platforms/` | 平台风格 | 若干 |
 | `templates/pools/` | 拆书素材池规范 | 24 |
 
@@ -25,20 +25,22 @@ agent_created: 2026-10-15
 
 1. **按场景找技法** → `./references/技法速查索引.md`（先读它，不要直接翻目录）
 2. **按题材找风格** → `library/genres/`
-3. **身份档案** → `library/identities/`（写作前必确认讲述者档案有项目级覆盖）
+3. **身份档案** → `library/identities/`（写作前必确认作者档案 §5.2 声音样本有项目级覆盖）
 4. **平台调性** → `library/platforms/`
 
 ## 三、身份档案（写作流程要用）
 
 | 档案 | 用在哪 |
 |---|---|
-| `./library/identities/作者.md` | 立项、S4 拍板 |
+| **`./library/identities/作者.md`** | **立项 + S2 正文（执笔态）+ S4 拍板——唯一产出文字的角色** |
 | `./library/identities/编剧.md` | S1 骨架 |
-| **`./library/identities/讲述者.md`** | **S2 正文——唯一产出文字的角色** |
 | `./library/identities/编辑.md` | S3 留存通道 |
 | `./library/identities/读者.md` | S3 体验通道 |
+| `./library/identities/档案员.md` | S4 落库（唯一写窗口）+ 检索·恢复 |
 
-**讲述者必须项目级覆盖**：技能级只给通用基线，给不出你的声音。填法见该档案 §五 声音样本区（200-400 字成稿段 + 句法倾向）。这是治 AI 味的第一步，优先级高于流程改造。
+> v2.1：原「讲述者」身份已删除，声线职责并入作者档案 §五-§七。作者有两个状态：决策态（立项/S4）与执笔态（S2）。
+
+**作者档案 §5.2 声音样本必须项目级覆盖**：技能级只留槽位，给不出你的声音。填法见该节（200-400 字成稿段 + 句法倾向）。这是治 AI 味的第一步，优先级高于流程改造。
 
 ## 四、拆书素材池
 

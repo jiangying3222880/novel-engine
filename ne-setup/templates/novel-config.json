@@ -11,6 +11,12 @@
   },
   "current_arc": "第一卷",
   "body_filename_template": "第000X章 {title}.md",
+  "genre_tags": ["待反推"],
+  "platform": "待反推",
+  "platform_source": "auto",
+  "platform_runner_up": "",
+  "style_card": "",
+  "style_fingerprint": "",
   "modules": {
     "short_story": true,
     "chat_outsource": true,

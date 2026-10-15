@@ -26,7 +26,7 @@
 | `knowledge/` | 通用知识库（古代文史/人物/世界观/民俗/类型文/描写素材） | `knowledge/_README.md` |
 | `packaging/` | 卖点包装与反套路提案 | `packaging.md` |
 | `platforms/` | 平台适配指南（8 平台速览 + 写作要点 + 红线） | `platforms/_README.md`（内容本体） |
-| `identities/` | 身份档案基线（作者/编剧/编辑/读者） | 各身份文件 |
+| `identities/` | 身份档案基线（作者/编剧/编辑/读者/档案员） | 各身份文件 |
 
 ---
 
@@ -58,7 +58,7 @@
 | 文件 | 大小 | 用途（首行标题） | 更新 |
 |------|------|-------------------|------|
 | market-research.md | 2.0K | 市场调查三档路由 | 2026-10-15 |
-| packaging.md | 5.2K | 卖点包装与反套路提案（doubao-novel-writing 融合 | 2026-10-15 |
+| packaging.md | 5.3K | 卖点包装与反套路提案（doubao-novel-writing 融合 | 2026-10-16 |
 
 ### 子目录
 

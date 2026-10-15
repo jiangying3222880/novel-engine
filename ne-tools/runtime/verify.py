@@ -820,6 +820,43 @@ def main():
             tl_bad.append('缺 timeline.md')
         check('timeline覆盖', not tl_bad, '; '.join(tl_bad) if tl_bad else 'OK')
 
+    # 12b 细纲台词越界（v2.1.1 · settle/all · 编剧排布态纪律）
+    # 规则：细纲里出现引号包起的完整台词 = 排布态抢了执笔态的活。
+    # 例外：注释/标注了「必须原样出现」的逐字内容（如暗线里必须兑现的原句）不报。
+    if args.scope in ('settle', 'all'):
+        ol_dir = os.path.join(root, '大纲')
+        tl_bad2 = []
+        if os.path.isdir(ol_dir):
+            for fn in sorted(os.listdir(ol_dir)):
+                if not (fn.startswith('细纲_') and fn.endswith('.md')):
+                    continue
+                p = os.path.join(ol_dir, fn)
+                txt = open(p, encoding='utf-8').read()
+                lines = txt.splitlines()
+                for i, line in enumerate(lines):
+                    if '必须原样出现' in line:
+                        continue
+                    ctx = (lines[i - 1] if i > 0 else '') + line + (lines[i + 1] if i + 1 < len(lines) else '')
+                    if '必须原样出现' in ctx:
+                        continue
+                    # 三种引号都认：中文弯引号 “” 、直角引号 「」 、ASCII 直引号 ""
+                    for m in re.finditer(
+                            r'["\u201c\u300c]([^"\u201c\u201d\u300c\u300d\n]{5,})["\u201d\u300d]', line):
+                        seg = m.group(1)
+                        # 判定为「台词」的硬条件：引号前面是说话动词（说/道/问/答/喊/回/骂/叫）+ 可选冒号。
+                        # 这样可排除"他的判断是'她要么是装的'"这类非台词引语（否则误报）。
+                        prefix = line[:m.start()]
+                        if not re.search(r'(说|道|问|答|喊|回|骂|叫)[^。！？]{0,8}$', prefix):
+                            continue
+                        if len(seg) >= 5:
+                            tl_bad2.append(f'{fn}: 「{seg[:20]}」')
+                            break
+        if tl_bad2:
+            warn('细纲台词越界', '细纲含完整台词（措辞归执笔态，编剧只给事实与意图）：'
+                 + '; '.join(tl_bad2[:3]) + ('…' if len(tl_bad2) > 3 else ''))
+        else:
+            warn('细纲台词越界', 'OK')
+
     # 13 hooks ID 唯一性（v1.9.1 · settle/all）
     if args.scope in ('settle', 'all'):
         hooks_path = os.path.join(root, '故事', '真相', 'hooks.md')

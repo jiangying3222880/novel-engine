@@ -1,0 +1,17 @@
+{
+  "book_title": "梦里叫主人，醒来装路人",
+  "target_word_count": 1500,
+  "platform": "番茄长篇",
+  "platform_source": "user_prior",
+  "genre_tags": [
+    "都市异能"
+  ],
+  "style_card": "番茄长篇",
+  "style_fingerprint": "节奏：事件驱动，几乎不留静场｜语言：短句、动词先行、对话驱动｜情绪：高频小幅波动｜视角：紧贴主角第三人称限知｜人物：主角主动出击、配角功能化",
+  "audience": "番茄都市异能读者",
+  "rules": [
+    "每章目标1500字",
+    "禁用词：仿佛/似乎/不由得/说不清的/某种/小心翼翼"
+  ],
+  "body_filename_template": "第000X章 {title}.md"
+}

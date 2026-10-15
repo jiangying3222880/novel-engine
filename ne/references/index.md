@@ -14,7 +14,7 @@
 | 立项/初始化 | "开新书/帮我建项目/导入" | `../../ne-setup/references/project-setup.md` |
 | S1 骨架（编剧） | "写下一章/规划第X章/继续写" | `../../ne-memory/references/session-start.md` + `../../ne-outline/templates/细纲模板.md` |
 | 全程 地基 | 写前必读（内核三联+驱动标注） | `../../ne-outline/references/narrative-kernel.md` |
-| S2 血肉（讲述者） | 细纲门通过 | 唯一输入包 = `../../ne-outline/templates/细纲模板.md` 产物（细纲_第XXXX章.md）+ config 字数；**禁读规则/状态/技法文件**（口径见 `../../ne-write/references/execution-modes.md` §2.2，v1.9.1.2） |
+| S2 血肉（执笔态） | 细纲门通过 | 唯一输入包 = `../../ne-outline/templates/细纲模板.md` 产物（细纲_第XXXX章.md）+ config 字数；**禁读规则/状态/技法文件**（口径见 `../../ne-write/references/execution-modes.md` §2.2，v1.9.1.2） |
 | S3 检验（编辑） | 初稿完成 | `../../ne-review/references/self-review.md` + `../../ne-review/templates/检验报告模板.md` |
 | S3 依据 | AI味判定/表达问题打回 | `../../ne-review/references/anti-ai.md` |
 | S4 落库（档案员） | 检验通过 | `../../ne-memory/references/hooks-and-memory.md` |
@@ -159,7 +159,7 @@
 | `../../ne-memory/templates/log-template.md` | 每章流程日志（S1-S4 合一） | S1~S4 |
 | `../../ne-outline/templates/细纲模板.md` | 长篇四维骨架细纲（冲突链/情绪弧/信息释放/声线透传/角色状态最小摘要/任务字数） | S1 |
 | `../../ne-review/templates/检验报告模板.md` | S3 双视角检验报告（细纲门+正文门+读者/编辑视角+遮名测试） | S3 |
-| `../../ne-library/library/identities/` | 身份档案模板（作者/编剧/编辑/读者） | 立项/全程 |
+| `../../ne-library/library/identities/` | 身份档案模板（作者/编剧/编辑/读者/档案员） | 立项/全程 |
 | `../../ne-library/library/market-research.md` | 市场调查三档路由 | 立项 |
 | `../../ne-library/library/packaging.md` | 卖点包装 + 反套路提案（doubao 融合） | 立项/投稿/包装 |
 | `../../ne-library/templates/pools/` | 素材池模板（author_dna/planner/unit/knowledge/reference + 拆解方法论） | 立项 |
