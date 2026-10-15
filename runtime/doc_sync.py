@@ -27,14 +27,21 @@ DEFAULT_ROOT = os.path.dirname(HERE)  # runtime/ 的上级 = 技能根
 MARK_START = "<!-- AUTO-LIST-START: 由 doc_sync.py 自动维护，请勿手改 -->"
 MARK_END = "<!-- AUTO-LIST-END -->"
 # deps = 离线 vendored 第三方依赖（jieba/pypinyin/pyyaml），非技能说明文档，跳过扫描
-SKIP_DIRS = {".git", "__pycache__", ".workbuddy", "node_modules", "deps"}
+SKIP_DIRS = {".git", "__pycache__", ".workbuddy", "node_modules", "deps", "dist"}
+# 开发期目录（与 package.py 排除规则同口径，D-19）：不进运行镜像，
+# 因此也不纳入技能本体同步校验——否则镜像里跑 check 会因子目录缺失而误报过期。
+SKIP_DIR_PREFIXES = ("_skill_analysis", "_selftest", "_backup", "测试_基线")
+# 非技能本体的文件（与 package.py 的 EXCLUDE_FILE_PATTERNS 同口径）：
+# 不进运行镜像，因此也不进自动清单，否则镜像侧 check 必然误报过期。
+SKIP_FILE_PATTERNS = (r'^pr-body\.md$', r'^审查报告.*\.md$')
 
 
 def walk_dirs(root):
     """返回所有含 md 或有子目录的目录（相对路径列表，'.' 代表根）。"""
     result = []
     for dp, dirs, files in os.walk(root):
-        dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
+        dirs[:] = [d for d in dirs
+                   if d not in SKIP_DIRS and not d.startswith(SKIP_DIR_PREFIXES)]
         if ".git" in dp:
             continue
         rel = os.path.relpath(dp, root)
@@ -75,7 +82,8 @@ def gen_autolist(root, rel):
     dp = os.path.join(root, rel) if rel != "." else root
     entries = []
     files = sorted(f for f in os.listdir(dp)
-                   if f.endswith(".md") and not f.startswith("_"))
+                   if f.endswith(".md") and not f.startswith("_")
+                   and not any(re.match(pat, f) for pat in SKIP_FILE_PATTERNS))
     for f in files:
         p = os.path.join(dp, f)
         try:
@@ -91,7 +99,9 @@ def gen_autolist(root, rel):
     for f, sz, pur, mt in entries:
         lines.append("| %s | %s | %s | %s |" % (f, sz, pur or "-", mt))
     subdirs = sorted(d for d in os.listdir(dp)
-                     if os.path.isdir(os.path.join(dp, d)) and d not in SKIP_DIRS)
+                     if os.path.isdir(os.path.join(dp, d))
+                     and d not in SKIP_DIRS
+                     and not d.startswith(SKIP_DIR_PREFIXES))
     if subdirs:
         lines.append("")
         lines.append("### 子目录")
@@ -180,6 +190,52 @@ def check_version_consistency(root):
     return problems
 
 
+# 模块注册表编号 → config.modules 键 → verify.py need_keys 的映射（SSOT 三方对齐用）
+# 触发类型为"默认开/auto"的模块（如 M-007 多窗口执行）是执行架构，无需开关，故豁免。
+MODULE_KEY_MAP = {
+    "M-001": "short_story",
+    "M-002": "chat_outsource",
+    "M-003": "pool_teardown",
+    "M-004": "obsidian_overview",
+    "M-005": "zvec",
+    "M-006": "book_teardown",
+}
+MODULE_EXEMPT = {"M-007"}  # 执行架构，宿主有子 agent 时自动启用，不占 config 开关
+
+
+def check_module_consistency(root):
+    """模块三方一致性：module-registry.md / novel-config.json / verify.py need_keys。
+
+    治"文档里登记了模块，配置和门禁里却没有"这类不同步（2026-10-15 实测发现
+    M-006 拆书模块有完整模块卡与模板，但 config 与 verify 都没有它的开关）。
+    """
+    problems = []
+    reg = os.path.join(root, "references", "module-registry.md")
+    if not os.path.exists(reg):
+        return problems
+    reg_txt = read(reg)
+    mods = re.findall(r'^###\s+(M-\d{3})', reg_txt, re.M)
+    if not mods:
+        return problems
+
+    cfg_txt = read(os.path.join(root, "templates", "novel-config.json"))
+    ver_txt = read(os.path.join(root, "runtime", "verify.py"))
+    for m in sorted(set(mods)):
+        if m in MODULE_EXEMPT:
+            continue
+        key = MODULE_KEY_MAP.get(m)
+        if key is None:
+            problems.append("%s 未在 MODULE_KEY_MAP 中登记映射（新增模块后请补）" % m)
+            continue
+        if '"%s"' % key not in cfg_txt:
+            problems.append("%s 的开关键 '%s' 不在 templates/novel-config.json（该模块无法关闭）"
+                            % (m, key))
+        if "'%s'" % key not in ver_txt:
+            problems.append("%s 的开关键 '%s' 不在 runtime/verify.py 的 need_keys（门禁不校验）"
+                            % (m, key))
+    return problems
+
+
 def do_scan_or_check(root, check=False):
     bad = 0
     for rel, files, dirs in walk_dirs(root):
@@ -192,6 +248,9 @@ def do_scan_or_check(root, check=False):
     for vp in check_version_consistency(root):
         bad += 1
         print("[版本不一致] %s" % vp)
+    for mp in check_module_consistency(root):
+        bad += 1
+        print("[模块不一致] %s" % mp)
     if not bad:
         print("全部目录说明文档已同步，且 SKILL/README/变更历史版本一致 ✓")
     return 1 if (bad and check) else 0

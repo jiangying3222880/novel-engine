@@ -656,6 +656,9 @@ def main():
                 else:
                     need_keys = ['short_story', 'chat_outsource', 'pool_teardown',
                                  'obsidian_overview', 'zvec']
+                    # 可选项（向后兼容）：M-006 拆书模块 v1.9.2 才补登记开关键，
+                    # 旧项目的 novel-config.json 没有它，缺失只提示不阻断。
+                    optional_keys = ['book_teardown']
                     missing = [k for k in need_keys if k not in mods]
                     if missing:
                         mod_ok, mod_detail = False, 'modules 缺键: ' + ','.join(missing)
@@ -663,6 +666,12 @@ def main():
                         bad = [k for k, v in mods.items() if not isinstance(v, bool)]
                         if bad:
                             mod_ok, mod_detail = False, 'modules 值非布尔: ' + ','.join(bad)
+                        else:
+                            miss_opt = [k for k in optional_keys if k not in mods]
+                            if miss_opt:
+                                mod_detail = ('可选项未配置（不阻断）: %s；'
+                                              '旧项目可补 "book_teardown": true 以启用拆书模块开关'
+                                              % ','.join(miss_opt))
             except Exception as e:
                 mod_ok, mod_detail = False, f'config 解析失败: {e}'
         check('模块配置(modules)', mod_ok, mod_detail)
