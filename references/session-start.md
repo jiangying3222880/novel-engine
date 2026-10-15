@@ -39,7 +39,7 @@
 11. `素材池/reference/techniques/` 对应技巧 — 方法论参考（按场景选1-2个）
 12. `素材池/reference/samples/` 同类场景 — 实战样本参考（按场景选1-2个）
 
-**首次启动判断**：如果项目目录中没有 `novel-config.json`，说明项目未初始化，跳转至 `references/project-setup.md` 执行阶段⓪。
+**首次启动判断**：如果项目目录中没有 `novel-config.json`，说明项目未初始化，跳转至 `references/project-setup.md` 执行立项初始化。
 
 **禁止全量加载设定集。** 大纲文件只读当前章对应段落。
 

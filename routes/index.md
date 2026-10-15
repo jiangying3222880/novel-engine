@@ -11,7 +11,7 @@
 
 | 阶段 | 入口判断 | 必读文件 |
 |------|---------|---------|
-| ⓪ 项目初始化 | "开新书/帮我建项目/导入" | `references/project-setup.md` |
+| 立项/初始化 | "开新书/帮我建项目/导入" | `references/project-setup.md` |
 | S1 骨架（编剧） | "写下一章/规划第X章/继续写" | `references/session-start.md` + `templates/细纲模板.md` |
 | 全程 地基 | 写前必读（内核三联+驱动标注） | `references/narrative-kernel.md` |
 | S2 血肉（讲述者） | 细纲门通过 | 唯一输入包 = `templates/细纲模板.md` 产物（细纲_第XXXX章.md）+ config 字数；**禁读规则/状态/技法文件**（口径见 `references/execution-modes.md` §2.2，v1.9.1.2） |
@@ -38,7 +38,7 @@
 
 ## 二、references 上下游关系
 
-### project-setup.md · 阶段⓪ 项目初始化
+### project-setup.md · 立项初始化
 ```
 上游：SKILL.md（"开新书/导入"触发）
 前置：无
@@ -150,19 +150,19 @@
 
 | 模板 | 用途 | 触发阶段 |
 |------|------|---------|
-| `templates/novel-config.json` | 项目配置预设 | ⓪ |
+| `templates/novel-config.json` | 项目配置预设 | 立项 |
 | `templates/chapter-template.md` | 章节 Frontmatter 模板 | S2 |
 | `templates/voice-profile-template.md` | 角色声线基线档案模板 | S1 |
-| `templates/truth/` | 6个状态文件模板（characters/world/hooks/relationships/objects/timeline） | ⓪ |
-| `templates/meta/` | 章节元数据模板（chapter_XXXX.md + index.md 索引） | ⓪/S2 |
+| `templates/truth/` | 6个状态文件模板（characters/world/hooks/relationships/objects/timeline） | 立项 |
+| `templates/meta/` | 章节元数据模板（chapter_XXXX.md + index.md 索引） | 立项/S4 |
 | `templates/narrative/` | Obsidian 叙事总览模板（00作品/01角色/02世界观/03伏笔/04地图/05关系网） | S4 |
 | `templates/log-template.md` | 每章流程日志（S1-S4 合一） | S1~S4 |
 | `templates/细纲模板.md` | 长篇四维骨架细纲（冲突链/情绪弧/信息释放/声线透传/角色状态最小摘要/任务字数） | S1 |
 | `templates/检验报告模板.md` | S3 双视角检验报告（细纲门+正文门+读者/编辑视角+遮名测试） | S3 |
-| `library/identities/` | 身份档案模板（作者/编剧/编辑/读者） | ⓪/全程 |
-| `library/market-research.md` | 市场调查三档路由 | ⓪ |
-| `library/packaging.md` | 卖点包装 + 反套路提案（doubao 融合） | ⓪/投稿/包装 |
-| `templates/pools/` | 素材池模板（author_dna/planner/unit/knowledge/reference + 拆解方法论） | ⓪ |
+| `library/identities/` | 身份档案模板（作者/编剧/编辑/读者） | 立项/全程 |
+| `library/market-research.md` | 市场调查三档路由 | 立项 |
+| `library/packaging.md` | 卖点包装 + 反套路提案（doubao 融合） | 立项/投稿/包装 |
+| `templates/pools/` | 素材池模板（author_dna/planner/unit/knowledge/reference + 拆解方法论） | 立项 |
 | `templates/short-story-template.md` | 短篇细纲模板（憋压三段式四维骨架 + 细纲门 + 每节字数门禁） | 短篇 S1 |
 
 ## 四、素材库导航（用户级 + 项目级 · 全目录级）

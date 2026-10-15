@@ -1,6 +1,6 @@
 ﻿---
 # 市场调查三档路由
-# 路由见 references/identity-routing.md · 作者身份在阶段⓪/投稿时调用
+# 路由见 references/identity-routing.md · 作者身份在立项阶段/投稿时调用
 # 功能六 · 豆包 novel-writing market-research 深度嫁接
 ---
 

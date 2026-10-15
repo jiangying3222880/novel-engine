@@ -57,8 +57,8 @@
 
 | 文件 | 大小 | 用途（首行标题） | 更新 |
 |------|------|-------------------|------|
-| market-research.md | 2.0K | 市场调查三档路由 | 2026-08-31 |
-| packaging.md | 5.1K | 卖点包装与反套路提案（doubao-novel-writing 融合 | 2026-08-31 |
+| market-research.md | 2.0K | 市场调查三档路由 | 2026-10-15 |
+| packaging.md | 5.3K | 卖点包装与反套路提案（doubao-novel-writing 融合 | 2026-10-15 |
 
 ### 子目录
 
