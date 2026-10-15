@@ -80,7 +80,7 @@ python <技能根>/ne-tools/runtime/verify.py --root <项目根> --scope <阶段
 
 ## 六、降级：宿主不支持子技能路由时
 
-豆包、网页版 AI 等没有子技能路由能力。此时**不要等宿主分发**，直接按意图读对应子技能的 ../_skill_analysis/旧版SKILL.md_v1.9.1.3存档.md 并内联展开其核心指令。硬门禁（verify.py）在无 Python 环境下跳过，并在流程日志显式标注 `execution_mode=no_python，verify.py 跳过，手动校验：…`——**不静默假装通过**。
+豆包、网页版 AI 等没有子技能路由能力。此时**不要等宿主分发**，直接按意图读对应子技能的 `SKILL.md`（如写正文读 `../ne-write/SKILL.md`）并内联展开其核心指令。硬门禁（verify.py）在无 Python 环境下跳过，并在流程日志显式标注 `execution_mode=no_python，verify.py 跳过，手动校验：…`——**不静默假装通过**。
 
 ## 七、升级 SOP（改完技能必做）
 

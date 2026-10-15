@@ -10,7 +10,7 @@
 
 | 文件 | 大小 | 用途（首行标题） | 更新 |
 |------|------|-------------------|------|
-| short-story-engines.md | 11.8K | 短篇文梗引擎库（Short Story Engines） | 2026-10-15 |
+| short-story-engines.md | 11.7K | 短篇文梗引擎库（Short Story Engines） | 2026-10-15 |
 | short-story-rhythm-origin.md | 2.5K | 短故事节奏原理（用户验证版） | 2026-09-04 |
 | short-story.md | 15.5K | 短故事创作模式（Short Story） | 2026-10-15 |
 <!-- AUTO-LIST-END -->

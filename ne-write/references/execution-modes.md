@@ -1,7 +1,7 @@
 # 执行模式与物理隔离（Execution Modes · v1.9.1）
 
 > 定位：流程层文件（L2）。解决"S1-S4 流水线如何物理隔离上下文""有降级手段时如何防偷懒""连写 N 章如何不逐章劣化（v1.9.1 batch）"。
-> 上游：../../_skill_analysis/346/227/247/347/211/210SKILL.md_v1.9.1.3/345/255/230/346/241/243.md 模块路由表 · `./workflow-detail.md`（S1-S4 流水线全文）
+> 上游：../../ne/SKILL.md 模块路由表 · `./workflow-detail.md`（S1-S4 流水线全文）
 > 下游：S2 写作执行 · 流程日志（`故事/日志/`）· verify.py（execution_mode 字段校验 + 产物链完整性）
 
 ---
@@ -155,4 +155,4 @@ batch **不是第四种隔离方式**，而是叠加在 single/multi 之上的**
 
 - 执行模式只决定"**同一个阶段**的上下文隔离方式"，不改变"**哪个阶段该加载哪个 L3 模块**"（后者归 `module-registry.md` 调度）
 - multi 下，子 Agent 启动时按模块路由表决定自己窗口内读不读 L3 模块卡；single 下同规则
-- 模块触发/挂载铁律见 ../../_skill_analysis/346/227/247/347/211/210SKILL.md_v1.9.1.3/345/255/230/346/241/243.md 模块路由表 + `../../ne-setup/references/module-registry.md`
+- 模块触发/挂载铁律见 ../../ne/SKILL.md 模块路由表 + `../../ne-setup/references/module-registry.md`

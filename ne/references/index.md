@@ -153,56 +153,52 @@
 | `../../ne-setup/../../ne-setup/templates/novel-config.json` | 项目配置预设 | 立项 |
 | `../../ne-write/templates/chapter-template.md` | 章节 Frontmatter 模板 | S2 |
 | `../../ne-write/templates/voice-profile-template.md` | 角色声线基线档案模板 | S1 |
-| `templates/truth/` | 6个状态文件模板（characters/world/hooks/relationships/objects/timeline） | 立项 |
-| `templates/meta/` | 章节元数据模板（chapter_XXXX.md + index.md 索引） | 立项/S4 |
-| `templates/narrative/` | Obsidian 叙事总览模板（00作品/01角色/02世界观/03伏笔/04地图/05关系网） | S4 |
+| `../../ne-setup/templates/truth/` | 6个状态文件模板（characters/world/hooks/relationships/objects/timeline） | 立项 |
+| `../../ne-setup/templates/meta/` | 章节元数据模板（chapter_XXXX.md + index.md 索引） | 立项/S4 |
+| `../../ne-memory/templates/narrative/` | Obsidian 叙事总览模板（00作品/01角色/02世界观/03伏笔/04地图/05关系网） | S4 |
 | `../../ne-memory/templates/log-template.md` | 每章流程日志（S1-S4 合一） | S1~S4 |
 | `../../ne-outline/templates/细纲模板.md` | 长篇四维骨架细纲（冲突链/情绪弧/信息释放/声线透传/角色状态最小摘要/任务字数） | S1 |
 | `../../ne-review/templates/检验报告模板.md` | S3 双视角检验报告（细纲门+正文门+读者/编辑视角+遮名测试） | S3 |
-| `library/identities/` | 身份档案模板（作者/编剧/编辑/读者） | 立项/全程 |
+| `../../ne-library/library/identities/` | 身份档案模板（作者/编剧/编辑/读者） | 立项/全程 |
 | `../../ne-library/library/market-research.md` | 市场调查三档路由 | 立项 |
 | `../../ne-library/library/packaging.md` | 卖点包装 + 反套路提案（doubao 融合） | 立项/投稿/包装 |
-| `templates/pools/` | 素材池模板（author_dna/planner/unit/knowledge/reference + 拆解方法论） | 立项 |
+| `../../ne-library/templates/pools/` | 素材池模板（author_dna/planner/unit/knowledge/reference + 拆解方法论） | 立项 |
 | `../../ne-short/templates/short-story-template.md` | 短篇细纲模板（憋压三段式四维骨架 + 细纲门 + 每节字数门禁） | 短篇 S1 |
 
 ## 四、素材库导航（用户级 + 项目级 · 全目录级）
 
 > 各目录 `_README.md` 只承载 doc_sync 自动清单 + 内容本体（若有），**语义导航一律以本表为准**。
 
-### 用户级 `library/`
+### 用户级素材库 `../../ne-library/library/`
 
 | 路径 | 说明 |
 |------|------|
-| `library/techniques/` | 通用写作方法论：T-卡 103 张（T-001~T-118，编号有空缺）+ 方法论 21 篇 = 124 文件；**场景→技法两级索引见 `../../ne-library/references/技法速查索引.md`** |
-| `library/genres/` | 题材风格包：`xuanhuan-chendong`（辰东式玄幻）/ `urban-myth-zanshen`（斩神式都市神话）/ `都市` / `仙侠修真` / `悬疑`，各含 1-4 个 md |
-| `library/knowledge/` | 通用知识库：`corpus`（语料索引 4 份）/ `analysis`（技法对比 2 份） |
-| `library/platforms/` | 平台适配指南（**内容本体在 `_README.md`**：8 平台速览 + 写作要点 + 红线） |
-| `library/identities/` | 身份档案基线（作者/编剧/编辑/读者，项目级可覆盖） |
+| `../../ne-library/library/techniques/` | 通用写作方法论：T-卡 103 张（T-001~T-118，编号有空缺）+ 方法论 21 篇 = 124 文件；**场景→技法两级索引见 `../../ne-library/references/技法速查索引.md`** |
+| `../../ne-library/library/genres/` | 题材风格包：`xuanhuan-chendong`（辰东式玄幻）/ `urban-myth-zanshen`（斩神式都市神话）/ `都市` / `仙侠修真` / `悬疑`，各含 1-4 个 md |
+| `../../ne-library/library/knowledge/` | 通用知识库：`corpus`（语料索引 4 份）/ `analysis`（技法对比 2 份） |
+| `../../ne-library/library/platforms/` | 平台适配指南（**内容本体在 `_README.md`**：8 平台速览 + 写作要点 + 红线） |
+| `../../ne-library/library/identities/` | 身份档案基线（作者/编剧/编辑/读者，项目级可覆盖） |
 | `../../ne-library/library/market-research.md` | 市场调查三档路由（快速/标准/深度） |
 
-### 项目级模板 `templates/`
+### 项目级模板（v2.0 起按子技能分散存放）
 
 | 路径 | 说明 |
 |------|------|
-| `templates/` | 模板总览（config/chapter/voice-profile/log/细纲/检验报告/短篇/外包） |
-| `templates/truth/` | 6 状态文件模板（characters/world/hooks/relationships/objects/timeline） |
-| `templates/meta/` | 章节元数据模板（chapter_XXXX.md + index.md） |
-| `templates/narrative/` | Obsidian 叙事总览模板（00作品/01角色/02世界观/03伏笔/04地图/05关系网） |
-| `templates/identity/` | 项目级身份覆盖模板 |
-| `templates/pools/` | 素材池模板（拆书规范 + 拆解方法论；author_dna/planner/unit/_template.md） |
-| `templates/pools/knowledge/` | 知识池说明（**内容本体在 `_README.md`**） |
-| `templates/pools/reference/` | 文学素材池说明（**内容本体在 `_README.md`**） |
-| `templates/pools/reference/techniques/` | 项目池技巧分类 8 大类（**内容本体在 `_README.md`**） |
-| `templates/pools/reference/samples/` | 实战样本库 7 类（coolness/suspense/action/humor/horror/worldbuilding/xianxia，各 1 份样本；**内容本体在 `_README.md`**） |
+| `../../ne-setup/templates/` | 立项模板：`novel-config.json` + `truth/`（6 状态文件）+ `meta/`（章节元数据 + index.md）+ `identity/`（项目级身份覆盖） |
+| `../../ne-outline/templates/细纲模板.md` | 长篇四维骨架细纲（冲突链/情绪弧/信息释放/声线透传/角色状态最小摘要/任务字数） |
+| `../../ne-write/templates/` | `chapter-template.md`（正文）/ `voice-profile-template.md`（声音档案）/ `outsource-prompt.md`（外包提示词） |
+| `../../ne-review/templates/检验报告模板.md` | S3 双视角检验报告（细纲门+正文门+遮名测试） |
+| `../../ne-memory/templates/` | `log-template.md`（流程日志）+ `narrative/`（叙事总览根 MOC + 6 个子页） |
+| `../../ne-short/templates/short-story-template.md` | 短篇细纲模板（憋压三段式四维骨架） |
+| `../../ne-library/templates/pools/` | 素材池模板（拆书规范 + 拆解方法论；`knowledge/` `reference/techniques/` `reference/samples/` 内容本体在各 `_README.md`） |
 
 ### 其他目录
 
 | 路径 | 说明 |
 |------|------|
-| `references/` | 方法库（阶段参考，上下游见本文件 §二） |
-| `runtime/` | Python 运行时（脚本用途表见 `../../ne-tools/runtime/_README.md`） |
-| `routes/` | 本文件（路由台账唯一真相源） |
-| `story/` | 项目结构示意（仅示意） |
+| `references/` | 本目录（技能包文件地图，唯一真相源） |
+| `../../ne-tools/runtime/` | Python 运行时——全技能唯一跑 Python 的地方（脚本用途表见 `../../ne-tools/runtime/_README.md`） |
+| `../../_skill_analysis/` | 开发期档案（设计方案/缺陷登记/变更历史/测试基线），**不进发行包、不进运行镜像** |
 
 ---
 

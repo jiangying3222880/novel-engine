@@ -10,7 +10,7 @@
 
 | 文件 | 大小 | 用途（首行标题） | 更新 |
 |------|------|-------------------|------|
-| module-registry.md | 6.6K | 模块注册表（Module Registry · Agent 调度版  | 2026-10-15 |
+| module-registry.md | 6.5K | 模块注册表（Module Registry · Agent 调度版  | 2026-10-15 |
 | module-说明书.md | 5.4K | 模块说明书（Module Guide · 用户决策版 · v1.8） | 2026-10-10 |
 | project-setup.md | 17.6K | 立项阶段：项目初始化指南 | 2026-10-15 |
 | 商业立意与题材选择.md | 4.8K | 商业立意与题材选择 | 2026-10-08 |

@@ -14,7 +14,5 @@
 
 ### 子目录
 
-- `references/` （缺说明，运行 doc_sync update 生成）
 - `runtime/` （有说明）
-- `templates/` （缺说明，运行 doc_sync update 生成）
 <!-- AUTO-LIST-END -->

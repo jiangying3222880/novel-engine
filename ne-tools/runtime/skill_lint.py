@@ -35,6 +35,7 @@ skill_lint.py — Skill 标准化自检（v2.0 闸 0）
 退出码：0=全部 PASS（可能有 WARN）；1=有 FAIL
 """
 import argparse
+import io
 import os
 import re
 import sys
@@ -411,6 +412,50 @@ def check_report_naming(root):
     return ('PASS', '产物命名契约', 'templates/ 内无废弃产物别名')
 
 
+# 「路径样 token」：含 / 且带 .md 扩展名。只在这类 token 里找八进制串，
+# 否则技法编号 T-021/040/065、约束编号 C-001/002/003 会误报。
+PATHISH = re.compile(r'[\w\u4e00-\u9fff\-.]*/[\w\u4e00-\u9fff\-./]*\.md')
+# 连续 3 段以上的「三位八进制数 / 分隔」= git quotepath 转义被当成路径分隔符写进了文档
+OCTET_PATH_RUN = re.compile(r'/(?:[0-7]{3}/){2,}')
+
+
+def check_path_escapes(root):
+    """（检查 14）路径八进制转义残留。
+
+    根因：git 默认 core.quotepath=true，中文路径在 diff 里显示成 \\346\\227\\247，
+    批量修引用的脚本若把反斜杠当路径分隔符，就会把八进制串当成目录层级写进文档。
+    为什么普通断链检查抓不到：它按 basename 解析，这类串的最后一段仍是合法文件名，
+    于是被当成"存在的文件"放过——必须单独按形状拦。
+
+    ⚠️ 本函数用 io.open，缺 import io 时会被 except 静默吞成恒 PASS（踩过）。
+    """
+    bad = []
+    skip = ('.git', '.workbuddy', 'deps', '_skill_analysis')
+    for dp, dirs, files in os.walk(root):
+        dirs[:] = [d for d in dirs if d not in skip]
+        for f in files:
+            if not f.endswith(('.md', '.py')):
+                continue
+            p = os.path.join(dp, f)
+            try:
+                txt = io.open(p, encoding='utf-8', errors='ignore').read()
+            except Exception:
+                continue
+            if f == os.path.basename(__file__):   # 本文件 docstring 里有反例说明，跳过自身
+                continue
+            for m in PATHISH.finditer(txt):
+                if OCTET_PATH_RUN.search(m.group(0)):
+                    bad.append('%s: …%s…' % (os.path.relpath(p, root).replace('\\', '/'),
+                                             m.group(0)[-40:]))
+                    break
+    uniq = sorted(set(bad))
+    if uniq:
+        return ('FAIL', '路径转义残留',
+                '%d 个文件含 git 八进制转义路径（中文文件名被破坏）：%s'
+                % (len(uniq), '；'.join(uniq[:3])))
+    return ('PASS', '路径转义残留', '未检出八进制转义路径')
+
+
 def main():
     ap = argparse.ArgumentParser(description='Skill 标准化自检')
     ap.add_argument('--root', default='', help='技能根目录（默认=本文件上级的上级）')
@@ -460,7 +505,8 @@ def main():
     for t in targets:
         print('\n=== %s ===' % os.path.basename(os.path.abspath(t)))
         if args.consistency:
-            rows = [check_repo_refs(t), check_artifact_templates(t), check_report_naming(t)]
+            rows = [check_repo_refs(t), check_artifact_templates(t),
+                    check_report_naming(t), check_path_escapes(t)]
         else:
             rows = check_skill(t)
         for level, item, detail in rows:

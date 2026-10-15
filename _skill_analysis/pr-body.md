@@ -1,6 +1,6 @@
 ## Summary
 
-> 📌 历史存档：本文是 **v1.5.0 那次 PR 的正文**（2026-09），保留用于追溯。当前版本与全部变更见 `./_skill_analysis/346/227/247/347/211/210SKILL.md_v1.9.1.3/345/255/230/346/241/243.md` 更新段 + `./_skill_analysis/变更历史.md`。请勿依据本文判断当前技能状态。
+> 📌 历史存档：本文是 **v1.5.0 那次 PR 的正文**（2026-09），保留用于追溯。当前版本与全部变更见 `./_skill_analysis/旧版SKILL.md_v1.9.1.3存档.md` 更新段 + `./_skill_analysis/变更历史.md`。请勿依据本文判断当前技能状态。
 
 novel-engine v1.5.0 六步改进全执行完毕，基于基线测试数据驱动的 skill 改进。
 
@@ -26,7 +26,7 @@ novel-engine v1.5.0 六步改进全执行完毕，基于基线测试数据驱动
 ### 文件变更
 
 - 新增：./ne-write/references/model-guide.md, ./ne-outline/references/target-focus.md, ./ne-library/library/techniques/高潮突转技法库.md, ./ne-library/library/techniques/代入感技法.md
-- 修改：./_skill_analysis/346/227/247/347/211/210SKILL.md_v1.9.1.3/345/255/230/346/241/243.md(v1.5.0), ./ne/references/index.md, verify.py, hooks-and-memory.md, session-start.md, self-review.md(Q5), ./ne-review/references/anti-ai.md(原则三扩展), 9个技法文件, ./ne-library/library/techniques/_README.md, ./ne-tools/runtime/_README.md
+- 修改：./_skill_analysis/旧版SKILL.md_v1.9.1.3存档.md(v1.5.0), ./ne/references/index.md, verify.py, hooks-and-memory.md, session-start.md, self-review.md(Q5), ./ne-review/references/anti-ai.md(原则三扩展), 9个技法文件, ./ne-library/library/techniques/_README.md, ./ne-tools/runtime/_README.md
 
 ### 验证方式
 

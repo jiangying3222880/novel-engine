@@ -11,9 +11,9 @@
 | 文件 | 大小 | 用途（首行标题） | 更新 |
 |------|------|-------------------|------|
 | chat-outsource.md | 5.8K | 1. 何时用 / 何时不用 | 2026-10-15 |
-| execution-modes.md | 10.2K | 执行模式与物理隔离（Execution Modes · v1.9.1 | 2026-10-15 |
+| execution-modes.md | 10.0K | 执行模式与物理隔离（Execution Modes · v1.9.1 | 2026-10-15 |
 | identity-routing.md | 9.9K | 身份路由（写作视角 × 流水线环节 → 专业身份） | 2026-10-15 |
 | model-guide.md | 8.5K | 模型文档 · 各阶段适用模型与提示策略 | 2026-10-15 |
-| workflow-detail.md | 19.7K | S1-S4 物理隔离流水线详解（v1.9） | 2026-10-15 |
+| workflow-detail.md | 19.6K | S1-S4 物理隔离流水线详解（v1.9） | 2026-10-15 |
 | writing-guide.md | 16.6K | 阶段②：正文写作指南（S2 血肉 · 讲述者） | 2026-10-15 |
 <!-- AUTO-LIST-END -->

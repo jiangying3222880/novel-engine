@@ -73,4 +73,4 @@ python ../ne-tools/runtime/verify.py --root <项目根> --scope settle
 
 ## 七、体积红线
 
-单状态文件 ≤ 8KB；单次对话强制加载总量 ≤ 12KB。../_skill_analysis/346/227/247/347/211/210SKILL.md_v1.9.1.3/345/255/230/346/241/243.md 只存契约，详情下沉 references/。
+单状态文件 ≤ 8KB；单次对话强制加载总量 ≤ 12KB。../ne/SKILL.md 只存契约，详情下沉 references/。

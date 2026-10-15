@@ -18,15 +18,15 @@ ne-tools     运行时（门禁 / 索引 / 打包 / 镜像同步）
 
 纯 Markdown 状态机（主）+ 检索运行时（`ne-tools/runtime/`，BM25+FTS 已落地，ZVEC 可选增强）。**技能只存模板，项目存内容。**整个系统**仅 `ne-tools/runtime/` 一处跑 Python**（其余全纯 Markdown）。
 
-> 版本单一真相源是包级 `VERSION` 文件；所有子技能 ./_skill_analysis/346/227/247/347/211/210SKILL.md_v1.9.1.3/345/255/230/346/241/243.md 的 version 必须等于它，由 `doc_sync.py check` 强制校验。
+> 版本单一真相源是包级 `VERSION` 文件；所有子技能 `SKILL.md` 的 version 必须等于它，由 `doc_sync.py check` 强制校验。
 
-> ⚠️ 本文档为对外说明（安装 / FAQ）。**助手执行路由以 `./_skill_analysis/346/227/247/347/211/210SKILL.md_v1.9.1.3/345/255/230/346/241/243.md` 为准，全文件地图以 `./ne/references/index.md` 为准**（唯一真相源）。
+> ⚠️ 本文档为对外说明（安装 / FAQ）。**助手执行路由以 `./ne/SKILL.md` 为准，全文件地图以 `./ne/references/index.md` 为准**（唯一真相源）。
 
 ## 快速使用
 
 ### 1. 安装为技能
 
-将 `novel-engine/` 整个目录复制到助手的技能目录（如豆包的 `.user_skills/novel-engine/`），保持目录名与 `./_skill_analysis/346/227/247/347/211/210SKILL.md_v1.9.1.3/345/255/230/346/241/243.md` 的 `name` 一致。
+将 `novel-engine/` 整个目录复制到助手的技能目录（如豆包的 `.user_skills/novel-engine/`），保持每个子技能目录名与其 `SKILL.md` 的 `name` 一致。
 
 > **发行包建议**：用 `python runtime/package.py` 生成 ZIP——自动排除开发期文件（`_skill_analysis/`、`测试_基线*/`、`pr-body.md`、`.git`、`__pycache__` 等），避免把内部缺陷登记与分析材料一起发出去。手动复制时请按同样清单排除。
 
@@ -80,7 +80,7 @@ ne-tools     运行时（门禁 / 索引 / 打包 / 镜像同步）
 能。它们走两套流程，互不干扰。短故事不建项目，长篇用项目状态管理。
 
 **Q：遇到问题去哪看？**
-- 助手行为异常 → 看 `./ne/references/index.md`（文件地图）+ `./_skill_analysis/346/227/247/347/211/210SKILL.md_v1.9.1.3/345/255/230/346/241/243.md`（路由）。
+- 助手行为异常 → 看 `./ne/references/index.md`（文件地图）+ `./ne/SKILL.md`（路由）。
 - 想了解设计理念 → 看本 README。
 - 想排查检索 → 看 `runtime/bm25_fts.py` 头部用法说明与 `./ne-memory/references/retrieval.md`。
 
@@ -88,7 +88,7 @@ ne-tools     运行时（门禁 / 索引 / 打包 / 镜像同步）
 
 | 目的 | 文件 |
 |------|------|
-| 助手执行路由 | `./_skill_analysis/346/227/247/347/211/210SKILL.md_v1.9.1.3/345/255/230/346/241/243.md` |
+| 助手执行路由 | `./ne/SKILL.md` |
 | 全文件地图（唯一真相源） | `./ne/references/index.md` |
 | 版本历史（完整） | `./_skill_analysis/变更历史.md` |
 | 场景→技法速查 | `./ne-library/references/技法速查索引.md` |
