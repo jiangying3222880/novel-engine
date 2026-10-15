@@ -1,14 +1,32 @@
-# Novel Engine v1.9.1.3
+# Novel Engine v2.0.0（技能包）
 
-工业级网文写作 Skill：纯 Markdown 状态机（主）+ 检索运行时（runtime/，BM25+FTS 已落地，ZVEC 可选增强）。**技能只存模板，项目存内容。**整个系统**仅 `runtime/` 目录一处跑 Python**（内含 9 个脚本，其余全纯 Markdown；脚本清单见 `runtime/_README.md`）。
+工业级网文写作**技能包**：v2.0 起由单个大技能拆为 **9 个子技能**，按"一次会话只干一件事"切分。
 
-> ⚠️ 本文档为对外说明（安装 / FAQ）。**助手执行路由以 `SKILL.md` 为准，全文件地图以 `routes/index.md` 为准**（唯一真相源）。
+```
+ne           路由入口（先读它，判断转交哪个子技能）
+ne-setup     立项 / 项目初始化
+ne-outline   细纲 / 骨架（S1）
+ne-write     正文主流程 S1-S4（S2 讲述者产出文字）
+ne-review    检验 / 去 AI 味（S3）
+ne-memory    落库 / 跨会话续写（S4）
+ne-short     短篇全流程
+ne-library   素材库（技法 / 题材 / 身份 / 平台 / 拆书）
+ne-tools     运行时（门禁 / 索引 / 打包 / 镜像同步）
+```
+
+**写章节时只加载 `ne`（2.5K token）+ `ne-write`（2.5K token）**，而不是以前整体 7.8K 主文件 + 全量 references。
+
+纯 Markdown 状态机（主）+ 检索运行时（`ne-tools/runtime/`，BM25+FTS 已落地，ZVEC 可选增强）。**技能只存模板，项目存内容。**整个系统**仅 `ne-tools/runtime/` 一处跑 Python**（其余全纯 Markdown）。
+
+> 版本单一真相源是包级 `VERSION` 文件；所有子技能 ./_skill_analysis/346/227/247/347/211/210SKILL.md_v1.9.1.3/345/255/230/346/241/243.md 的 version 必须等于它，由 `doc_sync.py check` 强制校验。
+
+> ⚠️ 本文档为对外说明（安装 / FAQ）。**助手执行路由以 `./_skill_analysis/346/227/247/347/211/210SKILL.md_v1.9.1.3/345/255/230/346/241/243.md` 为准，全文件地图以 `./ne/references/index.md` 为准**（唯一真相源）。
 
 ## 快速使用
 
 ### 1. 安装为技能
 
-将 `novel-engine/` 整个目录复制到助手的技能目录（如豆包的 `.user_skills/novel-engine/`），保持目录名与 `SKILL.md` 的 `name` 一致。
+将 `novel-engine/` 整个目录复制到助手的技能目录（如豆包的 `.user_skills/novel-engine/`），保持目录名与 `./_skill_analysis/346/227/247/347/211/210SKILL.md_v1.9.1.3/345/255/230/346/241/243.md` 的 `name` 一致。
 
 > **发行包建议**：用 `python runtime/package.py` 生成 ZIP——自动排除开发期文件（`_skill_analysis/`、`测试_基线*/`、`pr-body.md`、`.git`、`__pycache__` 等），避免把内部缺陷登记与分析材料一起发出去。手动复制时请按同样清单排除。
 
@@ -21,9 +39,9 @@
 3. 说 "写第 1 章" 启动 S1-S4 流水线（编剧细纲 → 讲述者正文 → 检验打回 → 落库）
 4. 新角色首次登场时，Agent 自动按模板建立基线档案
 
-**短故事单篇**：说 "写个短故事" / "抖音推文风" → 三段式单情绪弧憋压爆发，按节分单元生成，不建项目。节奏原理见 `references/short-story.md`，文梗选型见 `references/short-story-engines.md`。
+**短故事单篇**：说 "写个短故事" / "抖音推文风" → 三段式单情绪弧憋压爆发，按节分单元生成，不建项目。节奏原理见 `./ne-short/references/short-story.md`，文梗选型见 `./ne-short/references/short-story-engines.md`。
 
-**外包写作**：说 "这章外包" / "整本书走外包模式" → S1 骨架照跑后自动编译自包含提示词，贴入任意网页 chat 写作，正文贴回后走 S3 检验（含表达打回）→ S4 落库。流程见 `references/chat-outsource.md`。
+**外包写作**：说 "这章外包" / "整本书走外包模式" → S1 骨架照跑后自动编译自包含提示词，贴入任意网页 chat 写作，正文贴回后走 S3 检验（含表达打回）→ S4 落库。流程见 `./ne-write/references/chat-outsource.md`。
 
 ### 3. Python 依赖说明
 
@@ -62,20 +80,20 @@
 能。它们走两套流程，互不干扰。短故事不建项目，长篇用项目状态管理。
 
 **Q：遇到问题去哪看？**
-- 助手行为异常 → 看 `routes/index.md`（文件地图）+ `SKILL.md`（路由）。
+- 助手行为异常 → 看 `./ne/references/index.md`（文件地图）+ `./_skill_analysis/346/227/247/347/211/210SKILL.md_v1.9.1.3/345/255/230/346/241/243.md`（路由）。
 - 想了解设计理念 → 看本 README。
-- 想排查检索 → 看 `runtime/bm25_fts.py` 头部用法说明与 `references/retrieval.md`。
+- 想排查检索 → 看 `runtime/bm25_fts.py` 头部用法说明与 `./ne-memory/references/retrieval.md`。
 
 ## 链接
 
 | 目的 | 文件 |
 |------|------|
-| 助手执行路由 | `SKILL.md` |
-| 全文件地图（唯一真相源） | `routes/index.md` |
-| 版本历史（完整） | `references/变更历史.md` |
-| 场景→技法速查 | `references/技法速查索引.md` |
-| 脚本清单 | `runtime/_README.md` |
+| 助手执行路由 | `./_skill_analysis/346/227/247/347/211/210SKILL.md_v1.9.1.3/345/255/230/346/241/243.md` |
+| 全文件地图（唯一真相源） | `./ne/references/index.md` |
+| 版本历史（完整） | `./_skill_analysis/变更历史.md` |
+| 场景→技法速查 | `./ne-library/references/技法速查索引.md` |
+| 脚本清单 | `./ne-tools/runtime/_README.md` |
 
 ## 版本
 
-最新：**v1.9.1.3**（检验语义边界与门禁回归基线：#27 升两级——标题存在 + 槽位实质填写，语义验收归 S3（D-30）；新增 `runtime/selftest_gates.py` 8 场景 21 断言门禁回归（D-31），改门禁先登记预期、发版前必跑）。完整版本表见 [`references/变更历史.md`](references/变更历史.md)。
+最新：**v1.9.1.3**（检验语义边界与门禁回归基线：#27 升两级——标题存在 + 槽位实质填写，语义验收归 S3（D-30）；新增 `runtime/selftest_gates.py` 8 场景 21 断言门禁回归（D-31），改门禁先登记预期、发版前必跑）。完整版本表见 [`./_skill_analysis/变更历史.md`](./_skill_analysis/变更历史.md)。
