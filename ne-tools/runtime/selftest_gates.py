@@ -125,6 +125,38 @@ WORLD_TPL = ('# world\n\n'
              '### 地点\n- 主场景：占位\n\n'
              '### 环境\n- 天气：晴\n')
 
+# 作者身份档案夹具（v2.1.4 #29c）
+AUTHOR_BASE = ('# 作者身份档案（项目级 · selftest）\n\n'
+               '一句话卖点：自测占位卖点，用于门禁回归夹具。\n'
+               '目标读者：自测占位读者群，年龄跨度与题材偏好均为占位。\n'
+               '写作边界：自测占位边界，不写与本章冲突链无关的内容。\n'
+               '叙述人称：第三人称限知，跟随主角。\n'
+               '句法倾向：短句为主，动词先行，心理靠外部动作呈现。\n')
+
+AUTHOR_VOICE_GOOD = AUTHOR_BASE + (
+    '样本段: |\n'
+    '  电梯到七楼，门开了又合上。他站着没动，指节抵在不锈钢壁上，凉。\n'
+    '  走廊尽头的灯管坏了两格，一明一灭，把她的影子拉到墙上又收回来。\n'
+    '  他想起早上出门时她说过的话，随即又把它按回去。想这些没用。\n'
+    '  办公室的门半掩着，里面有人在笑，笑声隔着一层石膏板，像从水底传上来。\n'
+    '  他把手从壁上挪开，往那边走。鞋跟敲地砖的声音规律得让他自己都觉得假。\n')
+
+AUTHOR_VOICE_TEMPLATE = AUTHOR_BASE + (
+    '样本段: |\n'
+    '  （粘贴 200-400 字本项目成稿，作为声音基准。\n'
+    '   取样三条硬口径，粘错了本区等于没填：\n'
+    '   1. 主体必须是叙述/描写/动作段 —— 引号内台词占比 ≤ 1/3。\n'
+    '   2. 挑常态段，不要挑高潮段 —— 高潮段句式会变形，拿它当基准会让全书一直紧绷。\n')
+
+AUTHOR_VOICE_DIALOG = AUTHOR_BASE + (
+    '样本段: |\n'
+    '  "你把咖啡洒了。"她把文件往桌角一推。\n'
+    '  "对不起，"他说，"我马上擦。"\n'
+    '  "擦？"她笑了一声，"你知道这份文件要几份吗？"\n'
+    '  "我知道。"他抽出纸巾，"三份，楼下印。"\n'
+    '  "两份已经废了。"她站起来，"你今天第几次了？"\n'
+    '  "第三次。"他说。\n')
+
 TICK_BLOCK = ('<!-- WORLD-TICK-START -->\n'
               '- clock: 0001 | 周一 早 → 周一 晚 | 半天\n'
               '- place: 主场景=占位地点\n'
@@ -157,6 +189,11 @@ class Proj:
 
     def set_world(self, text):
         (self.root / '故事/真相' / 'world.md').write_text(text, encoding='utf-8')
+
+    def author_voice(self, text=None):
+        """写 配置/身份/作者.md（v2.1.4 #29c 夹具）。"""
+        t = AUTHOR_BASE if text is None else text
+        (self.root / '配置' / '身份' / '作者.md').write_text(t, encoding='utf-8')
 
     def index(self, rows):
         lines = ['# 章节索引', '', '| 章号 | 标题 | 状态 |', '|------|------|------|']
@@ -418,6 +455,31 @@ def s10_world_tick_writer(base, a, verbose):
     rc, out2 = run_world_tick(p.root, apply=True)
     a.results.append(('第0001章行已存在' in out2, 'S10.6 重复跑幂等（timeline 按章号去重，不重复追加）',
                       [l.strip() for l in out2.splitlines() if 'timeline' in l][:1] or '(无 timeline 行)'))
+
+
+@scenario
+def s11_author_voice_sample(base, a, verbose):
+    """v2.1.4 #29c 作者声音样本：缺失/模板原文/全是台词 → WARN；真实叙述段 → 不报。
+    （这条闸治的是：把角色声线当成作者声线粘进来，或把模板原文当成已填。）"""
+    p = Proj(base)
+    _, out = run_verify(p.root, 'init')
+    a.expect(out, 'WARN', '作者声音样本(#29c)', 'S11.1 未建 配置/身份/作者.md → WARN')
+
+    p.author_voice(AUTHOR_VOICE_TEMPLATE)
+    _, out = run_verify(p.root, 'init')
+    a.expect(out, 'WARN', '作者声音样本(#29c)', 'S11.2 样本段仍是模板原文 → WARN')
+    a.results.append(('模板原文' in out, 'S11.3 报警指明是模板原文（不是笼统的"缺失"）',
+                      find_line(out, 'WARN', '作者声音样本') or '(无)'))
+
+    p.author_voice(AUTHOR_VOICE_DIALOG)
+    _, out = run_verify(p.root, 'init')
+    a.expect(out, 'WARN', '作者声音样本(#29c)', 'S11.4 样本段台词占比 >1/3 → WARN（那是角色声线）')
+    a.results.append(('台词占比' in out, 'S11.5 报警给出占比数字，指明粘错成角色声线',
+                      find_line(out, 'WARN', '作者声音样本') or '(无)'))
+
+    p.author_voice(AUTHOR_VOICE_GOOD)
+    _, out = run_verify(p.root, 'init')
+    a.expect_absent(out, '作者声音样本(#29c)', 'S11.6 真实叙述样本 → 不再报（WARN 只真命中才发声）')
 
 
 # ---------- 主流程 ----------

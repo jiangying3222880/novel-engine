@@ -1434,6 +1434,50 @@ def main():
         if alias_hit:
             warn('状态文件命名(#29b)', '; '.join(alias_hit))
 
+        # 29c 作者声音样本（v2.1.4 · init WARN 级）
+        # 根因：§5.2 声音样本是纪律项，项目里最常见的"填了"其实是两种情况：
+        #   ① 直接把模板整段复制过来（含"取样三条硬口径"那几行）——看着 200+ 字，其实是空的
+        #   ② 粘的全是角色台词——那是角色声线，不是本区要的作者笔调
+        # 两者都发生过且都没有任何东西会报错，所以这里只在这两种情况真正命中时才发声。
+        # 为什么是 WARN 不是 FAIL：样本只能由人提供，机器填不出来，硬 FAIL 会锁死立项。
+        author_voice = os.path.join(root, '配置', '身份', '作者.md')
+        vs_bad = []
+        if not os.path.isfile(author_voice):
+            vs_bad.append('缺 配置/身份/作者.md（§5.2 声音样本无处落）')
+        else:
+            vc = open(author_voice, encoding='utf-8').read().splitlines()
+            blk, collecting = [], False
+            for ln in vc:
+                if re.match(r'^\s*样本段\s*[:：]', ln):
+                    inline = re.split(r'[:：]', ln, 1)[1].strip()
+                    if inline and inline != '|':
+                        blk.append(inline)
+                    collecting = True
+                    continue
+                if collecting:
+                    if ln.strip() == '' or re.match(r'^\s{2,}', ln) or ln.strip().startswith('|'):
+                        blk.append(ln.strip())
+                    else:
+                        break
+            sample = ''.join(blk)
+            sample = re.sub(r'\|$', '', sample).strip()
+            n = len(re.sub(r'\s', '', sample))
+            if '取样三条硬口径' in sample or '粘贴 200-400' in sample or '本项目成稿' in sample:
+                vs_bad.append('样本段仍是模板原文（未替换成真实成稿）')
+            elif n < 100:
+                vs_bad.append('样本段为空或过短（%d 字，需 200-400 字叙述段）' % n)
+            else:
+                # 台词占比：引号内字符 / 总字符（中文引号 + 英文引号 + 书名号不算）
+                quoted = 0
+                for m in re.finditer(r'[“"](.*?)[”"]', sample, re.S):
+                    quoted += len(re.sub(r'\s', '', m.group(1)))
+                if n > 0 and quoted > 0 and quoted * 1.0 / n > 0.34:
+                    vs_bad.append('样本段台词占比 %.0f%% > 1/3 —— 那是角色声线，'
+                                  '本区要的是叙述/描写/动作段' % (quoted * 100.0 / n))
+        if vs_bad:
+            warn('作者声音样本(#29c)', '; '.join(vs_bad)
+                 + '（缺它 = 只能用通用书面语兜底，十本书一个味）')
+
         check('init关键文件非空(#29)', not init_bad, '; '.join(init_bad))
 
     # 31 退化趋势 + 基线（v1.9.1.1 · trend/all=预警 WARN；batch=连续爬升 FAIL 停机 · D-07）

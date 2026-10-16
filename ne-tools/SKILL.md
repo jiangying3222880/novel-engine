@@ -1,7 +1,7 @@
 ---
 name: ne-tools
 description: 小说创作引擎的运行时工具。当用户说"跑门禁""校验项目""刷新索引""打包技能""同步运行镜像""跑自测"时使用。提供 verify/doc_sync/index/query/package/deploy/skill_lint 等脚本。
-version: 2.1.3
+version: 2.1.4
 agent_created: 2026-10-15
 ---
 
@@ -17,7 +17,7 @@ python <技能根>/ne-tools/runtime/verify.py --root <项目根> --scope <阶段
 
 | scope | 时机 | 覆盖 |
 |---|---|---|
-| `init` | 项目初始化完成 | 目录结构 / 真相防污染 / config 合法性 / **根 MOC 存在** |
+| `init` | 项目初始化完成 | 目录结构 / 真相防污染 / config 合法性 / **根 MOC 存在** / **6 状态文件齐全** / **#29c 作者声音样本（WARN）** |
 | `outline` | 细纲产出后 | 细纲门硬性结构 |
 | `execution` | S3 检验后 | 正文质量 / 工具与框架残留 |
 | `settle` | **每章落库必跑** | 落库一致 / timeline / **世界时钟** / hooks / 证据链 |
