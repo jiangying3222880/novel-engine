@@ -10,5 +10,5 @@
 | objects.md | 1.4K | 物品状态库（objects.md · 功能七新增） | 2026-10-15 |
 | relationships.md | 1.2K | 角色关系网络 | 2026-10-15 |
 | timeline.md | 1.4K | 时间线（timeline.md · 功能七新增） | 2026-10-15 |
-| world.md | 3.1K | 世界状态 + 时间线 | 2026-10-15 |
+| world.md | 3.9K | 世界状态 + 时间线 | 2026-10-16 |
 <!-- AUTO-LIST-END -->

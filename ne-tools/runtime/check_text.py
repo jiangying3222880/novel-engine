@@ -25,8 +25,8 @@ Novel Engine v1.5 · 正文观测 / 门禁脚本（P0 借鉴 · 防"假自检"�
   --hook        检查文首 300 字是否命中回归式标记（"从什么时候开始"等）
   --consist     按出现顺序导出时序副词及其句子，人工核对先后是否自洽
   --digits      导出章节内所有数字（含中文数字）及上下文，人工核对金额/数量统一
-  --facts <台账> 将正文与 facts.md 台账的金额/正文写法比对，提示不一致
-  示例：python runtime/check_text.py <正文> --target 3000 --strict --hook --digits --facts ../../真相/facts.md
+  --facts <台账> 将正文与 objects.md 台账（已确立事实：金额/约定/数值）的正文写法比对，提示不一致
+  示例：python runtime/check_text.py <正文> --target 3000 --strict --hook --digits --facts ../../真相/objects.md
 
 退出码：0=通过  1=路径错误  2=门禁 FAIL（字数或高频词）
 """
@@ -235,7 +235,7 @@ def digits_scan(res):
 
 
 def facts_scan(res, ledger_path):
-    """观察级：将正文与 facts.md 台账比对（--facts）。
+    """观察级：将正文与 objects.md 台账（已确立事实）比对（--facts）。
 
     只处理含「正文写法」列的账目表（当前为「金额账目」），其余表（位置/时间/数量）
     无该列则跳过，避免误报。命中：值中的阿拉伯数字，或「正文写法」去空白子串匹配出现于正文。
@@ -296,7 +296,7 @@ def main():
     ap.add_argument("--hook", action="store_true", help="观察开篇是否回顾式（观察级）")
     ap.add_argument("--consist", action="store_true", help="导出时间线副词顺序（观察级）")
     ap.add_argument("--digits", action="store_true", help="导出章节内数字清单（观察级）")
-    ap.add_argument("--facts", metavar="台账路径", default=None, help="比对正文与 facts.md（观察级）")
+    ap.add_argument("--facts", metavar="台账路径", default=None, help="比对正文与 objects.md 台账（已确立事实，观察级）")
     args = ap.parse_args()
     if not os.path.exists(args.path):
         print(f"路径不存在：{args.path}")

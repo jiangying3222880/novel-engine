@@ -9,7 +9,9 @@
 > 多文件更新（6 状态 + 元数据 + index + 日志）中途失败 = "正文已写入但部分状态没更新"。S4 改为原子四步：
 
 1. **暂存**：生成 Change Report + 待落库变更请求 → 暂存区 `故事/日志/暂存_第XXXX章.md`
-2. **校验**：`verify.py --scope settle` 机器检查（v1.9.1 起真实存在）：落库一致性 / timeline 覆盖 / hooks 唯一性 / hooks 登记核对 / 逗号密度 >12% FAIL / 检验报告双路径兼容。见 workflow-detail §S4 原子四步。
+2. **校验**：`verify.py --scope settle` 机器检查（v1.9.1 起真实存在）：落库一致性 / timeline 覆盖 /
+   **世界时钟**（v2.1.3：world.md 当前进度章号 < 最新落库章号 = FAIL）/ hooks 唯一性 / hooks 登记核对 /
+   逗号密度 >12% FAIL / 检验报告双路径兼容。见 workflow-detail §S4 原子四步。
 3. **提交**：通过 → 批量更新 6 状态文件 + 元数据/index + 正文落位
 4. **回滚**：失败 → 保留旧状态，不部分更新；修正 Change Report 后重跑
 
@@ -19,6 +21,8 @@
 
 - **状态集中在 `故事/真相/`**：6个文件（characters / world / hooks / relationships / objects / timeline）是唯一真相中心
 - **Change Report 驱动更新**：先出报告，再改状态文件，确保所有变更可追溯
+- **其中 world.md / timeline.md 由 `world_tick.py` 机器推进**（v2.1.3）：写 WORLD-TICK 五行 → 脚本分发，
+  不手改。手改两遍的结果是滞后与漂移，而"漏更"门禁看不见。其余 4 个文件仍手写。
 - **池子只放对标书内容**：素材池是高质量对标书的拆解产物，不存自己的稿件
 
 ---
@@ -30,11 +34,11 @@
 | 文件 | 内容 | 状态机 | 更新频率 |
 |------|------|--------|----------|
 | `characters.md` | 基线摘要 + 当前状态（位置/情绪/知识/物品） | mortal（alive/missing/false_dead/true_dead/resurrected） | 每章 |
-| `world.md` | 核心规则 + 当前状态（时间/地点/环境/大事记）+ 地点阶段 | location_phase（intact/damaged/destroyed/abandoned/rebuilt/transformed） | 每章 |
+| `world.md` | 核心规则 + 当前状态（时间/地点/环境）+ 地点阶段【**机器推进**】 | location_phase（intact/damaged/destroyed/abandoned/rebuilt/transformed） | 每章·自动 |
 | `hooks.md` | 伏笔追踪（active/resolved/abandoned/pending + 推进状态） | 推进状态（pending/partial/due） | 每章 |
 | `relationships.md` | 关系矩阵 + 量化距离 + 事件史 | relation（ally/support/neutral/tension/hostile/severed/reconciled） | 每章 |
 | `objects.md` | 物品状态 + 持有链（【新增】） | artifact（owned/lost/destroyed/sealed/transferred） | 每章 |
-| `timeline.md` | 全局时间轴：章号↔故事时间↔事件（【新增】） | 回溯/连集对齐/防剧透 | 每章 |
+| `timeline.md` | 全局时间轴：章号↔故事时间↔事件（【新增】·**时间线唯一真相源**）【**机器推进**】 | 回溯/连集对齐/防剧透 | 每章·自动 |
 
 **5 通用字段 ↔ 模板列 统一映射（功能七 · 单一真相源；index.py 按别名解析，缺省 status=''/visibility=public/source_chapter=0）**：
 
@@ -145,22 +149,35 @@
 1. **角色变化**：哪些角色的位置/情绪/已知信息/携带物品变了
 2. **新伏笔**：本章埋了哪些新伏笔（含部分揭示的推进状态更新）
 3. **伏笔回收**：本章回收了哪些旧伏笔
-4. **时间线**：故事时间推进了多少（timeline.md 新增条目）
-5. **世界规则变化**：有没有新设定确立（world.md 地点阶段更新）
-6. **关系变化**：哪些角色关系变了（量化距离变化）
-7. **物品变化**：关键道具的持有/物理状态变化（objects.md）
-8. **新出场/升级角色检查（D 回填）**：本章台词≥2句的新角色 → 触发 B 类建档（characters.md 加一行精简基线）
+4. **世界推进（WORLD-TICK · 机器解析区）**：本章 clock / place / env / loc / event 五行
+   —— 这是 v2.1.3 起的**唯一世界写入点**，格式见 `./change-report-spec.md` §四。
+   **这一节写散了，world.md 和 timeline.md 就推不动**，settle 会判「世界时钟滞后」FAIL。
+5. **关系变化**：哪些角色关系变了（量化距离变化）
+6. **物品变化**：关键道具的持有/物理状态变化（objects.md）
+7. **新出场/升级角色检查（D 回填）**：本章台词≥2句的新角色 → 触发 B 类建档（characters.md 加一行精简基线）
 
-### Step 2：更新 故事/真相/ 状态文件
+### Step 2：先机器推进世界，再手改其余状态文件（v2.1.3）
 
-根据 Change Report 内容，逐个更新 6 个状态文件：
+**2a · 世界自动推进（必须先做）**：
+
+```bash
+python <技能>/ne-tools/runtime/world_tick.py --root <项目根> --apply
+```
+
+它读 Change Report 的 WORLD-TICK 区，自动分发到：
+
+- `timeline.md` → 本章事件行（章号去重，**时间线唯一真相源**）
+- `world.md` → 【当前状态】时间/地点/环境 +【地点状态机】地点 upsert
+
+> 默认 dry-run（只打印计划），**确认无误再加 `--apply`**。
+> 幂等：同章重复跑不产生重复行。
+
+**2b · 手写其余 4 个状态文件**（world.md / timeline.md **不在这步手改**，手改必与机器推进打架）：
 
 - `characters.md` → 更新「当前状态」表格，「基线摘要」极少变动；新 B 类角色加一行精简基线
-- `world.md` → 更新「当前状态」+「时间线大事记」+ 地点阶段，「核心规则」极少变动
 - `hooks.md` → 新伏笔追加行，回收的伏笔改状态 + 填实际回收章；部分揭示更新推进状态/下一回收点
 - `relationships.md` → 更新关系矩阵强度 + 量化距离 + 事件史
 - `objects.md` → 更新物品持有链/物理状态（plot-critical 道具必须登记去向）
-- `timeline.md` → 新增本章时间条目（章号↔故事时间↔事件）
 
 ### Step 3：写入元数据 + 日志 + 索引（功能三/四/八）
 
@@ -183,14 +200,14 @@
 
 ## 状态更新
   ✓ characters.md：[变化简述，如：林深位置→上传舱，情绪→紧张]
-  ✓ world.md：[变化简述，如：时间推进32分钟，新增"意识上传"规则]
+  ✓ world.md [自动·world_tick]：当前进度→第XXXX章/（时间）；地点状态机 upsert X 处
+  ✓ timeline.md [自动·world_tick]：第XXXX章事件行已写入
   ✓ hooks.md：新增 X 个，回收 X 个，部分揭示 X 个
     - 新增：h_00X（内容简述）
     - 回收：h_00X
     - 部分揭示：h_00X（已揭示…剩…，下一回收点第N章）
   ✓ relationships.md：[变化简述，如：林深↔方若华 从6→7]
   ✓ objects.md：[变化简述，如：量子玻璃持有者→林深]
-  ✓ timeline.md：[故事时间推进到…]
   ✓ 故事/元数据/index.md：进度已更新
 
 ## 伏笔债务

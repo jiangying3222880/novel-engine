@@ -20,6 +20,7 @@ from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 VERIFY = SCRIPT_DIR / 'verify.py'
+WORLD_TICK = SCRIPT_DIR / 'world_tick.py'
 SKILL_ROOT = SCRIPT_DIR.parent
 
 # ---------- 夹具构造 ----------
@@ -115,6 +116,23 @@ CONFIG = ('{\n  "title": "selftest",\n  "target_word_count": 3000,\n'
 
 TRUTH_FILES = ['characters', 'world', 'hooks', 'relationships', 'objects', 'timeline']
 
+# world.md 夹具：含 v2.1.3 的【当前状态】区块（无它 → 世界时钟检查无处可判）
+WORLD_TPL = ('# world\n\n'
+             '## 当前状态（每章更新）\n\n'
+             '### 时间\n'
+             '- 故事起点：第一章\n'
+             '- 当前进度：第 {ch} 章 / 自测占位\n\n'
+             '### 地点\n- 主场景：占位\n\n'
+             '### 环境\n- 天气：晴\n')
+
+TICK_BLOCK = ('<!-- WORLD-TICK-START -->\n'
+              '- clock: 0001 | 周一 早 → 周一 晚 | 半天\n'
+              '- place: 主场景=占位地点\n'
+              '- env: 天气=晴\n'
+              '- loc: 占位地点 | intact | - | 无\n'
+              '- event: 周一 晚 | 自测世界推进事件 | 自测影响\n'
+              '<!-- WORLD-TICK-END -->\n')
+
 
 class Proj:
     """最小项目夹具构建器。"""
@@ -127,9 +145,18 @@ class Proj:
         (self.root / 'novel-config.json').write_text(CONFIG, encoding='utf-8')
         for t in TRUTH_FILES:
             (self.root / '故事/真相' / f'{t}.md').write_text(f'# {t}\n\n（selftest 占位）\n', encoding='utf-8')
+        self._clock = '0000'
+        self.set_world(WORLD_TPL.format(ch='0000'))
 
     def body(self, ch, text=None):
         (self.root / '正文' / f'第{ch}章 测试.md').write_text(text or tiny_body(), encoding='utf-8')
+        # 夹具也要遵守契约：正文写到哪一章，世界时钟就跟到哪一章（等价于跑过 world_tick）
+        if ch > self._clock:
+            self._clock = ch
+            self.set_world(WORLD_TPL.format(ch=ch))
+
+    def set_world(self, text):
+        (self.root / '故事/真相' / 'world.md').write_text(text, encoding='utf-8')
 
     def index(self, rows):
         lines = ['# 章节索引', '', '| 章号 | 标题 | 状态 |', '|------|------|------|']
@@ -151,6 +178,11 @@ class Proj:
             f'# change_report 第{ch}章\n\n本章自测占位：角色无变化，伏笔无推进，时间线推进一天，'
             '关系无变化，物品无变化，世界观无变化。全部字段为回归夹具填充内容，不构成真实章节产物。\n' * 2,
             encoding='utf-8')
+
+    def change_report_tick(self, ch, block=TICK_BLOCK):
+        """往现有 change_report 追加 WORLD-TICK 区（模拟 S4 填了世界推进五行）。"""
+        f = self.root / '故事/日志' / f'change_report_第{ch}章.md'
+        f.write_text(f.read_text(encoding='utf-8') + '\n' + block, encoding='utf-8')
 
     def flag(self, name, content='0001\n'):
         (self.root / '故事/日志' / name).write_text(content, encoding='utf-8')
@@ -179,6 +211,15 @@ def run_verify(root, scope):
                        capture_output=True, env=env, cwd=str(SKILL_ROOT))
     out = p.stdout.decode('utf-8', errors='replace')
     return p.returncode, out
+
+
+def run_world_tick(root, apply):
+    env = dict(os.environ, PYTHONIOENCODING='utf-8', PYTHONUTF8='1')
+    cmd = [sys.executable, str(WORLD_TICK), '--root', str(root)]
+    if apply:
+        cmd.append('--apply')
+    p = subprocess.run(cmd, capture_output=True, env=env, cwd=str(SKILL_ROOT))
+    return p.returncode, p.stdout.decode('utf-8', errors='replace')
 
 
 def find_line(out, mark, name_substr):
@@ -323,6 +364,60 @@ def s8_batch_trend(base, a, verbose):
                       '输出含 连续5章爬升=%s, batch 停机=%s' % ('连续5章爬升' in out, 'batch 停机' in out)))
     _, out = run_verify(p.root, 'trend')
     a.expect(out, 'WARN', '退化趋势', 'S8.3 trend scope 同曲线仅 WARN')
+
+
+@scenario
+def s9_world_clock(base, a, verbose):
+    """v2.1.3 世界时钟：时钟停旧章 FAIL；同步则 PASS；缺当前进度行 FAIL；老格式只 WARN 不并列 PASS。"""
+    p = Proj(base)
+    p.full_chapter('0001', report_text=report_filled())
+    _, out = run_verify(p.root, 'settle')
+    a.expect(out, 'PASS', '世界时钟', 'S9.1 世界时钟与最新落库章同步 → PASS')
+
+    # 模拟「没跑 world_tick」：时钟退回 0000，正文/索引已在 0001
+    p.set_world(WORLD_TPL.format(ch='0000'))
+    _, out = run_verify(p.root, 'settle')
+    a.expect(out, 'FAIL', '世界时钟', 'S9.2 时钟停在 0000 章 < 最新 0001 章 → FAIL')
+
+    # 有区块但缺「当前进度」行 = world_tick 无处写入
+    p.set_world('# world\n\n## 当前状态（每章更新）\n\n### 时间\n- 故事起点：第一章\n')
+    _, out = run_verify(p.root, 'settle')
+    a.expect(out, 'FAIL', '世界时钟', 'S9.3 缺「当前进度」行 → FAIL')
+
+    # 老格式 world.md：只 WARN，且**不许同时并列一条 PASS**（两条自相矛盾 = 比没有检查更糟）
+    p.set_world('# world\n\n- 现实：普通职场。\n')
+    _, out = run_verify(p.root, 'settle')
+    a.expect(out, 'WARN', '世界时钟', 'S9.4 老格式 world.md → WARN 提示未接入自动推进')
+    a.expect_absent(out, '[PASS] 世界时钟', 'S9.5 老格式不并列输出 PASS（防自相矛盾结论）')
+
+
+@scenario
+def s10_world_tick_writer(base, a, verbose):
+    """v2.1.3 写入器↔检查器配对：缺 WORLD-TICK 退出码 2；填了→推进→settle PASS；重复跑幂等。"""
+    p = Proj(base)
+    p.full_chapter('0001', report_text=report_filled())
+    p.set_world(WORLD_TPL.format(ch='0000'))
+
+    rc, out = run_world_tick(p.root, apply=False)
+    a.results.append((rc == 2, 'S10.1 无 WORLD-TICK 区 → world_tick 退出码 2', f'rc={rc}'))
+
+    p.change_report_tick('0001')
+    rc, out = run_world_tick(p.root, apply=False)
+    a.results.append((rc == 0 and 'dry-run' in out, 'S10.2 默认 dry-run 不写盘',
+                      f'rc={rc}, 含dry-run={"dry-run" in out}'))
+    a.results.append(('缺 WORLD-TICK' not in out, 'S10.3 有 WORLD-TICK 时不再报缺失',
+                      out.strip().splitlines()[-1] if out.strip() else '(空输出)'))
+
+    rc, out = run_world_tick(p.root, apply=True)
+    a.results.append((rc == 0 and '已写盘' in out, 'S10.4 --apply 写盘成功', f'rc={rc}'))
+
+    _, out = run_verify(p.root, 'settle')
+    a.expect(out, 'PASS', '世界时钟', 'S10.5 写入器推进后 检查器 PASS（两者必须配对）')
+
+    # 幂等：第二次跑不应再 insert（timeline 按章号去重）
+    rc, out2 = run_world_tick(p.root, apply=True)
+    a.results.append(('第0001章行已存在' in out2, 'S10.6 重复跑幂等（timeline 按章号去重，不重复追加）',
+                      [l.strip() for l in out2.splitlines() if 'timeline' in l][:1] or '(无 timeline 行)'))
 
 
 # ---------- 主流程 ----------

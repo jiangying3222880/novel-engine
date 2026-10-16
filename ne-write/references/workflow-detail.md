@@ -222,17 +222,21 @@ execution_mode=single，隔离=声明级最小化（三条硬指令），非物�
    - **残章与产物（v1.9.1）**：#20 archived 正文 <target×0.7 FAIL / 0.7-0.85 WARN；#21 章级五件套缺正文/细纲/chapter/change_report FAIL；#27 change_report 实质内容<100字 WARN
    - **状态与伏笔（v1.9.1）**：#23 物品/角色 ID 重复、表格内死而复生 FAIL，多人持有/同名重复/死者晚章正文出现 WARN；#28 伏笔债务（超计划回收章+5 FAIL、临近 WARN，无计划按类型化年龄，partial/due 排除）
    - **批跑断链（v1.9.1 · #32）**：正文跳号、前章有正文未 archived 即续写后章 = FAIL；细纲跳号/超前正文>3章 = WARN
+   - **世界时钟（v2.1.3）**：world.md【当前状态·当前进度】章号 < 最新落库章号 = FAIL
+     （写入器 = `world_tick.py`，两者必须配对；老项目无【当前状态】区块时只 WARN）
    - **WARN 处理**：WARN 不改退出码、不阻断，但须在本章日志记录；口癖/趋势/收尾类 WARN（#30/#31/#33）在连续批跑中出现应停批人工看（见 execution-modes.md §5 batch）
-3. **提交**：通过 → 批量更新 6 状态文件 + 元数据/index + 正文落位
+3. **提交**：① `world_tick.py --apply` 自动推进 world.md + timeline.md
+   → ② 手写其余 4 状态文件 + 元数据/index + 正文落位
 4. **回滚**：失败 → 保留旧状态，不部分更新
 
 ### 落库内容
 
-1. 生成本章 Change Report
-2. 更新 故事/真相/ 下 6 个状态文件（含 objects/timeline）
-3. 更新 故事/元数据/chapter_XXXX.md（change_summary）+ index.md（进度）
-4. 写 故事/日志/第XXXX章.md 流程日志（S1-S4 合一）
-5. 联动更新 叙事总览/（功能五）+ 重建检索索引（功能八）：
+1. 生成本章 Change Report（**必须含 WORLD-TICK 五行**）
+2. `world_tick.py --apply` → 更新 world.md + timeline.md（**这两个文件不手改**）
+3. 手写更新 故事/真相/ 下其余 4 个状态文件（characters / hooks / relationships / objects）
+4. 更新 故事/元数据/chapter_XXXX.md（change_summary）+ index.md（进度）
+5. 写 故事/日志/第XXXX章.md 流程日志（S1-S4 合一）
+6. 联动更新 叙事总览/（功能五）+ 重建检索索引（功能八）：
    - BM25+FTS（默认启用，零依赖，必跑）：`python runtime/bm25_fts.py build --root <项目根>`
    - ZVEC（可选增强，仅装了 zvec SDK 时跑）：`python runtime/index.py build --root <项目根>`
 6. 新出场/升级角色检查（D 回填）
@@ -243,12 +247,12 @@ execution_mode=single，隔离=声明级最小化（三条硬指令），非物�
 
 > **v1.9.1 变更**：本清单是"落库动作完成后的输出汇报"，不再是"完成凭证"。真正的完成凭证 = `verify.py --scope settle` **PASS**（机器检查 6 状态更新与 Change Report 一致，见原子四步第 2 步）。Agent 勾选清单 ≠ 已完成；settle 门禁 FAIL 时必须修复重跑。
 
+- [x] **world_tick.py --apply 已跑**（v2.1.3 · world.md + timeline.md 的自动推进，**必须先于 settle**）
 - [x] characters.md 已更新
-- [x] world.md 已更新
 - [x] hooks.md 已更新（含推进状态）
 - [x] relationships.md 已更新
 - [x] objects.md 已更新
-- [x] timeline.md 已更新
+- [x] world.md / timeline.md 已更新（**由 world_tick 自动推进，不手改**）
 - [x] 检索索引已重建（bm25_fts.py build 必跑；index.py build 仅装了 zvec 时跑）
 - [x] 故事/元数据/index.md 进度已更新
 - [x] 输入包已存档（日志含细纲+检验报告引用）

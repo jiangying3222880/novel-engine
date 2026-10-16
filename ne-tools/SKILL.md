@@ -1,7 +1,7 @@
 ---
 name: ne-tools
 description: 小说创作引擎的运行时工具。当用户说"跑门禁""校验项目""刷新索引""打包技能""同步运行镜像""跑自测"时使用。提供 verify/doc_sync/index/query/package/deploy/skill_lint 等脚本。
-version: 2.1.1
+version: 2.1.3
 agent_created: 2026-10-15
 ---
 
@@ -20,7 +20,7 @@ python <技能根>/ne-tools/runtime/verify.py --root <项目根> --scope <阶段
 | `init` | 项目初始化完成 | 目录结构 / 真相防污染 / config 合法性 / **根 MOC 存在** |
 | `outline` | 细纲产出后 | 细纲门硬性结构 |
 | `execution` | S3 检验后 | 正文质量 / 工具与框架残留 |
-| `settle` | **每章落库必跑** | 落库一致 / timeline / hooks / 证据链 |
+| `settle` | **每章落库必跑** | 落库一致 / timeline / **世界时钟** / hooks / 证据链 |
 | `trend` | 连续批跑·每 5 章 | 退化趋势 |
 | （不写） | 交付前兜底 | 全部 |
 
@@ -29,6 +29,20 @@ python <技能根>/ne-tools/runtime/verify.py --root <项目根> --scope <阶段
 > verify.py 是**校验器**不是执行器：它证明结果对，不自动把结果做对。展示层产物仍由 Agent 生成。
 
 **无 Python 环境时**：门禁跳过，但**必须在流程日志显式标注** `execution_mode=no_python，verify.py 跳过，手动校验：…`——不静默假装通过。
+
+### 一·五、世界自动推进（v2.1.3 · 每章落库必跑）
+
+```
+python <技能根>/ne-tools/runtime/world_tick.py --root <项目根>            # dry-run
+python <技能根>/ne-tools/runtime/world_tick.py --root <项目根> --apply     # 写盘
+python <技能根>/ne-tools/runtime/world_tick.py --root <项目根> --chapter 0001
+```
+
+读 Change Report 的 `<!-- WORLD-TICK-START -->` 区，自动分发到 `world.md`（当前状态 / 地点状态机）
+与 `timeline.md`（事件行，章号去重）。**幂等**，同章重复跑不产生重复行。
+
+先跑它，再跑 `verify.py --scope settle` 验收 —— 顺序反了会白跑一次：
+世界时钟没推进，settle 必 FAIL。
 
 ## 二、文档同步门禁（改技能时用）
 
@@ -62,6 +76,7 @@ python runtime/deploy.py --apply    # 真正同步（旧镜像先重命名备份
 
 | 脚本 | 用途 |
 |---|---|
+| `world_tick.py` | **世界状态自动推进**（v2.1.3 · 世界时钟的写入器，与 settle 的「世界时钟」检查配对） |
 | `index.py` / `query.py` | BM25 检索索引与查询 |
 | `selftest_gates.py` | 门禁回归自测（8 场景 21 断言），**改 verify.py 前后必跑** |
 | `safe_edit.py` | 锚点安全替换（先校验全部锚点存在，缺失即报错不写盘） |

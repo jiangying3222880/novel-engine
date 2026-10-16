@@ -27,6 +27,9 @@ Novel Engine 流程门禁（verify.py · v1.9.1.1）
   [残留]   正文首段工具残留检查（v1.9 · F-09：续写指令/工具声明/元注释漏入正文）
   [落库一致] index↔change_report↔正文互核（v1.9.1 · settle 范围：archived 必须有三件套；有正文但 index=outline_only 即 FAIL）
   [timeline] timeline.md 登记章数 ≥ index 已落库章数（v1.9.1 · settle：防时间线滞后）
+  [世界时钟] world.md【当前状态·当前进度】章号 ≥ 最新落库章号（v2.1.3 · settle：防世界停在旧章。
+            必须配写入器 world_tick.py：只加检查不加写入器 = 每章必 FAIL 且没人推得动；
+            只加写入器不加检查 = 不跑也没人知道）
   [hooks唯一] hooks.md ID 重复 = FAIL（v1.9.1 · settle：防伏笔 ID 冲突）
   [hooks登记] change_report 宣称"待登记"的伏笔必须在 hooks.md 找到（v1.9.1 · settle：防只写报告不登记）
   [逗号密度] 正文逗号密度 >12% = FAIL（v1.9.1 · all：防碎句退化逐章放大）
@@ -158,6 +161,28 @@ def parse_index_status(root):
         if status == 'archived':
             archived.add(ch)
     return archived, smap
+
+
+def exec_mode_declared(root):
+    """返回 (ok, detail)：最新流程日志是否含 execution_mode 声明行。
+
+    为什么 settle 也要查（v2.1.2）：这条检查原先只挂在 execution scope，
+    而实际每章落库跑的是 settle——本该每章校验的"降级是否留痕"几乎从不执行
+    （execution 只在专项排查时才有人跑）。
+    代价很具体：无 Python 环境时门禁会被整段跳过，若连声明都不留，
+    事后根本无法区分"跑过且通过"和"压根没跑过"。
+    """
+    log_dir = os.path.join(root, '故事', '日志')
+    if not os.path.isdir(log_dir):
+        return False, '缺 故事/日志/ 目录'
+    logs = sorted([f for f in os.listdir(log_dir) if f.endswith('.md')])
+    if not logs:
+        return False, '故事/日志/ 为空（无流程日志）'
+    latest_log = logs[-1]
+    txt = open(os.path.join(log_dir, latest_log), encoding='utf-8').read()
+    if 'execution_mode' not in txt:
+        return False, '最新日志(%s)缺 execution_mode 声明行（降级未留痕）' % latest_log
+    return True, ''
 
 
 def meta_dirs(root):
@@ -677,19 +702,7 @@ def main():
         check('模块配置(modules)', mod_ok, mod_detail)
 
         # 9b 最新流程日志含 execution_mode 声明行（降级必须留痕）
-        log_dir = os.path.join(root, '故事', '日志')
-        em_ok, em_detail = True, ''
-        if not os.path.isdir(log_dir):
-            em_ok, em_detail = False, '缺 故事/日志/ 目录'
-        else:
-            logs = sorted([f for f in os.listdir(log_dir) if f.endswith('.md')])
-            if not logs:
-                em_ok, em_detail = False, '故事/日志/ 为空（无流程日志）'
-            else:
-                latest_log = logs[-1]
-                log_txt = open(os.path.join(log_dir, latest_log), encoding='utf-8').read()
-                if 'execution_mode' not in log_txt:
-                    em_ok, em_detail = False, f'最新日志({latest_log})缺 execution_mode 声明行（降级未留痕）'
+        em_ok, em_detail = exec_mode_declared(root)
         check('执行模式声明(execution_mode)', em_ok, em_detail)
 
     # 10 正文工具/框架残留检查（v1.9 · F-09：AI 工具痕迹漏入正文）
@@ -736,6 +749,10 @@ def main():
     # 11 落库一致性：index↔change_report↔正文互核（v1.9.1 · settle/all）
     # 根因修复：唐末第3章"有正文但 index=outline_only + 缺 change_report"、第30章报告自夸30章全落库——机器未核
     if args.scope in ('settle', 'all'):
+        # 9b 执行模式声明（v2.1.2 起 settle 也查：每章落库必留痕）
+        # 原先只有 execution scope 查，而 settle 才是每章必跑的，等于这条从没真正生效过。
+        em_ok, em_detail = exec_mode_declared(root)
+        check('执行模式声明(execution_mode)', em_ok, em_detail)
         idx_path = os.path.join(root, '故事', '元数据', 'index.md')
         log_dir = os.path.join(root, '故事', '日志')
         body_dir = os.path.join(root, '正文')
@@ -851,11 +868,73 @@ def main():
                         if len(seg) >= 5:
                             tl_bad2.append(f'{fn}: 「{seg[:20]}」')
                             break
+        # 注意：无命中时不要调用 warn() 打「OK」——那会让这项恒定出现在 WARN 列表里，
+        # 真警报混在假警报里会被一起忽略（狼来了）。WARN 项只在真命中时发声。
         if tl_bad2:
             warn('细纲台词越界', '细纲含完整台词（措辞归执笔态，编剧只给事实与意图）：'
                  + '; '.join(tl_bad2[:3]) + ('…' if len(tl_bad2) > 3 else ''))
+
+    # 12c 世界时钟（v2.1.3 · settle/all · 防 world.md 停在旧章）
+    # 根因：世界状态（当前进度/地点/环境/地点状态机）以前靠 S4 读 Change Report 手改，
+    # 手改的必然结果是滞后或漏更；而「漏更」不产生任何可报错的东西——门禁看不见它。
+    # v2.1.3 起 WORLD-TICK 是唯一写入点，world_tick.py 推进，这里只验「推进到了最新章」。
+    if args.scope in ('settle', 'all'):
+        w_path = os.path.join(root, '故事', '真相', 'world.md')
+        clock_bad = []
+        cur_ch = None
+        clock_skip = False
+        clock_skip_msg = ''
+        if not os.path.isfile(w_path):
+            # 缺文件本身由 init scope 的「6 状态文件齐全」判 FAIL，这里不重复处罚，只提示。
+            clock_skip = True
+            clock_skip_msg = '缺 world.md（世界时钟无处落；init scope 已判 FAIL）'
         else:
-            warn('细纲台词越界', 'OK')
+            w_lines = open(w_path, encoding='utf-8').read().splitlines()
+            cs, ce = -1, len(w_lines)
+            for i, l in enumerate(w_lines):
+                if l.strip().startswith('##') and '当前状态' in l:
+                    cs = i
+                    break
+            if cs >= 0:
+                for j in range(cs + 1, len(w_lines)):
+                    if w_lines[j].strip().startswith('## '):
+                        ce = j
+                        break
+            if cs < 0:
+                # 老格式 world.md：没有可推进的区块，判不了滞后 → 走 WARN 且**只走 WARN**。
+                # 别在这之后再补一条 check(...'OK')：同一项同时 WARN 和 PASS 是自相矛盾的输出，
+                # 比没有这项检查更糟（实测已出现一次「[WARN] 世界时钟 + [PASS] 世界时钟 并列」）。
+                clock_skip = True
+                clock_skip_msg = ('world.md 无【当前状态】区块，未接入自动推进'
+                                  '（按 v2.1.3 模板补齐后本项才可机器校验）')
+            else:
+                has_row = False
+                for i in range(cs, ce):
+                    m = re.match(r'^\s*[-*]\s*当前进度\s*[:：]\s*(.*)$', w_lines[i])
+                    if m:
+                        has_row = True
+                        nums = re.findall(r'\d{3,4}', m.group(1))
+                        if nums:
+                            cur_ch = nums[0].zfill(4)
+                        break
+                if not has_row:
+                    clock_bad.append('world.md【当前状态】缺「当前进度」行（world_tick 无处写入）')
+                else:
+                    latest = max(archived_chapters) if archived_chapters else ''
+                    if not latest and os.path.isdir(body_dir):
+                        bs = [x for x in os.listdir(body_dir) if re.match(r'^第(\d{4})章', x)]
+                        if bs:
+                            latest = max(re.match(r'^第(\d{4})章', x).group(1) for x in bs)
+                    if not cur_ch:
+                        clock_bad.append('world.md「当前进度」无章号（应为：第 0001 章 / 三月十三 夜）')
+                    elif latest and cur_ch < latest:
+                        clock_bad.append(f'世界时钟停在第{cur_ch}章 < 最新第{latest}章'
+                                         '（补 WORLD-TICK 后跑 world_tick.py --apply）')
+        if clock_skip:
+            warn('世界时钟', clock_skip_msg)
+        else:
+            check('世界时钟', not clock_bad,
+                  '; '.join(clock_bad) if clock_bad else (f'已推进到第{cur_ch}章' if cur_ch else 'OK'))
 
     # 13 hooks ID 唯一性（v1.9.1 · settle/all）
     if args.scope in ('settle', 'all'):
@@ -1323,6 +1402,38 @@ def main():
                 world_chars += len(normalized(open(p, encoding='utf-8').read()))
         if world_chars < 50:
             init_bad.append('缺世界观实质内容（故事/真相/world.md 或 设定/世界观.md）')
+
+        # 29b 6 状态文件齐全 + 命名合规（v2.1.2 · init 强制）
+        # 根因：init 只查「目录存在」+「world.md 实质内容」，不查 6 个状态文件各自是否齐全。
+        # 实测代价：用 facts.md 顶替 relationships.md 建的项目，init/settle 照样全 PASS ——
+        # 缺的是关系网络这一整块状态，但门禁看不见，直到后面跨章一致性出问题才发现。
+        # 为什么 settle 抓不到：settle 只校验它要用到的那几个（timeline/hooks/objects），
+        # 缺的文件它根本不去读，于是「缺文件」==「没有可报错的地方」。
+        TRUTH_FILES = ('world.md', 'characters.md', 'hooks.md', 'objects.md',
+                       'relationships.md', 'timeline.md')
+        truth_dir = os.path.join(root, '故事', '真相')
+        missing_truth = []
+        for tf in TRUTH_FILES:
+            if tf == 'world.md':
+                # world 允许「设定/世界观.md」兜底（老项目沿用）
+                if not (os.path.isfile(os.path.join(truth_dir, tf))
+                        or os.path.isfile(os.path.join(root, '设定', '世界观.md'))):
+                    missing_truth.append(tf)
+            elif not os.path.isfile(os.path.join(truth_dir, tf)):
+                missing_truth.append(tf)
+        if missing_truth:
+            init_bad.append('缺状态文件：' + ','.join(missing_truth))
+        # 常见别名 → 不阻断，但必须提示（名字错了等于这块状态没人维护）
+        ALIAS = {'facts.md': 'relationships.md', 'worldview.md': 'world.md',
+                 'charactor.md': 'characters.md'}
+        alias_hit = []
+        if os.path.isdir(truth_dir):
+            for f in sorted(os.listdir(truth_dir)):
+                if f in ALIAS:
+                    alias_hit.append('%s→应为 %s' % (f, ALIAS[f]))
+        if alias_hit:
+            warn('状态文件命名(#29b)', '; '.join(alias_hit))
+
         check('init关键文件非空(#29)', not init_bad, '; '.join(init_bad))
 
     # 31 退化趋势 + 基线（v1.9.1.1 · trend/all=预警 WARN；batch=连续爬升 FAIL 停机 · D-07）

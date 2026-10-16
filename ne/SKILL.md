@@ -1,7 +1,7 @@
 ---
 name: ne
 description: 小说创作引擎的路由入口。当用户要开新书、写下一章、续写、改稿、检验章节、落库存盘、写短篇、找写作技法素材，或提到"小说/网文/章节/细纲/大纲/角色/伏笔/世界观"时使用。先读本文件判断该交给哪个子技能，不要直接开写。
-version: 2.1.1
+version: 2.1.3
 agent_created: 2026-10-15
 ---
 
@@ -48,6 +48,9 @@ agent_created: 2026-10-15
 关键动作完成后**必须**跑脚本，PASS 才继续，FAIL 必须修后重跑（退出码 1 = 禁止继续）：
 
 ```
+# ① 先让世界推进（v2.1.3 写入器，每章落库必跑）
+python <技能根>/ne-tools/runtime/world_tick.py --root <项目根> --apply
+# ② 再验收
 python <技能根>/ne-tools/runtime/verify.py --root <项目根> --scope <阶段>
 ```
 
@@ -55,11 +58,13 @@ python <技能根>/ne-tools/runtime/verify.py --root <项目根> --scope <阶段
 |---|---|---|
 | 项目初始化完成 | `init` | 目录结构 / 真相防污染 / config 合法性 |
 | 叙事总览生成后 | `narrative` | 总览骨架 / 双链可解析 / 4 位章号 |
-| **每章落库（必跑）** | `settle` | 落库一致 / timeline / hooks / 证据链 / 正文质量 |
+| **每章落库（必跑）** | `settle` | 落库一致 / timeline / **世界时钟** / hooks / 证据链 / 正文质量 |
 | 连续批跑·每 5 章 | `trend` | 退化趋势（逗号/口癖逐章放大） |
 | 交付前兜底 | （不写 scope） | 全部 |
 
-> verify.py 是**校验器**（证明结果对），不是执行器。展示层产物仍由 Agent 生成，但生成后必须过门禁。
+> verify.py 是**校验器**（证明结果对），world_tick.py 是**执行器**（把 world.md/timeline.md 推进对）。
+> 两者必须配对：只跑 verify 不跑 world_tick = 世界时钟必 FAIL；只跑 world_tick 不验收 = 推错了没人知道。
+> 展示层产物仍由 Agent 生成，但生成后必须过门禁。
 
 ## 五、子技能清单
 

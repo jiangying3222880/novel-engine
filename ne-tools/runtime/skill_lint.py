@@ -55,6 +55,40 @@ TRIGGER_SIGNALS = [
 
 CJK_RE = re.compile(r'[\u4e00-\u9fff]')
 
+_MD_REF_RE = re.compile(r'[\`\(]([^\`\)\n]+\.md)[\`\)]')
+
+# 包内 .md 文件索引缓存（跨子技能引用解析用）：{包根: {basename: 绝对路径}}
+_PKG_INDEX = {}
+
+
+def pkg_root(skill_dir):
+    """包根定位：优先含 VERSION，其次含 ne/ 路由目录（v2.0 拆分后 ne-* 平铺在包根下）。
+
+    为什么不能只认 SKILL.md：ne-tools 自己也有 SKILL.md，会被误判成包根。
+    """
+    p = os.path.dirname(os.path.abspath(skill_dir))
+    for _ in range(3):
+        if os.path.isfile(os.path.join(p, 'VERSION')) or os.path.isdir(os.path.join(p, 'ne')):
+            return p
+        p = os.path.dirname(p)
+    return None
+
+
+def pkg_file_index(pkg):
+    if not pkg:
+        return {}
+    if pkg in _PKG_INDEX:
+        return _PKG_INDEX[pkg]
+    idx = {}
+    for dirpath, dirnames, files in os.walk(pkg):
+        dirnames[:] = [d for d in dirnames
+                       if d not in ('.git', '__pycache__', '_skill_analysis')]
+        for f in files:
+            if f.endswith('.md'):
+                idx.setdefault(f, os.path.join(dirpath, f))
+    _PKG_INDEX[pkg] = idx
+    return idx
+
 # 项目级路径前缀：属于每本书自己的目录，不在技能内，断链检查应跳过
 PROJECT_PATH_PREFIXES = ('故事/', '正文/', '设定/', '追踪/', '叙事总览/')
 
@@ -154,10 +188,16 @@ def check_skill(root):
         res.append(('PASS', 'agent_created', '存在'))
 
     # 10. 引用断链
-    refs = set(re.findall(r'[\`\(]([^\`\)\n]+\.md)[\`\)]', body))
+    refs = set(_MD_REF_RE.findall(body))
+    # 行内豁免：文档里提到"历史异名/反面例子"时，写的本来就是不存在的名字。
+    # 在那一行加 <!-- link-exempt -->（或 truth-naming-exempt）即可，否则是假警报。
+    exempt_refs = set()
+    for line in body.splitlines():
+        if 'link-exempt' in line or 'truth-naming-exempt' in line:
+            exempt_refs.update(_MD_REF_RE.findall(line))
     broken = []
     for r in sorted(refs):
-        if r.startswith('http'):
+        if r.startswith('http') or r in exempt_refs:
             continue
         # 跳过模板占位符与项目级路径：它们不在技能目录内，运行时才生成
         # （否则「第000X章 <标题>.md」「故事/元数据/chapter_XXXX.md」会被误报为断链）
@@ -170,8 +210,14 @@ def check_skill(root):
         cands = [os.path.join(root, r),
                  os.path.join(root, 'references', r),
                  os.path.join(root, 'templates', r)]
-        if not any(os.path.exists(c) for c in cands):
-            broken.append(r)
+        if any(os.path.exists(c) for c in cands):
+            continue
+        # 跨子技能引用：技能包是一个整体，ne-memory 里写 `relationships.md` 指的就是
+        # ne-setup/templates/truth/relationships.md，那不是断链（v2.1.3 修的假警报）。
+        # 只按 basename 在包内找——写成路径的引用（如 ./references/x.md）不参与跨包解析。
+        if '/' not in r and os.path.basename(r) in pkg_file_index(pkg_root(root)):
+            continue
+        broken.append(r)
     if broken:
         res.append(('WARN', '引用断链', '%d 处：%s' % (len(broken), '、'.join(broken[:5]))))
     else:
@@ -201,7 +247,7 @@ RUNTIME_PATH_PREFIX = ('故事/', '正文/', '设定/', '追踪/', '叙事总览
 RUNTIME_FILE_RE = re.compile(
     r'(第\d{3,4}章|_第[X\d]{1,4}章|chapter_[\dX]{4}|第X章)', re.I)
 RUNTIME_BASENAMES = {'characters.md', 'facts.md', 'hooks.md', 'objects.md',
-                     'timeline.md', 'worldview.md', 'novel-config.json',
+                     'timeline.md', 'world.md', 'novel-config.json',
                      'index.md'}
 
 
@@ -419,6 +465,66 @@ PATHISH = re.compile(r'[\w\u4e00-\u9fff\-.]*/[\w\u4e00-\u9fff\-./]*\.md')
 OCTET_PATH_RUN = re.compile(r'/(?:[0-7]{3}/){2,}')
 
 
+# 6 状态文件正名（唯一口径源：ne-setup/templates/truth/ 下的 6 个模板）
+TRUTH_CANON = ('world.md', 'characters.md', 'hooks.md',
+               'objects.md', 'relationships.md', 'timeline.md')
+# 历史遗留的异名——曾同时存在于仓库不同文件里，导致人和 LLM 各读到一套
+TRUTH_ALIAS = {'worldview.md': 'world.md', 'facts.md': 'objects.md',
+               'charactor.md': 'characters.md', 'plot.md': 'hooks.md'}
+
+
+def check_truth_naming(root):
+    """（检查 15）状态文件命名统一。
+
+    根因：v2.0 拆分时没统一口径，仓库里同时存在三套叫法——
+      ne-setup/templates/truth/ 用 world.md / relationships.md，
+      ne-review/consistency-checklist.md 用 facts.md，
+      ne-memory/SKILL.md 与 skill_lint 旧白名单用 worldview.md。
+    代价不是"不好看"：外部 LLM 审计这个项目时，有的读到 worldview、有的读到 facts，
+    各自报出不同的"6 状态文件清单"，看起来像模型幻觉，实际是仓库自己在自相矛盾。
+    门禁也不校验文件名，于是用错名字建的项目照样全绿。
+    """
+    bad = []
+    skip = ('.git', '.workbuddy', 'deps', '_skill_analysis')
+    pat_truth = re.compile(r'(?:故事/)?真相/([A-Za-z_][A-Za-z0-9_]*\.md)')
+    pat_alias = re.compile(r'\b(worldview|facts|charactor|plot)\.md\b')
+    for dp, dirs, files in os.walk(root):
+        dirs[:] = [d for d in dirs if d not in skip]
+        for f in files:
+            if not f.endswith(('.md', '.py')):
+                continue
+            # 跳过别名字典的定义处本身，否则检查项会命中自己写的 'facts.md' 字面量
+            if f in ('verify.py', 'skill_lint.py'):
+                continue
+            p = os.path.join(dp, f)
+            try:
+                txt = io.open(p, encoding='utf-8', errors='ignore').read()
+            except Exception:
+                continue
+            rel = os.path.relpath(p, root).replace('\\', '/')
+            # 逐行扫描：文档为了说明历史而必须提到异名的行，用显式标记豁免，
+            # 不豁免就会被自己的说明文字反复误报（宽泛跳过"历史"字样则会放过真违规）
+            for line in txt.splitlines():
+                if 'truth-naming-exempt' in line:
+                    continue
+                for m in pat_truth.finditer(line):
+                    name = m.group(1)
+                    if name not in TRUTH_CANON:
+                        bad.append('%s: 真相/%s（正名：%s）' % (
+                            rel, name, TRUTH_ALIAS.get(name, '/'.join(TRUTH_CANON))))
+                for m in pat_alias.finditer(line):
+                    name = m.group(0)
+                    if name in TRUTH_ALIAS:
+                        bad.append('%s: %s（应为 %s）' % (rel, name, TRUTH_ALIAS[name]))
+            if bad:
+                break
+        if bad:
+            break
+    if bad:
+        return ('FAIL', '状态文件命名统一', '; '.join(bad[:4]))
+    return ('PASS', '状态文件命名统一', '6 状态文件口径一致')
+
+
 def check_path_escapes(root):
     """（检查 14）路径八进制转义残留。
 
@@ -506,7 +612,8 @@ def main():
         print('\n=== %s ===' % os.path.basename(os.path.abspath(t)))
         if args.consistency:
             rows = [check_repo_refs(t), check_artifact_templates(t),
-                    check_report_naming(t), check_path_escapes(t)]
+                    check_report_naming(t), check_path_escapes(t),
+                    check_truth_naming(t)]
         else:
             rows = check_skill(t)
         for level, item, detail in rows:

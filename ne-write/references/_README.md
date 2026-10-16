@@ -14,6 +14,6 @@
 | execution-modes.md | 10.0K | 执行模式与物理隔离（Execution Modes · v1.9.1 | 2026-10-16 |
 | identity-routing.md | 12.3K | 身份路由（写作视角 × 流水线环节 → 专业身份） | 2026-10-16 |
 | model-guide.md | 8.5K | 模型文档 · 各阶段适用模型与提示策略 | 2026-10-16 |
-| workflow-detail.md | 19.6K | S1-S4 物理隔离流水线详解（v1.9） | 2026-10-16 |
+| workflow-detail.md | 20.2K | S1-S4 物理隔离流水线详解（v1.9） | 2026-10-16 |
 | writing-guide.md | 16.9K | 阶段②：正文写作指南（S2 血肉 · 作者·执笔态） | 2026-10-16 |
 <!-- AUTO-LIST-END -->

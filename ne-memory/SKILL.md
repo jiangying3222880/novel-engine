@@ -1,7 +1,7 @@
 ---
 name: ne-memory
 description: 小说状态落库、跨会话续写与检索（S4）。当用户说"存盘""落库""续写上次的""跨会话恢复""检索前文""更新叙事总览""写 Change Report"时使用。含滚动窗口与六状态文件维护。
-version: 2.1.1
+version: 2.1.3
 agent_created: 2026-10-15
 ---
 
@@ -10,13 +10,19 @@ agent_created: 2026-10-15
 ## 一、S4 原子四步（顺序不可乱）
 
 ```
-1. 暂存    Change Report → 先写盘，不直接改状态
+1. 暂存    Change Report（必须含 WORLD-TICK 五行）→ 先写盘，不直接改状态
 2. 校验    python ../ne-tools/runtime/verify.py --root <项目根> --scope settle
-3. 提交    原子更新 6 状态文件 → 元数据/index → 日志 → 叙事总览 → 索引
+3. 提交    ① python ../ne-tools/runtime/world_tick.py --root <项目根> --apply   ← 先机器推进
+           ② 再手写其余 4 状态文件 → 元数据/index → 日志 → 叙事总览 → 索引
 4. 回滚    校验失败则回滚到暂存前，不留下半截状态
 ```
 
-**未输出"更新确认清单" = 未完成。Change Report 为空 = 注水，打回。**
+> **3① 是 v2.1.3 的新步骤，不能跳**：world.md / timeline.md 现在由 world_tick.py 从
+> Change Report 的 WORLD-TICK 区自动推进。手改这两个文件 = 与机器推进打架，且同一条事件
+> 会被写成两遍（两遍必然对不上）。世界时钟停在旧章 → settle 判 FAIL。
+
+**未输出"更新确认清单" = 未完成。Change Report 为空 = 注水，打回。
+WORLD-TICK 区为空 = 世界没推进，打回。**
 
 详见 `./references/hooks-and-memory.md` + `./references/change-report-spec.md`。
 
@@ -24,14 +30,19 @@ agent_created: 2026-10-15
 
 | 文件 | 内容 |
 |---|---|
-| `worldview.md` | 世界观硬规则 |
+| `world.md` | 世界状态 + 硬规则 **【自动】**（当前状态/地点状态机 由 world_tick 推进；时间线已移出，不再在此登记） |
 | `characters.md` | 角色状态（含声线） |
-| `facts.md` | 已确立事实 |
-| `objects.md` | 关键物品/资源 |
+| `relationships.md` | 角色关系网络 + 量化距离 |
+| `objects.md` | 关键物品/资源 **+ 已确立事实台账**（金额/约定/数值锚点，S3 核对依据） |
 | `hooks.md` | 伏笔与钩子状态 |
-| `timeline.md` | 时间线 |
+| `timeline.md` | 时间线 **【自动】**（时间线唯一真相源，由 world_tick 推进） |
 
-每个文件维护 5 通用字段：`status` / `transition` / `valid_until` / `visibility` / `source_chapter`，供检索与一致性校验共用。
+> 唯一口径源 = `../ne-setup/templates/truth/` 下 6 个模板文件。
+> 历史上有过 `facts.md` / `worldview.md` 两套异名（本文件曾列 facts 而未列 relationships），<!-- truth-naming-exempt -->
+> 现已统一——外部文档若仍写异名，一致性核对会指向不存在的文件。
+
+通用字段 3 必填：`status` / `visibility` / `source_chapter`；
+`transition` / `valid_until` 为**预留**，按需补充（写不写都不算错）。供检索与一致性校验共用。
 
 **单状态文件 ≤ 8KB**，超了拆子文件。
 

@@ -1,7 +1,7 @@
 ---
 name: ne-setup
 description: 小说项目立项与初始化。当用户说"开新书""建项目""开始写新书""导入已有设定/大纲"时使用。建立 novel-config.json、故事/真相/ 六状态文件、身份档案与可选模块开关，完成后必须通过 init 门禁。
-version: 2.1.1
+version: 2.1.3
 agent_created: 2026-10-15
 ---
 

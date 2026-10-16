@@ -10,8 +10,8 @@
 
 | 文件 | 大小 | 用途（首行标题） | 更新 |
 |------|------|-------------------|------|
-| change-report-spec.md | 3.0K | Change Report 格式规范 | 2026-10-15 |
-| hooks-and-memory.md | 11.4K | S4 落库：状态落库与 Change Report | 2026-10-15 |
+| change-report-spec.md | 4.7K | Change Report 格式规范 | 2026-10-16 |
+| hooks-and-memory.md | 12.4K | S4 落库：状态落库与 Change Report | 2026-10-16 |
 | retrieval.md | 9.0K | 检索层（功能八 · BM25+FTS 默认 + ZVEC 可选） | 2026-10-15 |
 | session-start.md | 9.4K | S1 骨架：项目启动与本章细纲 SOP | 2026-10-16 |
 <!-- AUTO-LIST-END -->
