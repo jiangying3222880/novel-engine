@@ -525,6 +525,67 @@ def check_truth_naming(root):
     return ('PASS', '状态文件命名统一', '6 状态文件口径一致')
 
 
+def check_technique_ids(root):
+    """（检查 16）技法编号唯一。
+
+    根因（与检查 15 同源）：T-106 被两个完全不同的技法同时使用——
+    「以退为进法」和「时间节点对照法」。撞号时引用 T-106 不知道指哪一个，
+    S1 按编号选技法就会选错，而**没有任何东西会报错**（门禁不查，人也不翻表）。
+    已把后者改为 T-107；这里加闸防复发。
+
+    只匹配表格行首的 `| T-xxx |`，散文里提到编号（如更新日志）不会误命中。
+    """
+    def norm(s):
+        # 「最强最弱反差法」vs「最强=最弱反差法」是同一个技法的写法差异，不是冲突
+        return re.sub(r'[\s=＝·、，,。]', '', s)
+
+    pat_row = re.compile(r'^\|\s*(T-\d{3,4})\s*\|\s*([^|]+)')
+    pat_head = re.compile(r'^#{2,4}\s*(T-\d{3,4})\s+(.*)$')
+    dup, total = [], 0
+    # 编号 -> [(技法名, 来源文件), ...]。
+    # ⚠️ 不能用 setdefault(tid, (name,rel)) 只留第一条——那样跨文件永远比不出差异，
+    #    这条分支会变成**恒定绿灯**（2026-10-17 负向测试抓到：改了名字照样 PASS）。
+    table = {}
+    libs = os.path.join(root, 'ne-library', 'library')
+    for dp, dirs, files in os.walk(libs):
+        for f in sorted(files):
+            if not f.endswith('.md'):
+                continue
+            p = os.path.join(dp, f)
+            try:
+                txt = io.open(p, encoding='utf-8', errors='ignore').read()
+            except Exception:
+                continue
+            rel = os.path.relpath(p, root).replace('\\', '/')
+            # (1) 同文件内判重——同一张表/同一文件里两个不同技法用同一编号 = 真撞号
+            seen = {}
+            for line in txt.splitlines():
+                m = pat_row.match(line) or pat_head.match(line)
+                if not m:
+                    continue
+                tid, name = m.group(1), norm(m.group(2))
+                total += 1
+                if tid in seen and seen[tid] != name:
+                    dup.append('%s: %s 同文件撞号（%s / %s）' % (rel, tid, seen[tid], name))
+                seen.setdefault(tid, name)
+                table.setdefault(tid, []).append((name, rel))
+    # (2) 跨文件一致性：同一编号在两份文档里指向不同技法 = 更隐蔽的撞号。
+    #     判重不能按"出现次数"算（对比分析本来就会引用索引里的编号），
+    #     必须按"编号 → 技法名"是否一致来判。
+    conflict = []
+    for tid, items in sorted(table.items()):
+        names = {}
+        for name, rel in items:
+            names.setdefault(name, rel)
+        if len(names) > 1:
+            detail = ' / '.join('[%s]=%s' % (n, r.split('/')[-1]) for n, r in sorted(names.items()))
+            conflict.append('%s 跨文件不一致：%s' % (tid, detail))
+    bad = dup + conflict
+    if bad:
+        return ('FAIL', '技法编号唯一', '; '.join(sorted(set(bad))[:3]))
+    return ('PASS', '技法编号唯一', '%d 行编号，%d 个唯一号，跨文件一致' % (total, len(table)))
+
+
 def check_path_escapes(root):
     """（检查 14）路径八进制转义残留。
 
@@ -566,7 +627,8 @@ def main():
     ap = argparse.ArgumentParser(description='Skill 标准化自检')
     ap.add_argument('--root', default='', help='技能根目录（默认=本文件上级的上级）')
     ap.add_argument('--all', action='store_true', help='遍历 root 下所有含 SKILL.md 的子目录')
-    # 一致性子集：只跑"会不会让流程静默失效"的三项（全仓断链 / 产物模板契约 / 产物命名契约）。
+    # 一致性子集：只跑"会不会让流程静默失效"的项——全仓断链 / 产物模板契约 / 产物命名契约 /
+    # 路径转义 / 状态文件命名 / 技法编号唯一。共同点：撞了不会报错，只会让人按错的口径做事。
     # 给 pre-commit 用——完整自检里 description/token 那两项是长期待办，
     # 若一并进门禁会导致每次提交都被拒，反而逼人用 --no-verify 绕开。
     ap.add_argument('--consistency', action='store_true',
@@ -613,7 +675,7 @@ def main():
         if args.consistency:
             rows = [check_repo_refs(t), check_artifact_templates(t),
                     check_report_naming(t), check_path_escapes(t),
-                    check_truth_naming(t)]
+                    check_truth_naming(t), check_technique_ids(t)]
         else:
             rows = check_skill(t)
         for level, item, detail in rows:

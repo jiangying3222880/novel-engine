@@ -3,7 +3,13 @@
 > ⚠️ 本说明由 doc_sync.py 自动生成。请在下方补充本目录的语义说明（定位/用法/上下游），自动文件清单见文末。
 
 <!-- 人工说明区（doc_sync 保留此区，不会覆盖） -->
-（待补充）
+写作执行的细节依据：
+
+- `workflow-detail.md` —— S1-S4 原子步骤 + 每个门禁的调用时机（**SOP 本体**）
+- `writing-guide.md` —— 质感规则（冰山法则/章态构建/对话不对称三原则）
+- `identity-routing.md` —— 身份路由与**状态切换判据**（决策态 vs 执笔态，看手里的文件）
+- `execution-modes.md` —— single / multi / 外包三种模式
+- `chat-outsource.md` / `model-guide.md` —— 外包提示词打包与模型选择
 
 <!-- AUTO-LIST-START: 由 doc_sync.py 自动维护，请勿手改 -->
 ## 文件清单（自动生成）

@@ -3,7 +3,13 @@
 > ⚠️ 本说明由 doc_sync.py 自动生成。请在下方补充本目录的语义说明（定位/用法/上下游），自动文件清单见文末。
 
 <!-- 人工说明区（doc_sync 保留此区，不会覆盖） -->
-（待补充）
+落库与续写的细节依据：
+
+- `change-report-spec.md` —— Change Report 规范，**含 WORLD-TICK 机器解析区**
+  （clock/place/env/loc/event 五行，供 `world_tick.py` 解析）
+- `hooks-and-memory.md` —— 伏笔与 6 状态文件的维护 SOP
+- `session-start.md` —— 续写入口（跨会话恢复上下文）
+- `retrieval.md` —— 检索索引（BM25）
 
 <!-- AUTO-LIST-START: 由 doc_sync.py 自动维护，请勿手改 -->
 ## 文件清单（自动生成）

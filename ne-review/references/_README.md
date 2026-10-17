@@ -3,7 +3,13 @@
 > ⚠️ 本说明由 doc_sync.py 自动生成。请在下方补充本目录的语义说明（定位/用法/上下游），自动文件清单见文末。
 
 <!-- 人工说明区（doc_sync 保留此区，不会覆盖） -->
-（待补充）
+去 AI 味与检验的判定依据，两组 + 一份清单：
+
+- `anti-ai.md`（总纲）/ `anti-ai-词级信号.md`（词级）/ `anti-ai-swaps.md`（替换表）/
+  `anti-ai-示范库.md`（正反例）
+- `human-signal-zh.md`（人味信号）/ `human-signal-模式库.md`
+- `consistency-checklist.md` —— 一致性清单，**每条都指回 `故事/真相/` 的状态文件**
+- `self-review.md` —— 八问 Q1-Q7 + 遮名测试 Q2a
 
 <!-- AUTO-LIST-START: 由 doc_sync.py 自动维护，请勿手改 -->
 ## 文件清单（自动生成）
