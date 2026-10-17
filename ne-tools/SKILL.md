@@ -1,7 +1,7 @@
 ---
 name: ne-tools
 description: 小说创作引擎的运行时工具。当用户说"跑门禁""校验项目""刷新索引""打包技能""同步运行镜像""跑自测"时使用。提供 verify/doc_sync/index/query/package/deploy/skill_lint 等脚本。
-version: 2.1.6
+version: 2.1.7
 agent_created: 2026-10-15
 ---
 
