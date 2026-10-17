@@ -33,6 +33,10 @@ Novel Engine 流程门禁（verify.py · v1.9.1.1）
   [hooks唯一] hooks.md ID 重复 = FAIL（v1.9.1 · settle：防伏笔 ID 冲突）
   [hooks登记] change_report 宣称"待登记"的伏笔必须在 hooks.md 找到（v1.9.1 · settle：防只写报告不登记）
   [逗号密度] 正文逗号密度 >12% = FAIL（v1.9.1 · all：防碎句退化逐章放大）
+  [声线漂移#29d] 正文句长中位数 > 样本段基线1.5倍 且 绝对差≥5字 = WARN（v2.1.6 · settle/batch：
+            逗号密度只抓"句子被切碎"，抓不住反向的"句子变长、飘回通用书面语"——这道闸补那另一半。
+            基线取自 配置/身份/作者.md §5.2 样本段；判定时先剥离引号内台词（台词是角色的嘴，不是作者的笔）；
+            无样本基线则跳过但写明原因，不静默 PASS）
   [检验报告#16] archived 章缺检验报告 = FAIL（v1.9.1.1；兼容 reports/ 与 元数据/chapters/；legacy-no-review.flag 豁免转 WARN）
   [退化趋势#31] trend/all：单章偏离基线>50%、连续5章爬升 = WARN；batch：连续5章爬升 = FAIL 停机（v1.9.1.1 逐章放大停机闸）
   [正文质量#17-#33] #17章内重复FAIL / #18跨章整句重复WARN / #19半角标点 / #24占位符FAIL / #25崩溃句FAIL /
@@ -131,6 +135,57 @@ def chapter_metrics(body):
 
 def normalized(text):
     return re.sub(r'\s+', '', text)
+
+
+def sentence_lengths(text):
+    """句子长度列表（中文字数）。样本段与正文**必须用这一个函数**，
+    口径不一致的数值比较没有意义（一边按换行切、一边按句号切 = 自欺）。"""
+    out = []
+    for s in re.split(r'[。！？；!?;\n]+', text):
+        n = len(re.findall(r'[\u4e00-\u9fff]', s))
+        if n >= 2:      # 单字句（"得。"）不进统计，避免把口头禅当句长样本
+            out.append(n)
+    return out
+
+
+def narrative_sentence_lengths(text):
+    """剥离引号内台词后的句长。声线漂移比的**只是作者的笔**，
+    台词是角色的嘴——不剥离，对话多的章会被台词短句拉低中位数，造成漏报。"""
+    stripped = re.sub(r'[“"](.*?)[”"]', '', text, flags=re.S)
+    return sentence_lengths(stripped)
+
+
+def median(xs):
+    if not xs:
+        return 0.0
+    s = sorted(xs)
+    m = len(s)
+    return float(s[m // 2]) if m % 2 else (s[m // 2 - 1] + s[m // 2]) / 2.0
+
+
+def parse_voice_sample(path):
+    """解析 配置/身份/作者.md 的 §5.2 样本段 → 纯文本。
+    init(#29c) 与 settle(#29d) 共用同一份解析，避免两处逻辑各自漂移。"""
+    try:
+        vc = open(path, encoding='utf-8').read().splitlines()
+    except Exception:
+        return ''
+    blk, collecting = [], False
+    for ln in vc:
+        if re.match(r'^\s*样本段\s*[:：]', ln):
+            inline = re.split(r'[:：]', ln, maxsplit=1)[1].strip()
+            if inline and inline != '|':
+                blk.append(inline)
+            collecting = True
+            continue
+        if collecting:
+            if ln.strip() == '' or re.match(r'^\s{2,}', ln) or ln.strip().startswith('|'):
+                blk.append(ln.strip())
+            else:
+                break
+    sample = ''.join(blk)
+    sample = re.sub(r'\|$', '', sample).strip()
+    return sample
 
 
 def parse_index_status(root):
@@ -993,6 +1048,42 @@ def main():
                     comma_bad.append(f'{fn}: 逗号密度 {pct:.1f}% (>12%)')
         check('逗号密度', not comma_bad, '; '.join(comma_bad) if comma_bad else 'OK')
 
+    # 29d 声线漂移（v2.1.6 · settle WARN）
+    # 根因：AI 味的复发不是"某章突然烂"，是**句长逐章爬回通用书面语**。
+    #   逗号密度(#15)抓的是碎句退化，抓不住"句子变长、修饰变多"这种反向漂移。
+    #   判据：正文（剥离台词后）句长中位数 比 样本段 高出 50% 且绝对差 ≥5 字。
+    #      - 要 50% 也要 ≥5 字：只看比例的话，样本 5 字→正文 8 字会误报；
+    #        只看绝对值的话，样本 30 字→正文 38 字（已明显漂移）会漏报。
+    #   为什么 WARN 不是 FAIL：存在"这章就该写长句"的合法场景，硬 FAIL 会逼人把长句砍碎。
+    #     连续批跑中出现应停批人工看（与 #30/#31/#33 同处理）。
+    if args.scope in ('settle', 'all', 'batch'):
+        av_path = os.path.join(root, '配置', '身份', '作者.md')
+        if not os.path.isfile(av_path):
+            # 缺样本不在这里重复报——#29c 在 init 已负责报"缺样本"。
+            # 但也不能假装"检查通过"，说明写进 detail（否则又是一个静默项）。
+            check('声线漂移(#29d)', True, '无 配置/身份/作者.md 基线，跳过（见 #29c）')
+        else:
+            base = median(narrative_sentence_lengths(parse_voice_sample(av_path)))
+            if base <= 0:
+                check('声线漂移(#29d)', True, '样本段无有效句长基线，跳过（见 #29c）')
+            else:
+                drift_bad = []
+                for ch, fn, raw, cbody in iter_chapter_bodies(root):
+                    if len(re.sub(r'\s+', '', cbody)) < 500:
+                        continue    # 短章不判，与 #15 同口径
+                    cur = median(narrative_sentence_lengths(cbody))
+                    if cur <= 0:
+                        continue
+                    if cur > base * 1.5 and cur - base >= 5:
+                        drift_bad.append('第%s章 句长中位 %d > 基线 %.0f 的1.5倍'
+                                         % (ch, int(cur), base))
+                if drift_bad:
+                    warn('声线漂移(#29d)',
+                         '; '.join(drift_bad) + f'（样本段基线 {base:.0f} 字/句 —— '
+                         '句子变长+修饰变多 = 飘回通用书面语）')
+                else:
+                    check('声线漂移(#29d)', True, f'句长中位贴近基线 {base:.0f} 字')
+
     # 16 检验报告完整性（v1.9.1.1 · D-01：archived 章缺报告 = FAIL；旧逻辑只数份数、0 报告写死 PASS）
     # 显式豁免：v1.9 前遗留项目可建 故事/日志/legacy-no-review.flag
     #   文件内列 4 位章号 = 只豁免这些章；空文件 = 豁免全部。命中豁免转 WARN（留痕可审计），不静默 PASS。
@@ -1445,22 +1536,7 @@ def main():
         if not os.path.isfile(author_voice):
             vs_bad.append('缺 配置/身份/作者.md（§5.2 声音样本无处落）')
         else:
-            vc = open(author_voice, encoding='utf-8').read().splitlines()
-            blk, collecting = [], False
-            for ln in vc:
-                if re.match(r'^\s*样本段\s*[:：]', ln):
-                    inline = re.split(r'[:：]', ln, 1)[1].strip()
-                    if inline and inline != '|':
-                        blk.append(inline)
-                    collecting = True
-                    continue
-                if collecting:
-                    if ln.strip() == '' or re.match(r'^\s{2,}', ln) or ln.strip().startswith('|'):
-                        blk.append(ln.strip())
-                    else:
-                        break
-            sample = ''.join(blk)
-            sample = re.sub(r'\|$', '', sample).strip()
+            sample = parse_voice_sample(author_voice)
             n = len(re.sub(r'\s', '', sample))
             if '取样三条硬口径' in sample or '粘贴 200-400' in sample or '本项目成稿' in sample:
                 vs_bad.append('样本段仍是模板原文（未替换成真实成稿）')
