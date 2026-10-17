@@ -238,8 +238,9 @@ class Proj:
         lines += [f'| {ch} | 测试 | {st} |' for ch, st in rows]
         (self.root / '故事/元数据' / 'index.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')
 
-    def outline(self, ch):
-        (self.root / '大纲' / f'细纲_第{ch}章.md').write_text(f'# 细纲：第 {ch} 章\n\n- 冲突链：占位\n', encoding='utf-8')
+    def outline(self, ch, text=None):
+        (self.root / '大纲' / f'细纲_第{ch}章.md').write_text(
+            text or f'# 细纲：第 {ch} 章\n\n- 冲突链：占位\n', encoding='utf-8')
 
     def chapter_meta(self, ch):
         (self.root / '故事/元数据' / f'chapter_{ch}.md').write_text(
@@ -557,6 +558,51 @@ def s12_voice_drift(base, a, verbose):
     pline = find_line(out, 'PASS', '声线漂移') or ''
     a.results.append(('跳过' in pline, 'S12.6 跳过时必须写明原因（不静默 PASS）',
                       pline.strip() or '(无)'))
+
+
+# 细纲夹具（v2.1.8 S13）：三种「引号 + 道」的组合，区分误报与真报
+OUTLINE_NO_DIALOGUE_TAOIST = (
+    '# 细纲：第 0001 章\n\n'
+    '| 事实层 | 老道士知道那个"有人代为回应"的现象意味着什么；铜钱碎是崩坏前兆 |\n'
+    '- 老道士：知道那个"有人代为回应"的现象意味着什么；不知道林枫会不会回头\n'
+)
+OUTLINE_DIALOGUE_SAID = (
+    '# 细纲：第 0001 章\n\n'
+    '- 节四：他说"这句是完整台词不该出现在细纲"\n'
+)
+OUTLINE_DIALOGUE_TAOIST_SAID = (
+    '# 细纲：第 0001 章\n\n'
+    '- 节四：老道士说道"这句也是完整台词"\n'
+)
+
+
+@scenario
+def s13_outline_dialogue_false_positive(base, a, verbose):
+    """v2.1.8 细纲台词越界：真台词要抓，复合词里的「道」不许误报。
+
+    真书实测（梦里叫主人）才暴露的误报：细纲写
+        「老道士知道那个"有人代为回应"的现象」
+    「老道士」的道 + 「知道」的道，两处都被当成说话动词 → 误报。
+    夹具里不会有人叫「老道士」，所以夹具测试永远发现不了。
+    """
+    p = Proj(base)
+
+    # 误报侧：含「老道士」「知道」的复合词，引号里不是台词 → 不该报
+    p.outline('0001', OUTLINE_NO_DIALOGUE_TAOIST)
+    _, out = run_verify(p.root, 'settle')
+    wline = find_line(out, 'WARN', '细纲台词越界') or ''
+    a.results.append((wline == '', 'S13.1 复合词含「道」（老道士/知道）→ 不误报',
+                      wline.strip() or '(无 WARN 行)'))
+
+    # 真报侧1：他说 + 台词
+    p.outline('0001', OUTLINE_DIALOGUE_SAID)
+    _, out = run_verify(p.root, 'settle')
+    a.expect(out, 'WARN', '细纲台词越界', 'S13.2 他说"…" 真台词 → 必须报')
+
+    # 真报侧2：老道士说道 + 台词（"道士"要被右断言排除，但"说道"不是"道士"）
+    p.outline('0001', OUTLINE_DIALOGUE_TAOIST_SAID)
+    _, out = run_verify(p.root, 'settle')
+    a.expect(out, 'WARN', '细纲台词越界', 'S13.3 老道士说道"…" → 仍要报（不能因挡误报而失效）')
 
 
 # ---------- 主流程 ----------

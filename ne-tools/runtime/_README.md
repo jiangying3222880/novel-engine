@@ -10,7 +10,7 @@
 | `world_tick.py` | **世界状态自动推进**（v2.1.3 新增）：读 Change Report 的 `WORLD-TICK` 机器解析区 → 推进 `world.md`（当前状态/地点状态机）+ `timeline.md`（事件行，章号去重）。**幂等**；默认 **dry-run**，`--apply` 才写盘；无 WORLD-TICK 区时退出码 2 | **每章 S4 落库时，在 `verify.py --scope settle` 之前跑**；顺序反了世界时钟必 FAIL |
 | `doc_sync.py` | **说明文档同步**：scan/check/update 各目录 `_README.md` 自动清单 + **跨文件版本一致性**（首行标题 + 全文最高版本号扫描，v1.9.1.2 补盲） | 修改技能文件后 `update`；发布前 `check` |
 | `package.py` | **发行打包**（v1.9.1.2 新增）：生成 ZIP，自动排除开发期文件（`_skill_analysis/`、`测试_基线*/`、`pr-body.md`、`.git`、`__pycache__` 等），版本号取包级 `../../VERSION` 文件（单一真相源，非 SKILL.md frontmatter） | 发布/分发技能包时 |
-| `selftest_gates.py` | **门禁回归自测**（v1.9.1.3 新增 · D-31）：**12 场景 44 断言**，把 verify 关键行为（#8 接线/证据双格式/#27 槽位/#16/#21/#23/#32/batch 停机闸/**世界时钟 + world_tick 写入器配对**/**#29c 作者声音样本**/**#29d 声线漂移**）固化为可重放回归；`-v` 看明细、`--keep` 留夹具 | **改 verify.py 前先在此登记预期（预期先行），改完必跑；发版前必跑** |
+| `selftest_gates.py` | **门禁回归自测**（v1.9.1.3 新增 · D-31）：**13 场景 47 断言**，把 verify 关键行为（#8 接线/证据双格式/#27 槽位/#16/#21/#23/#32/batch 停机闸/**世界时钟 + world_tick 写入器配对**/**#29c 作者声音样本**/**#29d 声线漂移/**#12b 细纲台词越界的道字误报**）固化为可重放回归；`-v` 看明细、`--keep` 留夹具 | **改 verify.py 前先在此登记预期（预期先行），改完必跑；发版前必跑** |
 | `bm25_fts.py` | BM25+FTS 索引构建（零依赖 jieba，默认启用） | 项目初始化/每章落库后重建索引 |
 | `index.py` | 章节元数据/正文/实体类真相（characters/world/hooks/objects）→ 索引文档（BM25 词项） | 被 bm25_fts 调用 |
 | `query.py` | 检索查询：关键词 + 防剧透 cutoff + 知情权 visibility 过滤 | S1/S4 检索 |

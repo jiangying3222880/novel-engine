@@ -1,7 +1,7 @@
 ---
 name: ne-outline
 description: 小说章节细纲与骨架规划（S1）。当用户说"规划第X章""写细纲""这章写什么""章功能分型""排一下结构"时使用。产出四维骨架细纲文件，过细纲门后才交给 ne-write 写正文。
-version: 2.1.7
+version: 2.1.8
 agent_created: 2026-10-15
 ---
 
