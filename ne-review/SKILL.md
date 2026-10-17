@@ -1,7 +1,7 @@
 ---
 name: ne-review
 description: 小说章节检验与去 AI 味（S3）。当用户说"检验这章""自检""去AI味""写得像不像人""遮名测试""这段有没有问题"时使用。产出检验报告（必须带 evidence_ids，无证据的判定无效）。
-version: 2.1.8
+version: 2.1.9
 agent_created: 2026-10-15
 ---
 

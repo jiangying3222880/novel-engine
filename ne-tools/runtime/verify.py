@@ -37,6 +37,10 @@ Novel Engine 流程门禁（verify.py · v1.9.1.1）
             逗号密度只抓"句子被切碎"，抓不住反向的"句子变长、飘回通用书面语"——这道闸补那另一半。
             基线取自 配置/身份/作者.md §5.2 样本段；判定时先剥离引号内台词（台词是角色的嘴，不是作者的笔）；
             无样本基线则跳过但写明原因，不静默 PASS）
+  [禁用词#29e] 作者档案「禁用清单」块里的词在正文出现 = WARN（v2.1.9 · settle/batch：
+            此前禁用清单是张只给人看的表格，机器从不读 → 写了跟没写一样。
+            人写的规则机器不读 = 规则等于不存在。命中时给出「词×次数 + 章号」，
+            让人判断是改正文还是这个词本不该在清单里；未启用清单则 PASS 但写明跳过）
   [检验报告#16] archived 章缺检验报告 = FAIL（v1.9.1.1；兼容 reports/ 与 元数据/chapters/；legacy-no-review.flag 豁免转 WARN）
   [退化趋势#31] trend/all：单章偏离基线>50%、连续5章爬升 = WARN；batch：连续5章爬升 = FAIL 停机（v1.9.1.1 逐章放大停机闸）
   [正文质量#17-#33] #17章内重复FAIL / #18跨章整句重复WARN / #19半角标点 / #24占位符FAIL / #25崩溃句FAIL /
@@ -186,6 +190,66 @@ def parse_voice_sample(path):
     sample = ''.join(blk)
     sample = re.sub(r'\|$', '', sample).strip()
     return sample
+
+
+BAN_PLACEHOLDERS = {'由本项目定', '一目了然的词由本项目定', '待补充', '待填', 'TODO', '无', '暂不启用'}
+_CJK_ALNUM = re.compile(r'^[\u4e00-\u9fffA-Za-z0-9]+$')
+
+
+def _ban_tokens(text):
+    """把一行里的词拆出来：按空白/顿号/逗号/分号/竖线切。
+
+    三道过滤，漏一道就会造出幽灵清单：
+      1. 剥掉 markdown 列表符号（模板里 `禁用清单:` 的默认值就是 `- 由本项目定` 那种写法）
+      2. 只留纯中文/字母/数字串，长度 ≥2 —— 否则单个 `-` 会被当成禁用词去匹配正文里的破折号
+      3. 丢掉占位词（"由本项目定"那类）—— 不然项目没填清单时，占位词会变成一个"永不命中"
+         的假清单，检查永远 PASS 且永远没有意义
+    """
+    out = []
+    for t in re.split(r'[\s、,，;；|]+', text):
+        t = t.strip().lstrip('-').lstrip('*').lstrip('•').strip()
+        if len(t) < 2 or not _CJK_ALNUM.match(t) or t in BAN_PLACEHOLDERS:
+            continue
+        out.append(t)
+    return out
+
+
+def parse_banned_words(path):
+    """解析 配置/身份/作者.md 的「禁用清单」块 → [词]（去保序）。
+
+    为什么要有这道闸：此前「禁用清单」是作者档案里一张**只给人看的表格**——机器从不读它，
+    于是"写了清单"和"没有清单"对产出零差别（v2.1.9 之前实测时是我手工数命中的，
+    换个项目就没人再数了）。**人写的规则机器不读 = 规则等于不存在。**
+
+    读取口径（与 parse_voice_sample 同构，避免两处解析逻辑各自漂移）：
+      以行首「禁用清单:」起收集，兼容同行/分行两种写法；代码块围栏 ``` 直接跳过不中断收集，
+      这样清单写不写在 ``` 里都能解析。
+    """
+    try:
+        vc = open(path, encoding='utf-8').read().splitlines()
+    except Exception:
+        return []
+    words, collecting = [], False
+    for ln in vc:
+        if re.match(r'^\s*禁用清单\s*[:：]', ln):
+            inline = re.split(r'[:：]', ln, maxsplit=1)[1].strip()
+            if inline and inline != '|':
+                words += _ban_tokens(inline)
+            collecting = True
+            continue
+        if collecting:
+            if ln.strip().startswith('```'):
+                continue    # 围栏不是"块结束"，跳过继续收
+            if ln.strip() == '' or re.match(r'^\s{2,}', ln) or ln.strip().startswith('|'):
+                words += _ban_tokens(ln.strip())
+            else:
+                break
+    seen, out = set(), []
+    for w in words:
+        if w and w not in seen:
+            seen.add(w)
+            out.append(w)
+    return out
 
 
 def parse_index_status(root):
@@ -1088,6 +1152,38 @@ def main():
                          '句子变长+修饰变多 = 飘回通用书面语）')
                 else:
                     check('声线漂移(#29d)', True, f'句长中位贴近基线 {base:.0f} 字')
+
+    # 29e 禁用词（v2.1.9 · settle WARN）
+    # 根因：禁用词一直是"三张候选表给人看"，机器从不读 → 写了跟没写一样。
+    #   现实中禁用词的正确来源只有一个方向：拿本人成稿做频次统计，
+    #   把"AI 会高频输出而本人全稿 0 次"的通用填充词挑出来（即 A 档），
+    #   机器不替人选词——清单必须由本人在作者档案里显式启用。
+    #   与前几道声线闸的关系：#29c 管"有没有样本"，#29d 管"句长漂没漂"，本闸管
+    #   "具体哪些词不许出现"——三道都是"人提供素材、机器负责盯"，缺一道就有一处是纯自觉。
+    # 为什么 WARN 不是 FAIL：清单是人写的，人写的清单会错（比如某词后来决定要用）。
+    #   硬 FAIL 会逼人去偷删清单，那比违背清单更糟；WARN 把「词 + 次数 + 章号」摆出来，
+    #   让人判断是改正文还是这个词本不该在清单里。
+    if args.scope in ('settle', 'all', 'batch'):
+        av_path_e = os.path.join(root, '配置', '身份', '作者.md')
+        banned = parse_banned_words(av_path_e) if os.path.isfile(av_path_e) else []
+        if not banned:
+            # 没启用清单 ≠ 检查通过：写明跳过原因，别又造一个"没有可报错的地方"
+            check('禁用词(#29e)', True,
+                  '作者档案无「禁用清单」块（未启用），跳过 —— 建议按 A 档补一列，'
+                  '这是唯一能压住 AI 高频填充词的手段')
+        else:
+            ban_hits = []
+            for ch, fn, raw, cbody in iter_chapter_bodies(root):
+                found = [(w, cbody.count(w)) for w in banned if w in cbody]
+                if found:
+                    ban_hits.append('第%s章 %s' % (ch, '、'.join('%s×%d' % (w, n)
+                                                                for w, n in found)))
+            if ban_hits:
+                warn('禁用词(#29e)', '; '.join(ban_hits)
+                     + f'（清单 {len(banned)} 词，本人启用 —— 命中 = 要么改正文，'
+                       '要么这个词本不该在清单里）')
+            else:
+                check('禁用词(#29e)', True, f'{len(banned)} 词全稿 0 命中')
 
     # 16 检验报告完整性（v1.9.1.1 · D-01：archived 章缺报告 = FAIL；旧逻辑只数份数、0 报告写死 PASS）
     # 显式豁免：v1.9 前遗留项目可建 故事/日志/legacy-no-review.flag

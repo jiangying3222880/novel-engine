@@ -605,6 +605,101 @@ def s13_outline_dialogue_false_positive(base, a, verbose):
     a.expect(out, 'WARN', '细纲台词越界', 'S13.3 老道士说道"…" → 仍要报（不能因挡误报而失效）')
 
 
+# 禁用词夹具（v2.1.9 S14）
+# 分两行 + 代码块围栏两种写法，验证「块写在 ``` 里也能解析」以及「多行都要解析到」
+AUTHOR_BAN_NONE = AUTHOR_VOICE_GOOD + '\n写作边界：自测占位边界，未启用禁用清单。\n'
+
+AUTHOR_BAN_LIST = AUTHOR_VOICE_GOOD + (
+    '禁用清单:\n'
+    '  不由得  不禁  意味深长\n'
+    '  淡淡的笑  苦笑\n')
+
+# 围栏里的清单：验证 ``` 不当成"块结束"（否则清单写在代码块里会静默失效）
+AUTHOR_BAN_FENCED = AUTHOR_VOICE_GOOD + (
+    '禁用清单:\n'
+    '```\n'
+    '  轻笑一声  嘴角上扬\n'
+    '```\n')
+
+# 模板默认值的坑：`- 由本项目定` 若被当成真清单，会造出一个"永不命中的假清单"，
+# 检查永远 PASS 且永远没意义 —— 必须被占位词过滤器清掉
+AUTHOR_BAN_PLACEHOLDER = AUTHOR_VOICE_GOOD + (
+    '禁用清单:\n'
+    '  - 由本项目定\n')
+
+BAN_CLEAN_BODY = '\n'.join([
+    '他推开门。屋里没人。灯还亮着。',
+    '桌上有杯水。水是凉的。杯壁挂着一层雾。',
+    '他把包放下。坐了一会儿。没有动静。',
+] * 5) + '\n'
+
+BAN_DIRTY_BODY = '\n'.join([
+    '他推开门。屋里没人。灯还亮着。',
+    '他不由得想起上午的事，随即又把它按回去。',
+    '她落下那句话，意味深长地看着他。',
+    '想到这里他苦笑了一下，转身去把窗帘拉上。',
+    '他不明白，也不想明白。窗外的雨又开始下了。',
+] * 5) + '\n'
+
+
+@scenario
+def s14_banned_words(base, a, verbose):
+    """v2.1.9 #29e 禁用词：清单是人写的，闸门是机器盯的。
+
+    这道闸的存在理由很直白：此前「禁用清单」是作者档案里一张只给人看的表格，
+    机器从不读它 —— "写了清单"和"没写清单"对产出零差别。**人写的规则机器不读 = 规则等于不存在。**
+    所以这里必须测三件事：不启用清单要写明跳过（不许静默 PASS）、命中要指明词和章号、
+    围栏和多行都不能让清单漏解析。
+    """
+    p = Proj(base)
+
+    p.author_voice(AUTHOR_BAN_NONE)
+    p.body('0001', BAN_CLEAN_BODY)
+    _, out = run_verify(p.root, 'settle')
+    wline = find_line(out, 'WARN', '禁用词') or ''
+    a.results.append((wline == '', 'S14.1 未启用禁用清单 → 不报 WARN（写文档≠启用）',
+                      wline.strip() or '(无 WARN 行)'))
+    pline = find_line(out, 'PASS', '禁用词') or ''
+    a.results.append(('未启用' in pline, 'S14.2 未启用时 PASS 必须写明跳过原因（不静默）',
+                      pline.strip() or '(无)'))
+
+    p.author_voice(AUTHOR_BAN_LIST)
+    p.body('0001', BAN_DIRTY_BODY)
+    _, out = run_verify(p.root, 'settle')
+    a.expect(out, 'WARN', '禁用词(#29e)', 'S14.3 正文含禁用词 → WARN')
+    wline = find_line(out, 'WARN', '禁用词') or ''
+    a.results.append(('0001' in wline, 'S14.4 报警指明章号（不是笼统说"有命中"）',
+                      wline.strip() or '(无)'))
+    a.results.append(('不由得' in wline and '×' in wline,
+                      'S14.5 报警给出「词×次数」（让人判断改正文还是改清单）',
+                      wline.strip() or '(无)'))
+    # 第二行的词也要解析到 —— 只收第一行 = 又一处恒定漏报
+    a.results.append(('苦笑' in wline, 'S14.6 清单写在第二行的词也被解析（多行不漏）',
+                      wline.strip() or '(无)'))
+
+    p.body('0001', BAN_CLEAN_BODY)
+    _, out = run_verify(p.root, 'settle')
+    wline = find_line(out, 'WARN', '禁用词') or ''
+    a.results.append((wline == '', 'S14.7 干净正文 → 不报（WARN 只真命中才发声）',
+                      wline.strip() or '(无 WARN 行)'))
+
+    p.author_voice(AUTHOR_BAN_FENCED)
+    p.body('0001', '\n'.join([
+        '他推开门。屋里没人。灯还亮着。',
+        '她嘴角上扬，轻笑一声，随即又恢复了那副表情。',
+    ] * 5) + '\n')
+    _, out = run_verify(p.root, 'settle')
+    a.expect(out, 'WARN', '禁用词(#29e)',
+             'S14.8 清单写在 ``` 围栏里也能解析（围栏不是块结束）')
+
+    p.author_voice(AUTHOR_BAN_PLACEHOLDER)
+    _, out = run_verify(p.root, 'settle')
+    pline = find_line(out, 'PASS', '禁用词') or ''
+    a.results.append(('未启用' in pline,
+                      'S14.9 模板默认占位「- 由本项目定」不算启用清单（防幽灵清单）',
+                      pline.strip() or find_line(out, 'WARN', '禁用词') or '(无)'))
+
+
 # ---------- 主流程 ----------
 
 def main():
